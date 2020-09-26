@@ -36,9 +36,13 @@ public class Lexer {
                     return EOI;
                 }
 
-                current+=input_buffer;
-                yylineno++;
+                current=input_buffer;
                 current.trim();
+
+            }
+
+            if(current.isEmpty()){
+                return EOI;
             }
 
             for(int i = 0;i<current.length();i++){
@@ -51,17 +55,21 @@ public class Lexer {
                     case "*":current=current.substring(1);return TIMES;
                     case ")":current=current.substring(1);return RP;
                     case " ":
-                    case "\n":
                     case "\t":
+                    case "\n":
                         current=current.substring(1);break;
                     default:
-                        while(isAnum(current.charAt(i))){
-                            i++;
-                            yyleng++;
+                        if(isAnum(current.charAt(i))==false){
+                            return UNKNOW_SYMBOL;
+                        }else{
+                            while(i<current.length()&&isAnum(current.charAt(i))){
+                                i++;
+                                yyleng++;
+                            }
+                            yytext=current.substring(0,i);
+                            current=current.substring(i);
+                            return NUM_OR_ID;
                         }
-                        yytext=current.substring(0,i);
-                        current=current.substring(i);
-                        return NUM_OR_ID;
                 }
 
             }
@@ -88,7 +96,6 @@ public class Lexer {
 
     public void runlexer(){
         while(!match(EOI)){
-
             System.out.println("Token: " + token() + ",Symbol:"+yytext);
             advance();
         }
