@@ -1,61 +1,46 @@
-
-public class BasicParser {
+public class ImprovedParser {
     private Lexer lexer;
 
-    public  BasicParser(Lexer lexer){
+    public  ImprovedParser(Lexer lexer){
         this.lexer=lexer;
     }
 
     public void statements(){
 
-        expression();
-        if(lexer.match(Lexer.SEMI)){
-            lexer.advance();
-            if(!lexer.match(Lexer.EOI)){
-                statements();
+        while(lexer.match(Lexer.EOI)!=true){
+            expression();
+            if(lexer.match(Lexer.SEMI)){
+                lexer.advance();
+            } else{
+                System.out.println("Line Number "+lexer.yylineno+":Missing semicolon");
             }
         }
-        else if(lexer.match(Lexer.UNKNOW_SYMBOL)){
+
+        if(lexer.match(Lexer.UNKNOW_SYMBOL)){
             System.out.println("Unknow Symbol:"+lexer.yytext);
         }
-        else{
-            System.out.println("Line Number "+lexer.yylineno+":Missing semicolon");
-        }
-
     }
 
     public void expression(){
         term();
-        expr_prime();
+        while(lexer.match(Lexer.PLUS)){
+                lexer.advance();
+                term();
+        }
+        if(lexer.match(Lexer.UNKNOW_SYMBOL)){
+            System.out.println("Unknow Symbol:"+lexer.yytext);
+        }
         lexer.yylineno++;
-    }
-
-    public void expr_prime(){
-        if (lexer.match(Lexer.PLUS)){
-            lexer.advance();
-            term();
-            expr_prime();
-        }
-        else if(lexer.match(Lexer.UNKNOW_SYMBOL)){
-                System.out.println("Unknow Symbol:"+lexer.yytext);
-        }
-        else{
-            return;
-        }
     }
 
     public void term(){
         factor();
-        expr_term();
-    }
-
-    public void expr_term(){
-        if (lexer.match(Lexer.TIMES)){
+        while(lexer.match(Lexer.TIMES)){
             lexer.advance();
             factor();
-            expr_term();
         }
-        else if(lexer.match(Lexer.UNKNOW_SYMBOL)){
+
+        if(lexer.match(Lexer.UNKNOW_SYMBOL)){
             System.out.println("Unknow Symbol:"+lexer.yytext);
         }
         else{
@@ -84,5 +69,4 @@ public class BasicParser {
             System.out.println("illegal statements");
         }
     }
-
 }
