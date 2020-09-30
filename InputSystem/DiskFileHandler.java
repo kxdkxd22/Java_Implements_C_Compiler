@@ -1,5 +1,9 @@
 public class DiskFileHandler implements FileHandler {
 
+    public DiskFileHandler(String filename){
+
+    }
+
     @Override
     public void open() {
 
