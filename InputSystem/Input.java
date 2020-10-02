@@ -5,6 +5,7 @@ import java.util.Arrays;
 
 public class Input {
 
+    public static final byte EOF = 0;
     public int MAXLEX = 1024;
     public int MAXLOOK = 16;
     public int BUFSIZE = (MAXLEX*3)+(MAXLOOK*2);
@@ -171,6 +172,30 @@ public class Input {
             Eof_read = true;
         }
         return got;
+    }
+
+    public void ii_pushback(int n){
+        while(--n >= 0 && Next > sMark){
+            if(startBuf[--Next]=='\n'||startBuf[Next]=='\0'){
+                --lineno;
+            }
+        }
+
+        if(Next < eMark){
+            eMark = Next;
+            Mline = lineno;
+        }
+
+        return ;
+    }
+
+    public byte ii_lookahead(int n){
+        byte p = startBuf[Next+n-1];
+        if(Eof_read&&Next+n-1>=endBuf){
+            return EOF;
+        }
+
+        return (Next+n-1<0||Next+n-1>=endBuf)?0:p;
     }
 
 }
