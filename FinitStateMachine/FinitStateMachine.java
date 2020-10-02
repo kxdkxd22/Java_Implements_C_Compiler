@@ -1,7 +1,4 @@
 
-
-import java.lang.reflect.AccessibleObject;
-
 public class FinitStateMachine {
 
     private int yystate=0;
@@ -79,6 +76,9 @@ public class FinitStateMachine {
 
                 }
 
+                if(endOfReads){
+                    return;
+                }
 
             }
 
