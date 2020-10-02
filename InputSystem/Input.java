@@ -191,7 +191,6 @@ public class Input {
             eMark = Next;
             Mline = lineno;
         }
-
         return ;
     }
 
@@ -200,7 +199,6 @@ public class Input {
         if(Eof_read&&Next+n-1>=endBuf){
             return EOF;
         }
-
         return (Next+n-1<0||Next+n-1>=endBuf)?0:p;
     }
 
