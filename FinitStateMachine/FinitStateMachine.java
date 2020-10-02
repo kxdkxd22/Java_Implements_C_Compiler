@@ -1,3 +1,7 @@
+
+
+import java.lang.reflect.AccessibleObject;
+
 public class FinitStateMachine {
 
     private int yystate=0;
@@ -36,14 +40,47 @@ public class FinitStateMachine {
                 }
             }
 
-            if(fms.isAcceptState(yynstate)){
-                yyanchor=true;
-                yylastaccept=yynstate;
-                yyprev=yystate;
+            if(yynstate!=FMS.STATE_FAILURE){
+
+                System.out.println("from state: "+yystate+" to state: "+yynstate);
+                input.ii_advance();
+                if(fms.isAcceptState(yynstate)){
+                    yyanchor=true;
+                    yylastaccept=yynstate;
+                    yyprev=yystate;
+                    input.ii_mark_end();
+                }
+                yystate=yynstate;
+
+            }else{
+                if(yylastaccept==FMS.STATE_FAILURE){
+                    if(yylook!='\n'){
+                        System.out.println("bad input");
+                    }
+                    input.ii_advance();
+                }else {
+                    input.ii_to_mark();
+                    System.out.println("Accept State: "+yylastaccept);
+                    System.out.println("line: "+input.ii_lineno()+"accept text: "+input.ii_text());
+                    switch(yylastaccept){
+                        case 1:
+                            System.out.println("it is a integer");
+                            break;
+                        case 2:
+                        case 4:
+                            System.out.println("it is a float");
+                            break;
+                        default:
+                            System.out.println("interal error");
+                    }
+                    yylastaccept=FMS.STATE_FAILURE;
+                    yystate=0;
+                    input.ii_mark_start();
+
+                }
+
+
             }
-            yystate=yynstate;
-
-
 
 
         }

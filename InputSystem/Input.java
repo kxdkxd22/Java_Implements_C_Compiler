@@ -89,6 +89,12 @@ public class Input {
         return pMark;
     }
 
+    public int ii_to_mark(){
+        lineno = Mline;
+        Next = eMark;
+        return Next;
+    }
+
     public byte ii_advance(){
         if(noMoreChars()){
             return 0;
