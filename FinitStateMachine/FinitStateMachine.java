@@ -39,7 +39,7 @@ public class FinitStateMachine {
 
             if(yynstate!=FMS.STATE_FAILURE){
 
-                System.out.println("from state: "+yystate+" to state: "+yynstate);
+                System.out.println("from state: "+yystate+" to state: "+yynstate+" input char: "+(char)yylook);
                 input.ii_advance();
                 if(fms.isAcceptState(yynstate)){
                     yyanchor=true;
@@ -52,13 +52,13 @@ public class FinitStateMachine {
             }else{
                 if(yylastaccept==FMS.STATE_FAILURE){
                     if(yylook!='\n'){
-                        System.out.println("bad input");
+                        System.out.println("ingore bad input");
                     }
                     input.ii_advance();
                 }else {
                     input.ii_to_mark();
                     System.out.println("Accept State: "+yylastaccept);
-                    System.out.println("line: "+input.ii_lineno()+"accept text: "+input.ii_text());
+                    System.out.println("line: "+input.ii_lineno()+" accept text: "+input.ii_text());
                     switch(yylastaccept){
                         case 1:
                             System.out.println("it is a integer");
