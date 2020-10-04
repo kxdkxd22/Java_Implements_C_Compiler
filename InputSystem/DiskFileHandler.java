@@ -18,4 +18,5 @@ public class DiskFileHandler implements FileHandler {
     public int read(byte[] buf, int begin, int len) {
         return 0;
     }
+
 }
