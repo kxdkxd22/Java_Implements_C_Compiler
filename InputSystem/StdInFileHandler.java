@@ -10,9 +10,11 @@ public class StdInFileHandler implements FileHandler{
         String input = s.nextLine();
         while(!input.equals("end")){
             input_buffer+=input;
+            input_buffer+='\n';
             input=s.nextLine();
+
         }
-        s.close();
+
     }
 
     @Override

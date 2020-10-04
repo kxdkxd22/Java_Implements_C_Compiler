@@ -40,8 +40,18 @@ public class Input {
     }
 
     public void ii_newfile(String filename){
+
         fileHandler = getFileHandler(filename);
         fileHandler.open();
+        Eof_read = false;
+        Next     = END;
+        pMark    = END;
+        sMark    = END;
+        eMark    = END;
+        endBuf  = END;
+        lineno   = 1;
+        Mline    = 1;
+
     }
 
     public String ii_text(){

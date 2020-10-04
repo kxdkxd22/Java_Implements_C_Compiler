@@ -38,7 +38,7 @@ public class MacroHandler {
         }
 
         c = (char)input.ii_lookahead(1);
-        while(Character.isSpaceChar(c)==false||c!='\n'){
+        while(Character.isSpaceChar(c)==false&&c!='\n'){
             macroContent+=c;
             input.ii_advance();
             c = (char) input.ii_lookahead(1);
