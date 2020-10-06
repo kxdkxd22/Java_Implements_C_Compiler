@@ -11,7 +11,7 @@ public class ThompsonLexer {
         CCL_START,//字符集类开始括号 [
         CLOSE_CURLY,// }
         CLOSE_PAREN,// )
-        CLOSEURE,//*
+        CLOSURE,//*
         DASH,//-
         END_OF_INPUT,//输入流结束
         L,//字符常量
@@ -30,13 +30,15 @@ public class ThompsonLexer {
     private int lexeme;
     private Token currentToken = Token.EOS;
     private String curExpr = "";
-    private boolean inQuoted;
-    private boolean sawEsc;
+    private boolean inQuoted = false;
+    private boolean sawEsc = false;
 
     public ThompsonLexer(RegularExpressionHandler regularExpressionHandler){
         this.regularExpressionHandler = regularExpressionHandler;
         initTokenMap();
     }
+
+    public int getLexeme(){return lexeme;}
 
     public void initTokenMap(){
         for(int i= 0; i < ASCII_COUNT; i++){
@@ -50,7 +52,7 @@ public class ThompsonLexer {
         tokenMap['['] = Token.CCL_START;
         tokenMap['}'] = Token.CLOSE_CURLY;
         tokenMap[')'] = Token.CLOSE_PAREN;
-        tokenMap['*'] = Token.CLOSEURE;
+        tokenMap['*'] = Token.CLOSURE;
         tokenMap['-'] = Token.DASH;
         tokenMap['{'] = Token.OPEN_CURLY;
         tokenMap['('] = Token.OPEN_PAREN;
@@ -60,12 +62,14 @@ public class ThompsonLexer {
 
     }
 
+    public boolean MatchToken(Token t){return currentToken == t;}
+
     public Token advance(){
 
         if(currentToken == Token.EOS){
             if(exprCount >= regularExpressionHandler.regularExpr.size()){
-
-                return Token.END_OF_INPUT;
+                currentToken = Token.END_OF_INPUT;
+                return currentToken;
             }else{
 
                 curExpr = regularExpressionHandler.regularExpr.get(exprCount);
@@ -82,20 +86,119 @@ public class ThompsonLexer {
 
         if(curExpr.charAt(charIndex)=='"'){
             inQuoted=!inQuoted;
+            charIndex++;
         }
 
-        sawEsc = (curExpr.charAt(charIndex)=='"');
+        sawEsc = (curExpr.charAt(charIndex)=='\\');
+        if(sawEsc&&curExpr.charAt(charIndex+1)!='"'&&inQuoted==false){
+            lexeme = handleEsc();
+        }else{
+            if(sawEsc&&curExpr.charAt(charIndex+1)=='"'){
+                lexeme = '"';
+                charIndex+=2;
+            }else{
+                lexeme = curExpr.charAt(charIndex);
+                charIndex++;
+            }
+        }
 
+        //currentToken = (inQuoted || sawEsc)?Token.L:tokenMap[lexeme];
+        currentToken = tokenMap[lexeme];
+        return currentToken;
 
-
-        return Token.L;
     }
 
-    public int handleEsc(){
+    private int handleEsc(){
 
+        int rval = 0;
+        String exprToUpper = curExpr.toUpperCase();
+        charIndex++;
 
-        return 0;
+        switch (exprToUpper.charAt(charIndex)){
+            case '\0':
+                rval = '\\';
+                break;
+            case 'B':
+                rval = '\b';
+                break;
+            case 'F':
+                rval = '\f';
+                break;
+            case 'N':
+                rval = '\n';
+                break;
+            case 'R':
+                rval = '\r';
+                break;
+            case 'S':
+                rval = ' ';
+                break;
+            case 'T':
+                rval = '\t';
+                break;
+            case 'E':
+                rval = '\033';
+                break;
+            case '^':
+                charIndex++;
+                rval = (char)(curExpr.charAt(charIndex)-'@');
+                break;
+            case 'X':
+                charIndex++;
+                if(isHexDigit(curExpr.charAt(charIndex))){
+                    rval = hex2Bin(curExpr.charAt(charIndex));
+                    charIndex++;
+                }
+                if(isHexDigit(curExpr.charAt(charIndex))){
+                    rval <<= 4;
+                    rval |= hex2Bin(curExpr.charAt(charIndex));
+                    charIndex++;
+                }
+                if(isHexDigit(curExpr.charAt(charIndex))){
+                    rval <<= 4;
+                    rval |= hex2Bin(curExpr.charAt(charIndex));
+                    charIndex++;
+                }
+                charIndex--;
+                break;
+            default:
+                if(isOctDigit(curExpr.charAt(charIndex))==false){
+                    rval = curExpr.charAt(charIndex);
+                }else{
+                    rval = oct2Bin(curExpr.charAt(charIndex));
+                    charIndex++;
+                    if(isOctDigit(curExpr.charAt(charIndex))){
+                        rval <<= 3;
+                        rval |= oct2Bin(curExpr.charAt(charIndex));
+                        charIndex++;
+                    }
+                    if (isOctDigit(curExpr.charAt(charIndex))){
+                        rval <<= 3;
+                        rval |= oct2Bin(curExpr.charAt(charIndex));
+                        charIndex++;
+                    }
+                    charIndex--;
+                }
+
+        }
+
+        charIndex++;
+        return rval;
     }
 
+    private boolean isHexDigit(char c){
+        return Character.isDigit(c)||(c>='a'&& c<='z')||(c >= 'A'&&c <= 'Z');
+    }
 
+    private int hex2Bin(char c){
+        return (Character.isDigit(c)?c-'0':(Character.toUpperCase(c)-'A'+10))&0xf;
+    }
+
+    private int oct2Bin(char c){
+        return (c-'0')&0x7;
+    }
+
+    private boolean isOctDigit(char c){
+        return (c>='0'&&c<='7');
+    }
 }
