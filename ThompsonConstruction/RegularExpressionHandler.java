@@ -16,6 +16,12 @@ public class RegularExpressionHandler {
         processExprHandler();
     }
 
+    public String getRegularExpression(int index){
+        if(index < 0 || index >= regularExpr.size()){
+            return null;
+        }
+        return regularExpr.get(index);
+    }
 
     public void processExprHandler() throws Exception {
 
