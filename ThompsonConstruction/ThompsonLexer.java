@@ -102,8 +102,8 @@ public class ThompsonLexer {
             }
         }
 
-        //currentToken = (inQuoted || sawEsc)?Token.L:tokenMap[lexeme];
-        currentToken = tokenMap[lexeme];
+        currentToken = (inQuoted || sawEsc)?Token.L:tokenMap[lexeme];
+        //currentToken = tokenMap[lexeme];
         return currentToken;
 
     }

@@ -54,7 +54,7 @@ public class ThompsonConstruction {
 
     private void printLexResult(){
         while(lexer.MatchToken(ThompsonLexer.Token.EOS)==false){
-            System.out.println("当前识别的字符是："+(char)lexer.getLexeme());
+            System.out.println("当前识别的字符是：" + (char)lexer.getLexeme());
             if(lexer.MatchToken(ThompsonLexer.Token.L)!=true){
                 System.out.println("当前字符具有特殊含义");
                 printMetaCharMeaning(lexer);
