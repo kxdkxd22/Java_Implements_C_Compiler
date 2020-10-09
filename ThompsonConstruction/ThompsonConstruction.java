@@ -10,6 +10,9 @@ public class ThompsonConstruction {
     private MacroHandler macroHandler = null;
     private ThompsonLexer lexer = null;
     RegularExpressionHandler regularExpressionHandler = null;
+    NfaMachineConstructor nfaMachineConstructor = null;
+    private NfaPrinter nfaPrinter = new NfaPrinter();
+
 
     public void runMacroHandler(){
         System.out.println("please enter macro definition");
@@ -118,10 +121,23 @@ public class ThompsonConstruction {
         System.out.println(s);
     }
 
+    private void runNfaMachineConstructor() throws Exception {
+        lexer = new ThompsonLexer(regularExpressionHandler);
+        nfaMachineConstructor = new NfaMachineConstructor(lexer);
+        NfaPair nfaPair = new NfaPair();
+        //nfaMachineConstructor.constructNfaForSingleCharacter(nfaPair);
+        nfaMachineConstructor.constructNfaForCharacterSet(nfaPair);
+        //nfaMachineConstructor.constructNfaForDot(nfaPair);
+        nfaPrinter.printNfa(nfaPair.startNode);
+
+    }
+
     public static void main(String[] args) throws Exception {
         ThompsonConstruction construction = new ThompsonConstruction();
         construction.runMacroHandler();
         construction.runRegularExprHandler();
         construction.runLexerExample();
+
+        construction.runNfaMachineConstructor();
     }
 }

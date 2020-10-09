@@ -13,9 +13,15 @@ public class NfaMachineConstructor {
         }
     }
 
+    public void term(NfaPair nfaPair) throws Exception {
+        boolean handled = constructNfaForSingleCharacter(nfaPair);
+        if(handled == false){
+            constructNfaForCharacterSet(nfaPair);
+        }
 
-    public void term(){
-        boolean handled = false;
+        if(handled == false){
+            constructNfaForDot(nfaPair);
+        }
 
     }
 
@@ -93,11 +99,11 @@ public class NfaMachineConstructor {
 
         int first = 0;
 
-        if(lexer.MatchToken(ThompsonLexer.Token.AT_BOL)){
-            lexer.advance();
-        }
+     //  if(lexer.MatchToken(ThompsonLexer.Token.AT_BOL)){
+       //    lexer.advance();
+      // }
 
-        while(lexer.MatchToken(ThompsonLexer.Token.CCL_END)==false||
+        while(lexer.MatchToken(ThompsonLexer.Token.CCL_END)==false &&
                 lexer.MatchToken(ThompsonLexer.Token.EOS)==false){
             if(lexer.MatchToken(ThompsonLexer.Token.DASH)==false){
                 first = lexer.getLexeme();
