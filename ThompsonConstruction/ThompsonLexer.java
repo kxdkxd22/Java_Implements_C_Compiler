@@ -38,6 +38,8 @@ public class ThompsonLexer {
         initTokenMap();
     }
 
+    public ThompsonLexer.Token getCurrentToken(){return currentToken;}
+
     public int getLexeme(){return lexeme;}
 
     public void initTokenMap(){

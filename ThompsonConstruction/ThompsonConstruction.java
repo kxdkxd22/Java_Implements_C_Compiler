@@ -126,8 +126,12 @@ public class ThompsonConstruction {
         nfaMachineConstructor = new NfaMachineConstructor(lexer);
         NfaPair nfaPair = new NfaPair();
         //nfaMachineConstructor.constructNfaForSingleCharacter(nfaPair);
-        nfaMachineConstructor.constructNfaForCharacterSet(nfaPair);
+        //nfaMachineConstructor.constructNfaForCharacterSet(nfaPair);
         //nfaMachineConstructor.constructNfaForDot(nfaPair);
+        //nfaMachineConstructor.constructStarClosure(nfaPair);
+        //nfaMachineConstructor.constructPlusClosure(nfaPair);
+        //nfaMachineConstructor.constructOptionsClosure(nfaPair);
+        nfaMachineConstructor.cat_expr(nfaPair);
         nfaPrinter.printNfa(nfaPair.startNode);
 
     }

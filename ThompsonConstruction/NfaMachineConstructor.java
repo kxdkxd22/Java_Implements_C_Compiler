@@ -13,14 +13,179 @@ public class NfaMachineConstructor {
         }
     }
 
-    public void term(NfaPair nfaPair) throws Exception {
-        boolean handled = constructNfaForSingleCharacter(nfaPair);
+    public void expr(NfaPair nfaPair) throws Exception {
+        cat_expr(nfaPair);
+        NfaPair nfaPair1 = new NfaPair();
+
+        while(lexer.MatchToken(ThompsonLexer.Token.OR)){
+            lexer.advance();
+            cat_expr(nfaPair1);
+            Nfa startNode = nfaManager.newNfa();
+            Nfa endNode = nfaManager.newNfa();
+
+            startNode.next = nfaPair.startNode;
+            startNode.next2 = nfaPair1.startNode;
+
+            nfaPair.endNode.next = endNode;
+            nfaPair1.endNode.next = endNode;
+
+            nfaPair.startNode = startNode;
+            nfaPair.endNode = endNode;
+
+        }
+
+    }
+
+    private boolean constructExprInParen(NfaPair nfaPair) throws Exception {
+
+        if(lexer.MatchToken(ThompsonLexer.Token.OPEN_CURLY)==true){
+            lexer.advance();
+            expr(nfaPair);
+        }
+
+        if(lexer.MatchToken(ThompsonLexer.Token.CLOSE_CURLY)==true){
+            lexer.advance();
+            return true;
+        }
+
+        return false;
+    }
+
+    public boolean constructStarClosure(NfaPair nfaPair) throws Exception {
+        Nfa start,end;
+        term(nfaPair);
+
+        if(lexer.MatchToken(ThompsonLexer.Token.CLOSURE)==false){
+            return false;
+        }
+
+        start = nfaManager.newNfa();
+        end = nfaManager.newNfa();
+
+        start.next = nfaPair.startNode;
+        nfaPair.endNode.next2 = nfaPair.startNode;
+        nfaPair.endNode.next = end;
+        start.next2 = end;
+
+        nfaPair.startNode = start;
+        nfaPair.endNode = end;
+
+        lexer.advance();
+
+        return true;
+    }
+
+    public boolean constructPlusClosure(NfaPair nfaPair) throws Exception {
+
+        Nfa start,end;
+        term(nfaPair);
+
+        if(lexer.MatchToken(ThompsonLexer.Token.PLUS_CLOSE)==false){
+            return false;
+        }
+
+        start = nfaManager.newNfa();
+        end = nfaManager.newNfa();
+
+        start.next = nfaPair.startNode;
+        nfaPair.endNode.next2 = nfaPair.startNode;
+        nfaPair.endNode.next = end;
+
+        nfaPair.startNode = start;
+        nfaPair.endNode = end;
+
+        lexer.advance();
+
+        return true;
+    }
+
+    public boolean constructOptionsClosure(NfaPair nfaPair) throws Exception {
+
+        Nfa start,end;
+        term(nfaPair);
+
+        if(lexer.MatchToken(ThompsonLexer.Token.OPTIONAL)==false){
+            return false;
+        }
+
+        start = nfaManager.newNfa();
+        end  = nfaManager.newNfa();
+
+        start.next = nfaPair.startNode;
+        nfaPair.endNode.next = end;
+        start.next2 = end;
+
+        nfaPair.startNode = start;
+        nfaPair.endNode = end;
+
+        lexer.advance();
+
+        return true;
+    }
+
+    public void factor(NfaPair nfaPair) throws Exception {
+
+        boolean handled = false;
+        handled = constructStarClosure(nfaPair);
         if(handled == false){
-            constructNfaForCharacterSet(nfaPair);
+            handled = constructPlusClosure(nfaPair);
+        }
+        if(handled == false){
+            handled = constructOptionsClosure(nfaPair);
+        }
+
+    }
+
+    public void cat_expr(NfaPair nfaPair) throws Exception {
+        if(first_in_cat(lexer.getCurrentToken())){
+            factor(nfaPair);
+        }
+
+        while(first_in_cat(lexer.getCurrentToken())){
+            NfaPair nfaPair1 = new NfaPair();
+            factor(nfaPair1);
+            nfaPair.endNode.next = nfaPair1.startNode;
+            nfaPair.endNode = nfaPair1.endNode;
+
+        }
+
+    }
+
+    private boolean first_in_cat(ThompsonLexer.Token tok) throws Exception {
+
+        switch(tok){
+            case CLOSE_PAREN:
+            case AT_EOL:
+            case EOS:
+                return false;
+            case CLOSURE:
+            case PLUS_CLOSE:
+            case OPTIONAL:
+                ErrorHandler.parseErr(ErrorHandler.Error.E_CLOSE);
+                return false;
+            case CCL_END:
+                ErrorHandler.parseErr(ErrorHandler.Error.E_BRACKET);
+                return false;
+            case AT_BOL:
+                ErrorHandler.parseErr(ErrorHandler.Error.E_BOL);
+                return false;
+        }
+        return true;
+    }
+
+
+    public void term(NfaPair nfaPair) throws Exception {
+        boolean handled = constructExprInParen(nfaPair);
+        if(handled == false){
+            handled = constructNfaForSingleCharacter(nfaPair);
         }
 
         if(handled == false){
-            constructNfaForDot(nfaPair);
+            handled = constructNfaForCharacterSet(nfaPair);
+        }
+
+        if(handled == false){
+            handled = constructNfaForDot(nfaPair);
         }
 
     }
