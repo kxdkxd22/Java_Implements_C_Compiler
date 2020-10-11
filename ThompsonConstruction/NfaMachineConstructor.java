@@ -38,13 +38,15 @@ public class NfaMachineConstructor {
 
     private boolean constructExprInParen(NfaPair nfaPair) throws Exception {
 
-        if(lexer.MatchToken(ThompsonLexer.Token.OPEN_CURLY)==true){
+        if(lexer.MatchToken(ThompsonLexer.Token.OPEN_PAREN)==true){
             lexer.advance();
             expr(nfaPair);
-        }
 
-        if(lexer.MatchToken(ThompsonLexer.Token.CLOSE_CURLY)==true){
-            lexer.advance();
+            if(lexer.MatchToken(ThompsonLexer.Token.CLOSE_PAREN)==true){
+                lexer.advance();
+            }else{
+                ErrorHandler.parseErr(ErrorHandler.Error.E_PAREN);
+            }
             return true;
         }
 
@@ -143,7 +145,12 @@ public class NfaMachineConstructor {
 
         while(first_in_cat(lexer.getCurrentToken())){
             NfaPair nfaPair1 = new NfaPair();
+          //  if(lexer.MatchToken(ThompsonLexer.Token.OR)){
+           //     lexer.advance();
+           // }
+
             factor(nfaPair1);
+
             nfaPair.endNode.next = nfaPair1.startNode;
             nfaPair.endNode = nfaPair1.endNode;
 
@@ -156,6 +163,7 @@ public class NfaMachineConstructor {
         switch(tok){
             case CLOSE_PAREN:
             case AT_EOL:
+            case OR:
             case EOS:
                 return false;
             case CLOSURE:

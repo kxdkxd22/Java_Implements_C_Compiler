@@ -131,7 +131,8 @@ public class ThompsonConstruction {
         //nfaMachineConstructor.constructStarClosure(nfaPair);
         //nfaMachineConstructor.constructPlusClosure(nfaPair);
         //nfaMachineConstructor.constructOptionsClosure(nfaPair);
-        nfaMachineConstructor.cat_expr(nfaPair);
+       // nfaMachineConstructor.cat_expr(nfaPair);
+        nfaMachineConstructor.expr(nfaPair);
         nfaPrinter.printNfa(nfaPair.startNode);
 
     }
