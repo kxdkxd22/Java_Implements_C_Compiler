@@ -55,7 +55,7 @@ public class NfaMachineConstructor {
 
     public boolean constructStarClosure(NfaPair nfaPair) throws Exception {
         Nfa start,end;
-        term(nfaPair);
+     //   term(nfaPair);
 
         if(lexer.MatchToken(ThompsonLexer.Token.CLOSURE)==false){
             return false;
@@ -80,7 +80,7 @@ public class NfaMachineConstructor {
     public boolean constructPlusClosure(NfaPair nfaPair) throws Exception {
 
         Nfa start,end;
-        term(nfaPair);
+     //   term(nfaPair);
 
         if(lexer.MatchToken(ThompsonLexer.Token.PLUS_CLOSE)==false){
             return false;
@@ -104,7 +104,7 @@ public class NfaMachineConstructor {
     public boolean constructOptionsClosure(NfaPair nfaPair) throws Exception {
 
         Nfa start,end;
-        term(nfaPair);
+      //  term(nfaPair);
 
         if(lexer.MatchToken(ThompsonLexer.Token.OPTIONAL)==false){
             return false;
@@ -126,7 +126,7 @@ public class NfaMachineConstructor {
     }
 
     public void factor(NfaPair nfaPair) throws Exception {
-
+        term(nfaPair);
         boolean handled = false;
         handled = constructStarClosure(nfaPair);
         if(handled == false){

@@ -137,6 +137,11 @@ public class ThompsonConstruction {
 
     }
 
+    public void runNfaIntepretor(){
+
+
+    }
+
     public static void main(String[] args) throws Exception {
         ThompsonConstruction construction = new ThompsonConstruction();
         construction.runMacroHandler();
@@ -144,5 +149,7 @@ public class ThompsonConstruction {
         construction.runLexerExample();
 
         construction.runNfaMachineConstructor();
+
+        construction.runNfaIntepretor();
     }
 }
