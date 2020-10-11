@@ -272,10 +272,6 @@ public class NfaMachineConstructor {
 
         int first = 0;
 
-     //  if(lexer.MatchToken(ThompsonLexer.Token.AT_BOL)){
-       //    lexer.advance();
-      // }
-
         while(lexer.MatchToken(ThompsonLexer.Token.CCL_END)==false &&
                 lexer.MatchToken(ThompsonLexer.Token.EOS)==false){
             if(lexer.MatchToken(ThompsonLexer.Token.DASH)==false){
