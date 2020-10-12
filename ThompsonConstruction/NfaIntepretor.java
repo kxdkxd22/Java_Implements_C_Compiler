@@ -137,17 +137,20 @@ public class NfaIntepretor {
         }
 
         Iterator it = input.iterator();
+        String acceptedStatement = "Accept Statement: ";
 
         while(it.hasNext()){
             Nfa nfa = (Nfa) it.next();
             if(nfa.next == null && nfa.next2 == null){
-
+                isAccepted = true;
+                acceptedStatement += nfa.getStateNum() + " ";
             }
-
 
         }
 
-
+        if(isAccepted){
+            System.out.println(acceptedStatement);
+        }
         return isAccepted;
     }
 
