@@ -14,6 +14,7 @@ public class ThompsonConstruction {
     private NfaPrinter nfaPrinter = new NfaPrinter();
 
     NfaPair nfaPair = null;
+    NfaIntepretor nfaIntepretor = null;
 
     public void runMacroHandler(){
         System.out.println("please enter macro definition");
@@ -139,8 +140,15 @@ public class ThompsonConstruction {
     }
 
     public void runNfaIntepretor(){
-        NfaIntepretor nfaIntepretor = new NfaIntepretor(input,nfaPair.startNode);
+        nfaIntepretor = new NfaIntepretor(input,nfaPair.startNode);
         nfaIntepretor.IntepretorNfa();
+    }
+
+    public void runDfaConstructorExample(){
+        DfaConstructor dfaConstructor = new DfaConstructor(nfaPair,nfaIntepretor);
+        dfaConstructor.convertNfaToDfa();
+        dfaConstructor.printDFA();
+
     }
 
     public static void main(String[] args) throws Exception {
@@ -152,5 +160,7 @@ public class ThompsonConstruction {
         construction.runNfaMachineConstructor();
 
         construction.runNfaIntepretor();
+
+        construction.runDfaConstructorExample();
     }
 }

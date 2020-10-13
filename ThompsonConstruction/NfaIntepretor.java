@@ -13,7 +13,7 @@ public class NfaIntepretor {
         this.start = start;
     }
 
-    private Set<Nfa> e_closure(Set<Nfa> input){
+    public Set<Nfa> e_closure(Set<Nfa> input){
 
         if(input == null||input.isEmpty()){
             return null;
@@ -51,7 +51,7 @@ public class NfaIntepretor {
         return input;
     }
 
-    private Set<Nfa> move(Set<Nfa> input,char c){
+    public Set<Nfa> move(Set<Nfa> input,char c){
 
         Set<Nfa> out = new HashSet<Nfa>();
         Iterator it = input.iterator();
