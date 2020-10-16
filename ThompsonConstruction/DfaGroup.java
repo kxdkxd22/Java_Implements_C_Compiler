@@ -44,7 +44,10 @@ public class DfaGroup {
     }
 
     public Dfa get(int i){
-        return dfaGroup.get(i);
+        if(i < dfaGroup.size()){
+            return dfaGroup.get(i);
+        }
+        return null;
     }
 
     public void printGroup(){

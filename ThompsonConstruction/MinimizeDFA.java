@@ -144,10 +144,10 @@ public class MinimizeDFA {
             for(int j = 0; j < groupManager.size(); j++)
             {
                 if(isOnNumberClass(i,j)){
-                    System.out.println(" from "+i+" to "+"j"+" on D");
+                    System.out.println(" from "+i+" to "+j+" on D");
                 }
                 if(isOnDot(i,j)){
-                    System.out.println(" from "+i+" to "+"j"+" on dot");
+                    System.out.println(" from "+i+" to "+j+" on dot");
                 }
             }
 
