@@ -16,6 +16,13 @@ public class DfaConstructor {
 
     private int[][] dfaStateTransformTable = new int[MAX_DFA_STATE_COUNT][ASCII_COUNT+1];
 
+    public int[][] getDfaStateTransformTable(){
+        return dfaStateTransformTable;
+    }
+
+    public ArrayList<Dfa> getDfaList(){
+        return dfaList;
+    }
 
     public DfaConstructor(NfaPair nfaPair,NfaIntepretor nfaIntepretor){
 
@@ -130,7 +137,7 @@ public class DfaConstructor {
 
     private boolean isOnNumberClass(int from,int to){
         char c;
-        for(c = '0'; c < '9'; c++){
+        for(c = '0'; c <= '9'; c++){
             if(dfaStateTransformTable[from][c]!=to){
                 return false;
             }
