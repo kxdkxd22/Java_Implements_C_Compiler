@@ -8,6 +8,7 @@
       <sourceFolder url="file://$MODULE_DIR$/InputSystem" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/FinitStateMachine" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/ThompsonConstruction" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/PushDownDFA" isTestSource="false" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
