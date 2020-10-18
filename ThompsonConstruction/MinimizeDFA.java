@@ -128,7 +128,6 @@ public class MinimizeDFA {
             }
         }
 
-
     }
 
     public void initMiniDfaTransTable(){
