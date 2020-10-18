@@ -8,8 +8,10 @@ public class Compiler {
         //im.statements();
       //  Parser p = new Parser(lexer);
        // p.statements();
-        PdaParser pdaParser = new PdaParser(lexer);
-        pdaParser.parse();
-        System.out.println("pdaParser accept input string");
+      //  PdaParser pdaParser = new PdaParser(lexer);
+      //  pdaParser.parse();
+      //  System.out.println("pdaParser accept input string");
+        ArgumentedParser argumentedParser = new ArgumentedParser(lexer);
+        argumentedParser.Statements();
     }
 }
