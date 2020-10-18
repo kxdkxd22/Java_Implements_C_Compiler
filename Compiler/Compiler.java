@@ -6,8 +6,10 @@ public class Compiler {
         //bp.statements();
         //ImprovedParser im = new ImprovedParser(lexer);
         //im.statements();
-        Parser p = new Parser(lexer);
-        p.statements();
-
+      //  Parser p = new Parser(lexer);
+       // p.statements();
+        PdaParser pdaParser = new PdaParser(lexer);
+        pdaParser.parse();
+        System.out.println("pdaParser accept input string");
     }
 }
