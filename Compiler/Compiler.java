@@ -11,7 +11,9 @@ public class Compiler {
       //  PdaParser pdaParser = new PdaParser(lexer);
       //  pdaParser.parse();
       //  System.out.println("pdaParser accept input string");
-        ArgumentedParser argumentedParser = new ArgumentedParser(lexer);
-        argumentedParser.Statements();
+      //  ArgumentedParser argumentedParser = new ArgumentedParser(lexer);
+        //argumentedParser.Statements();
+        AttributedParser attributedParser = new AttributedParser(lexer);
+        attributedParser.Statements();
     }
 }
