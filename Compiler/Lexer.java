@@ -5,10 +5,11 @@ public class Lexer {
     public static final int SEMI=1;
     public static final int PLUS=2;
     public static final int TIMES=3;
-    public static final int LP=4;
-    public static final int RP=5;
-    public static final int NUM_OR_ID=6;
-    public static final int UNKNOW_SYMBOL=7;
+    public static final int LP=5;
+    public static final int RP=6;
+    public static final int NUM_OR_ID=4;
+    public static final int WHITE_SPACE = 7;
+    public static final int UNKNOW_SYMBOL=8;
 
     public String current="";
     public String yytext="";
