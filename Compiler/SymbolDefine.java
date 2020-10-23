@@ -21,4 +21,36 @@ public class SymbolDefine {
     public static final int ACTION_3 = 515;
     public static final int ACTION_4 = 516;
 
+    public static String getSymbolStr(int symbol){
+        switch(symbol){
+            case EXPR:
+                return "EXPR";
+            case EXPR_PRIME:
+                return "EXPR_PRIME";
+            case FACTOR:
+                return "FACTOR";
+            case STMT:
+                return "STMT";
+            case TERM:
+                return "TERM";
+            case TERM_PRIME:
+                return "TERM_PRIME";
+            case LP:
+                return "LP";
+            case NUM_OR_ID:
+                return "NUM_OR_ID";
+            case PLUS:
+                return "PLUS";
+            case RP:
+                return "RP";
+            case SEMI:
+                return "SEMI";
+            case TIMES:
+                return "TIMES";
+            default:
+                return "UNKNOWN SYMBOL";
+
+        }
+    }
+
 }

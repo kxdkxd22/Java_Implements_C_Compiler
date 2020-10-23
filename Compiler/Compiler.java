@@ -17,7 +17,11 @@ public class Compiler {
         //attributedParser.Statements();
        // AttributedPDAParser parser = new AttributedPDAParser(lexer);
        // parser.parse();
-        TopdownParserWithParserTable parser = new TopdownParserWithParserTable(lexer);
-        parser.parse();
+        //TopdownParserWithParserTable parser = new TopdownParserWithParserTable(lexer);
+        //parser.parse();
+
+        ParserTableBuilder parserTableBuilder = new ParserTableBuilder();
+        parserTableBuilder.runFirstSets();
+
     }
 }
