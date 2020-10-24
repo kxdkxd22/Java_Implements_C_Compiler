@@ -7,6 +7,7 @@ public class ParserTableBuilder {
     private HashMap<Integer,Symbols> symbolMap = new HashMap<Integer, Symbols>();
     private ArrayList<Symbols> symbolArray = new ArrayList<Symbols>();
     private boolean runFirstSetPass = true;
+    private boolean runFollowSetPass = true;
 
     public ParserTableBuilder(){
         initProductions();
@@ -151,6 +152,108 @@ public class ParserTableBuilder {
         }
         s += "}";
         System.out.println(s);
+    }
+
+    public void runFollowSets(){
+
+        runFirstSets();
+        while(runFollowSetPass){
+            runFollowSetPass = false;
+
+            Iterator it = symbolArray.iterator();
+            while(it.hasNext()){
+                Symbols symbol = (Symbols) it.next();
+                addSymbolFollowSet(symbol);
+            }
+
+            printAllFollowSet();
+            System.out.println("+++++++++++++++++++++");
+
+        }
+    }
+
+    private void printAllFollowSet(){
+        Iterator<Symbols> it = symbolArray.iterator();
+        while(it.hasNext()){
+            Symbols sym = it.next();
+            printFollowSet(sym);
+        }
+    }
+
+    private void printFollowSet(Symbols symbol){
+        if(isSymbolTerminals(symbol.value) == true){
+            return;
+        }
+
+        String s = SymbolDefine.getSymbolStr(symbol.value);
+        s += "{";
+
+        for(int i = 0; i < symbol.followSet.size(); i++){
+            s+=SymbolDefine.getSymbolStr(symbol.followSet.get(i))+" ";
+        }
+        s += "}";
+        System.out.println(s);
+    }
+
+    private void addSymbolFollowSet(Symbols symbol){
+        if(isSymbolTerminals(symbol.value)==true){
+            return;
+        }
+
+        for(int i = 0; i < symbol.productions.size(); i++){
+            int[] rightSize = symbol.productions.get(i);
+
+            for(int j = 0;j < rightSize.length;j++){
+                Symbols current = symbolMap.get(rightSize[j]);
+
+                if(isSymbolTerminals(current.value)==true){
+                    continue;
+                }
+
+                for(int k = j+1;k < rightSize.length;k++){
+                    Symbols next = symbolMap.get(rightSize[k]);
+                    addSetToFollowSet(current,next.firstSet);
+                    if(next.isNullable==false){
+                        break;
+                    }
+                }
+
+            }
+
+            int pos = rightSize.length - 1;
+            while(pos>=0){
+                Symbols current = symbolMap.get(rightSize[pos]);
+                if(isSymbolTerminals(current.value)==false){
+                    addSetToFollowSet(current,symbol.followSet);
+                }
+                if(isSymbolTerminals(current.value)==true||current.isNullable==false){
+                    break;
+                }
+                pos--;
+            }
+
+        }
+
+    }
+
+    private void addSetToFollowSet(Symbols symbolBeAdded,ArrayList<Integer> set){
+        boolean add = false;
+        if(symbolBeAdded.followSet.contains(set)==false){
+            for(int i = 0; i <set.size(); i++){
+                if(symbolBeAdded.followSet.contains(set.get(i))==false){
+                    symbolBeAdded.followSet.add(set.get(i));
+                    runFollowSetPass = true;
+                    add = true;
+                }
+            }
+
+        }
+
+        if(add){
+            System.out.println("add symbol to followset:");
+            printFollowSet(symbolBeAdded);
+        }
+
     }
 
 }

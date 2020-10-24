@@ -20,8 +20,10 @@ public class Compiler {
         //TopdownParserWithParserTable parser = new TopdownParserWithParserTable(lexer);
         //parser.parse();
 
+      //  ParserTableBuilder parserTableBuilder = new ParserTableBuilder();
+       // parserTableBuilder.runFirstSets();
         ParserTableBuilder parserTableBuilder = new ParserTableBuilder();
-        parserTableBuilder.runFirstSets();
+        parserTableBuilder.runFollowSets();
 
     }
 }
