@@ -22,8 +22,12 @@ public class Compiler {
 
       //  ParserTableBuilder parserTableBuilder = new ParserTableBuilder();
        // parserTableBuilder.runFirstSets();
+       // ParserTableBuilder parserTableBuilder = new ParserTableBuilder();
+        //parserTableBuilder.runFollowSets();
+
         ParserTableBuilder parserTableBuilder = new ParserTableBuilder();
-        parserTableBuilder.runFollowSets();
+        parserTableBuilder.runSelectionSet();
+        parserTableBuilder.buildParseTable();
 
     }
 }

@@ -1,5 +1,8 @@
 public class SymbolDefine {
 
+    public static final int NO_TERMINAL_MAXRANGE = 6;
+    public static final int TERMINAL_MAX_RANGE = 7;
+    public static final int NO_TERMINAL_VALUE_BASE = 256;
     public static final int LP = 5;
     public static final int NUM_OR_ID = 4;
     public static final int PLUS = 2;
