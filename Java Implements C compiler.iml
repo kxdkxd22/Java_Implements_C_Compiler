@@ -9,7 +9,8 @@
       <sourceFolder url="file://$MODULE_DIR$/FinitStateMachine" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/ThompsonConstruction" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/PushDownDFA" isTestSource="false" />-->
-      <sourceFolder url="file://$MODULE_DIR$/BottomUpParser" isTestSource="false" />
+     <!-- <sourceFolder url="file://$MODULE_DIR$/BottomUpParser" isTestSource="false" />-->
+      <sourceFolder url="file://$MODULE_DIR$/BottomUpParser_LR_state_machine" isTestSource="false" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />

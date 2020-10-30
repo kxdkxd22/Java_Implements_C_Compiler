@@ -10,6 +10,7 @@ public class SymbolDefine {
     public static final int SEMI = 1;
     public static final int TIMES = 3;
     public static final int EOI = 0;
+    public static final int UNKNOWN_SYMBOL = -1;
 
     public static final int EXPR = 257;
     public static final int EXPR_PRIME = 259;
