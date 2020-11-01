@@ -6,6 +6,7 @@ public class ProductionManager {
 
     private static ProductionManager self = null;
     private HashMap<Integer, ArrayList<Production>> productionMap = new HashMap<Integer,ArrayList<Production>>();
+    FirstSetBuilder firstSetBuilder = new FirstSetBuilder();
 
     public static ProductionManager getProductionManager(){
         if(self==null){
@@ -84,9 +85,11 @@ public class ProductionManager {
 
     }
 
+    public FirstSetBuilder getFirstSetBuilder(){return firstSetBuilder;}
+
     public ArrayList<Production> getProduction(int left){return productionMap.get(left);}
 
     private ProductionManager(){
-
+        firstSetBuilder.runFirstSets();
     }
 }

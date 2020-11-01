@@ -51,10 +51,14 @@ public class SymbolDefine {
                 return "SEMI";
             case TIMES:
                 return "TIMES";
+            case EOI:
+                return "EOI";
             default:
                 return "UNKNOWN SYMBOL";
 
         }
     }
+
+    public static boolean isSymbolTerminals(int symbol){return symbol<256;}
 
 }

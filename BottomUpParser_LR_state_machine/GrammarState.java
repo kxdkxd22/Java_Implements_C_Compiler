@@ -1,7 +1,4 @@
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Stack;
+import java.util.*;
 
 public class GrammarState {
 
@@ -71,20 +68,64 @@ public class GrammarState {
             productionStack.push(productions.get(i));
         }
 
+        System.out.println("---begin make closure----");
+
         while(productionStack.isEmpty()==false){
             Production production = productionStack.pop();
+            System.out.println("\nproduction on top of stack is : ");
+            production.print();
+
+            if(SymbolDefine.isSymbolTerminals(production.getDotSymbol())==true){
+                System.out.println("symbol after dot is not non-terminal, ignore and process next time");
+                continue;
+            }
+
             int symbol = production.getDotSymbol();
             ArrayList<Production> closures = productionManager.getProduction(symbol);
-            for(int i = 0; closures!=null&&i<closures.size();i++){
-                if(closureSet.contains(closures.get(i))==false){
-                    closureSet.add(closures.get(i));
-                    productionStack.push(closures.get(i));
+            ArrayList<Integer> lookAhead = production.computeFirstSetOfBetaAndC();
+
+            Iterator it = closures.iterator();
+            while(it.hasNext()){
+                Production oldProduct = (Production) it.next();
+                Production newProduct = oldProduct.cloneSelf();
+                newProduct.addLookAheadSet(lookAhead);
+
+                System.out.println("create new production");
+                newProduct.print();
+
+                if(closureSet.contains(newProduct)==false){
+                    System.out.println("push and add new production to stack and closureSet");
+                    closureSet.add(newProduct);
+                    productionStack.push(newProduct);
+                    removeRedundantProduction(newProduct);
                 }
+                else{
+                    System.out.println("the production is already exist!");
+                }
+
             }
 
         }
 
         printClosure();
+        System.out.println("----end make closure----");
+    }
+
+    private void removeRedundantProduction(Production product){
+        boolean removeHappended = true;
+        while(removeHappended){
+            removeHappended = false;
+            for(int i = 0; i < closureSet.size(); i++){
+                if(product.coverUp(closureSet.get(i))){
+                    closureSet.remove(i);
+                    removeHappended = true;
+                    System.out.println("remove redundant production: ");
+                    closureSet.get(i).print();
+                }
+
+            }
+        }
+
     }
 
     private void printClosure(){

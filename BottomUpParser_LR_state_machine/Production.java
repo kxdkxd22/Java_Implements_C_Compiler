@@ -6,6 +6,7 @@ public class Production {
     private boolean printDot = false;
     private int left = 0;
     private ArrayList<Integer> right = null;
+    ArrayList<Integer> lookAhead = new ArrayList<Integer>();
 
     public Production(int left,int dot,ArrayList<Integer> right){
 
@@ -16,11 +17,55 @@ public class Production {
             dot = right.size();
         }
 
+        lookAhead.add(SymbolDefine.EOI);
+
         this.dotPos = dot;
     }
 
     public Production dotForward(){
-        return new Production(left,dotPos+1,right);
+
+        Production product =  new Production(left,dotPos+1,right);
+        product.lookAhead = new ArrayList<Integer>();
+
+        for(int i = 0; i < this.lookAhead.size(); i++){
+            product.lookAhead.add(this.lookAhead.get(i));
+        }
+
+        return product;
+    }
+
+    public Production cloneSelf(){
+        Production product = new Production(this.left,dotPos,this.right);
+
+        product.lookAhead = new ArrayList<Integer>();
+        for(int i = 0; i < lookAhead.size(); i++){
+            product.lookAhead.add(lookAhead.get(i));
+        }
+
+        return product;
+    }
+
+    public ArrayList<Integer> computeFirstSetOfBetaAndC(){
+        ArrayList<Integer> set = new ArrayList<Integer>();
+        set.addAll(lookAhead);
+
+        ProductionManager productionManager = ProductionManager.getProductionManager();
+
+        for(int i = dotPos+1; i < right.size(); i++){
+            ArrayList<Integer> firstSet =  productionManager.getFirstSetBuilder().getFirstSet(right.get(i));
+
+            for(int j = 0; j < firstSet.size();j++){
+                if(set.contains(firstSet.get(j))==false){
+                    set.add(firstSet.get(j));
+                }
+            }
+
+            if(productionManager.getFirstSetBuilder().isSymbolNullable(right.get(i))==false){
+                break;
+            }
+        }
+
+        return set;
     }
 
     public int getLeft() {
@@ -40,6 +85,14 @@ public class Production {
 
     public boolean equals(Object obj){
         Production product = (Production) obj;
+        if(this.productionEquals(product)&&this.lookAheadSetComparing(product)==0){
+            return true;
+        }
+        return false;
+    }
+
+    public boolean productionEquals(Object obj){
+        Production product = (Production) obj;
         if(this.left!=product.getLeft()){
             return false;
         }
@@ -55,6 +108,42 @@ public class Production {
         return true;
     }
 
+    public boolean coverUp(Production product){
+        if(this.productionEquals(product) && this.lookAheadSetComparing(product)==1){
+            return true;
+        }
+        return false;
+    }
+
+    private int lookAheadSetComparing(Production product){
+        if(this.lookAhead.size()>product.lookAhead.size()){
+            return 1;
+        }
+
+        if(this.lookAhead.size()<product.lookAhead.size()){
+            return -1;
+        }
+
+        if(this.lookAhead.size()==product.lookAhead.size()){
+            for(int i = 0; i < this.lookAhead.size(); i++){
+                if(this.lookAhead.get(i)!=product.lookAhead.get(i)){
+                    return -1;
+                }
+            }
+        }
+
+        return 0;
+
+    }
+
+    public void addLookAheadSet(ArrayList<Integer> list){
+        for(int i = 0; i < list.size(); i++){
+            if(lookAhead.contains(list.get(i))==false){
+                lookAhead.add(list.get(i));
+            }
+        }
+    }
+
     public void print(){
         System.out.print(SymbolDefine.getSymbolStr(left)+" -> ");
         for(int i = 0; i < right.size(); i++){
@@ -68,7 +157,12 @@ public class Production {
         if(!printDot){
             System.out.print(".");
         }
-        System.out.print("\n");
+
+        System.out.print("look ahead set: { ");
+        for(int i = 0; i < lookAhead.size(); i++){
+            System.out.print(SymbolDefine.getSymbolStr(lookAhead.get(i))+" ");
+        }
+        System.out.println("}");
 
     }
 
