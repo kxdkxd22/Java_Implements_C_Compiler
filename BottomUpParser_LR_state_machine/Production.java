@@ -39,7 +39,7 @@ public class Production {
 
         product.lookAhead = new ArrayList<Integer>();
         for(int i = 0; i < lookAhead.size(); i++){
-            product.lookAhead.add(lookAhead.get(i));
+            product.lookAhead.add(this.lookAhead.get(i));
         }
 
         return product;
@@ -47,25 +47,29 @@ public class Production {
 
     public ArrayList<Integer> computeFirstSetOfBetaAndC(){
         ArrayList<Integer> set = new ArrayList<Integer>();
+        for(int i = dotPos+1; i < right.size(); i++){
+            set.add(right.get(i));
+        }
         set.addAll(lookAhead);
 
         ProductionManager productionManager = ProductionManager.getProductionManager();
+        ArrayList<Integer> firstSet = new ArrayList<Integer>();
 
-        for(int i = dotPos+1; i < right.size(); i++){
-            ArrayList<Integer> firstSet =  productionManager.getFirstSetBuilder().getFirstSet(right.get(i));
+        for(int i = 0; i < set.size(); i++){
+            ArrayList<Integer> lookAhead =  productionManager.getFirstSetBuilder().getFirstSet(set.get(i));
 
-            for(int j = 0; j < firstSet.size();j++){
-                if(set.contains(firstSet.get(j))==false){
-                    set.add(firstSet.get(j));
+            for(int j = 0; j < lookAhead.size();j++){
+                if(firstSet.contains(lookAhead.get(j))==false){
+                    firstSet.add(lookAhead.get(j));
                 }
             }
 
-            if(productionManager.getFirstSetBuilder().isSymbolNullable(right.get(i))==false){
+            if(productionManager.getFirstSetBuilder().isSymbolNullable(set.get(i))==false){
                 break;
             }
         }
 
-        return set;
+        return firstSet;
     }
 
     public int getLeft() {
@@ -137,11 +141,12 @@ public class Production {
     }
 
     public void addLookAheadSet(ArrayList<Integer> list){
-        for(int i = 0; i < list.size(); i++){
+       /* for(int i = 0; i < list.size(); i++){
             if(lookAhead.contains(list.get(i))==false){
                 lookAhead.add(list.get(i));
             }
-        }
+        }*/
+       lookAhead = list;
     }
 
     public void print(){

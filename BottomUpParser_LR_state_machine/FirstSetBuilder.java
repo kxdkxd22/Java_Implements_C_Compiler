@@ -8,6 +8,8 @@ public class FirstSetBuilder {
     private ArrayList<Symbols> symbolArray = new ArrayList<Symbols>();
     private boolean runFirstSetPass = true;
 
+    int productionCount = 0;
+
     public FirstSetBuilder(){
         initProductions();
     }
@@ -48,6 +50,10 @@ public class FirstSetBuilder {
         symbolMap.put(SymbolDefine.FACTOR,factor);
         symbolArray.add(factor);
 
+        Symbols eoi = new Symbols(SymbolDefine.EOI,false,null);
+        symbolMap.put(SymbolDefine.EOI,eoi);
+        symbolArray.add(eoi);
+
         Symbols lp = new Symbols(SymbolDefine.LP,false,null);
         symbolMap.put(SymbolDefine.LP,lp);
         symbolArray.add(lp);
@@ -80,10 +86,10 @@ public class FirstSetBuilder {
                 addSymbolFirstSet(symbol);
             }
 
-            printAllFirstSet();
-            System.out.println("===============");
-
         }
+
+        printAllFirstSet();
+        System.out.println("===============");
     }
 
     private void addSymbolFirstSet(Symbols symbol){
@@ -146,6 +152,7 @@ public class FirstSetBuilder {
         }
         s += "}";
         System.out.println(s);
+
     }
 
     public ArrayList<Integer> getFirstSet(int symValue){

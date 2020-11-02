@@ -5,13 +5,14 @@ public class GrammarState {
     private static int stateNumCount = 0;
     private boolean printInfo = false;
     private boolean transitionDone = false;
-    private int stateNum = -1;
+    public int stateNum = -1;
     private GrammarStateManager stateManager = GrammarStateManager.getGrammarManager();
     private ArrayList<Production> productions = new ArrayList<Production>();
     private HashMap<Integer,GrammarState> transition = new HashMap<Integer, GrammarState>();
     private ArrayList<Production> closureSet = new ArrayList<Production>();
     private ProductionManager productionManager = ProductionManager.getProductionManager();
     private HashMap<Integer,ArrayList<Production>> partition = new HashMap<Integer,ArrayList<Production>>();
+    private ArrayList<Production> mergedProduction = new ArrayList<Production>();
 
     public static void increateStateNum(){
         stateNumCount++;
@@ -27,6 +28,16 @@ public class GrammarState {
         this.productions = productions;
 
         this.closureSet.addAll(this.productions);
+    }
+
+    public void stateMerge(GrammarState state){
+        if(this.productions.contains(state.productions)==false){
+            for(int i = 0; i < state.productions.size(); i++){
+                if(this.productions.contains(state.productions.get(i))==false&&mergedProduction.contains(state.productions.get(i))==false){
+                    mergedProduction.add(state.productions.get(i));
+                }
+            }
+        }
     }
 
     public void print(){
@@ -50,14 +61,14 @@ public class GrammarState {
         }
 
         transitionDone = true;
-        System.out.println("\n====make transition====\n");
-        print();
+      //  System.out.println("\n====make transition====\n");
+       // print();
 
         makeClosure();
         partition();
         makeTransition();
 
-        System.out.println("\n");
+      //  System.out.println("\n");
 
         printInfo = true;
     }
@@ -68,15 +79,15 @@ public class GrammarState {
             productionStack.push(productions.get(i));
         }
 
-        System.out.println("---begin make closure----");
+        //System.out.println("---begin make closure----");
 
         while(productionStack.isEmpty()==false){
             Production production = productionStack.pop();
-            System.out.println("\nproduction on top of stack is : ");
-            production.print();
+          //  System.out.println("\nproduction on top of stack is : ");
+           // production.print();
 
             if(SymbolDefine.isSymbolTerminals(production.getDotSymbol())==true){
-                System.out.println("symbol after dot is not non-terminal, ignore and process next time");
+             //   System.out.println("symbol after dot is not non-terminal, ignore and process next time");
                 continue;
             }
 
@@ -90,25 +101,25 @@ public class GrammarState {
                 Production newProduct = oldProduct.cloneSelf();
                 newProduct.addLookAheadSet(lookAhead);
 
-                System.out.println("create new production");
-                newProduct.print();
+               // System.out.println("create new production");
+                //newProduct.print();
 
                 if(closureSet.contains(newProduct)==false){
-                    System.out.println("push and add new production to stack and closureSet");
+                  //  System.out.println("push and add new production to stack and closureSet");
                     closureSet.add(newProduct);
                     productionStack.push(newProduct);
                     removeRedundantProduction(newProduct);
                 }
                 else{
-                    System.out.println("the production is already exist!");
+                  //  System.out.println("the production is already exist!");
                 }
 
             }
 
         }
 
-        printClosure();
-        System.out.println("----end make closure----");
+     //   printClosure();
+      //  System.out.println("----end make closure----");
     }
 
     private void removeRedundantProduction(Production product){
@@ -119,8 +130,9 @@ public class GrammarState {
                 if(product.coverUp(closureSet.get(i))){
                     closureSet.remove(i);
                     removeHappended = true;
-                    System.out.println("remove redundant production: ");
-                    closureSet.get(i).print();
+                   // System.out.println("remove redundant production: ");
+                    // closureSet.get(i).print();
+                    break;
                 }
 
             }
@@ -158,7 +170,7 @@ public class GrammarState {
 
         }
 
-        printPartition();
+     //   printPartition();
     }
 
     private void printPartition(){
@@ -190,12 +202,13 @@ public class GrammarState {
 
     private void makeTransition(){
         for(Map.Entry<Integer,ArrayList<Production>>entry:partition.entrySet()){
-            System.out.println("\n=====begin print transition info ===");
+           // System.out.println("\n=====begin print transition info ===");
             GrammarState nextState = makeNextGrammarState(entry.getKey());
             transition.put(entry.getKey(),nextState);
-            System.out.println("from state "+stateNum+" to State "+nextState.stateNum+" on "+SymbolDefine.getSymbolStr(entry.getKey()));
-            System.out.println("------State "+nextState.stateNum+"-------------");
-            nextState.print();
+            //System.out.println("from state "+stateNum+" to State "+nextState.stateNum+" on "+SymbolDefine.getSymbolStr(entry.getKey()));
+            //System.out.println("------State "+nextState.stateNum+"-------------");
+            //nextState.print();
+            stateManager.addTransition(this,nextState,entry.getKey());
         }
 
         extendFollowingTransition();
@@ -211,8 +224,38 @@ public class GrammarState {
     }
 
     public boolean equals(Object obj){
-        GrammarState state = (GrammarState) obj;
-        return state.productions.equals(this.productions);
+
+        return checkProductionEqual(obj,false);
     }
+
+    public boolean checkProductionEqual(Object obj,boolean isPartial){
+
+        GrammarState state = (GrammarState) obj;
+
+        int equalCount  = 0;
+        if(this.productions.size()!=state.productions.size()){
+            return false;
+        }
+
+        for(int i = 0; i < state.productions.size(); i++){
+            for(int j = 0; j < this.productions.size(); j++){
+                if(isPartial == false){
+                    if(state.productions.get(i).equals(this.productions.get(j))){
+                        equalCount++;
+                        break;
+                    }
+                }
+                else{
+                    if(state.productions.get(i).productionEquals(this.productions.get(j))){
+                        equalCount++;
+                        break;
+                    }
+                }
+            }
+        }
+
+        return state.productions.size()==equalCount;
+    }
+
 
 }
