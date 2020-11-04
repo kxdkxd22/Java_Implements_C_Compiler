@@ -8,8 +8,10 @@ public class GrammarStateManager {
     private ArrayList<GrammarState> stateList = new ArrayList<GrammarState>();
     private static GrammarStateManager self = null;
     private HashMap<GrammarState,HashMap<Integer,GrammarState>> transitionMap = new HashMap<GrammarState,HashMap<Integer, GrammarState>>();
+    private ArrayList<GrammarState> compressedStateList = new ArrayList<GrammarState>();
+    private HashMap<Integer,HashMap<Integer,Integer>> lrStateTable = new HashMap<Integer, HashMap<Integer, Integer>>();
 
-    private boolean isTransitionTableCompressed = false;
+    private boolean isTransitionTableCompressed = true;
 
     public static GrammarStateManager getGrammarManager(){
         if(self == null){
@@ -22,12 +24,43 @@ public class GrammarStateManager {
 
     }
 
+    public HashMap<Integer,HashMap<Integer,Integer>> getLRStateTable(){
+        Iterator it = null;
+        if(isTransitionTableCompressed){
+            it = compressedStateList.iterator();
+        }else{
+            it = stateList.iterator();
+        }
+
+        while(it.hasNext()){
+            GrammarState state = (GrammarState) it.next();
+            HashMap<Integer,Integer> jump = new HashMap<Integer, Integer>();
+            HashMap<Integer, GrammarState> map = transitionMap.get(state);
+            if(map!=null){
+                for(Map.Entry <Integer,GrammarState> entry:map.entrySet()){
+                    jump.put(entry.getKey(),entry.getValue().stateNum);
+                }
+            }
+
+            HashMap<Integer,Integer> reduceMap = state.makeReduce();
+            if(reduceMap.size() > 0){
+                for(Map.Entry<Integer,Integer> item: reduceMap.entrySet()){
+                    jump.put(item.getKey(),-(item.getValue()));
+                }
+            }
+
+            lrStateTable.put(state.stateNum,jump);
+        }
+        return lrStateTable;
+    }
+
     public void buildTransitionStateMachine(){
         ProductionManager productionManager = ProductionManager.getProductionManager();
         GrammarState state = getGrammarState(productionManager.getProduction(SymbolDefine.STMT));
         state.createTransition();
 
         printStateMap();
+        printReduceInfo();
     }
 
     public GrammarState getGrammarState(ArrayList<Production> productionList){
@@ -82,6 +115,9 @@ public class GrammarStateManager {
             }
         }
 
+        if(compressedStateList.contains(returnState)==false){
+            compressedStateList.add(returnState);
+        }
         return returnState;
     }
 
@@ -104,6 +140,32 @@ public class GrammarStateManager {
 
             System.out.println("********end a map row*******");
         }
+    }
+
+    public void printReduceInfo(){
+        System.out.println("\nShow reduce for each state: ");
+        Iterator it = null;
+        if(isTransitionTableCompressed){
+            it = compressedStateList.iterator();
+        }else{
+            it = stateList.iterator();
+        }
+
+        while(it.hasNext()){
+            GrammarState state = (GrammarState) it.next();
+            state.print();
+            HashMap<Integer,Integer> map = state.makeReduce();
+
+            if(map.entrySet().size()==0){
+                System.out.println("in this state, can not take any reduce action\n");
+            }
+
+            for(Map.Entry<Integer,Integer>entry:map.entrySet()){
+                System.out.println("Reduce on symbol: "+SymbolDefine.getSymbolStr(entry.getKey())+" to  Production "+entry.getValue());
+            }
+
+        }
+
     }
 
 }

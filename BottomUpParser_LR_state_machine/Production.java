@@ -7,11 +7,13 @@ public class Production {
     private int left = 0;
     private ArrayList<Integer> right = null;
     ArrayList<Integer> lookAhead = new ArrayList<Integer>();
+    private int productionNum = -1;
 
-    public Production(int left,int dot,ArrayList<Integer> right){
+    public Production(int productionNum,int left,int dot,ArrayList<Integer> right){
 
         this.left = left;
         this.right = right;
+        this.productionNum = productionNum;
 
         if(dot>=right.size()){
             dot = right.size();
@@ -24,7 +26,7 @@ public class Production {
 
     public Production dotForward(){
 
-        Production product =  new Production(left,dotPos+1,right);
+        Production product =  new Production(productionNum,left,dotPos+1,right);
         product.lookAhead = new ArrayList<Integer>();
 
         for(int i = 0; i < this.lookAhead.size(); i++){
@@ -35,7 +37,7 @@ public class Production {
     }
 
     public Production cloneSelf(){
-        Production product = new Production(this.left,dotPos,this.right);
+        Production product = new Production(productionNum,this.left,dotPos,this.right);
 
         product.lookAhead = new ArrayList<Integer>();
         for(int i = 0; i < lookAhead.size(); i++){
@@ -171,4 +173,9 @@ public class Production {
 
     }
 
+    public boolean canBeReduce(){return dotPos>=right.size();}
+
+    public ArrayList<Integer> getLookAhead(){return lookAhead;}
+
+    public int getProductionNum(){return productionNum;}
 }

@@ -45,6 +45,9 @@ public class GrammarState {
         for(int i = 0; i < productions.size(); i++){
             productions.get(i).print();
         }
+        for(int j = 0; j <mergedProduction.size(); j++){
+            mergedProduction.get(j).print();
+        }
     }
 
     public void printTransition(){
@@ -257,5 +260,23 @@ public class GrammarState {
         return state.productions.size()==equalCount;
     }
 
+    public HashMap<Integer,Integer> makeReduce(){
+        HashMap<Integer,Integer> map = new HashMap<Integer, Integer>();
+        Reduce(map,productions);
+        Reduce(map,mergedProduction);
+
+        return map;
+    }
+
+    public void Reduce(HashMap<Integer,Integer> map,ArrayList<Production> productions){
+        for(int i = 0; i < productions.size(); i++){
+            if(productions.get(i).canBeReduce()){
+                ArrayList<Integer> lookAhead = productions.get(i).getLookAhead();
+                for(int j = 0; j < lookAhead.size(); j++){
+                    map.put(lookAhead.get(j),productions.get(i).getProductionNum());
+                }
+            }
+        }
+    }
 
 }
