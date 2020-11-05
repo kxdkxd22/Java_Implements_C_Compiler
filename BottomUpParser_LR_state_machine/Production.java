@@ -178,4 +178,5 @@ public class Production {
     public ArrayList<Integer> getLookAhead(){return lookAhead;}
 
     public int getProductionNum(){return productionNum;}
+
 }

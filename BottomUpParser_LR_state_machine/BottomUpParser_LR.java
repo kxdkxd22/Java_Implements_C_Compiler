@@ -7,6 +7,10 @@ public class BottomUpParser_LR {
 
         GrammarStateManager stateManager = GrammarStateManager.getGrammarManager();
         stateManager.buildTransitionStateMachine();
+
+        Lexer lexer = new Lexer();
+        LRStateTableParser parser = new LRStateTableParser(lexer);
+        parser.parser();
     }
 
 }

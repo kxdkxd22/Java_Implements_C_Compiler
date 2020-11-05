@@ -92,4 +92,18 @@ public class ProductionManager {
     private ProductionManager(){
         firstSetBuilder.runFirstSets();
     }
+
+    public Production getProductionByIndex(int index){
+        for(Map.Entry<Integer,ArrayList<Production>>item:productionMap.entrySet()){
+            ArrayList<Production> productionList = item.getValue();
+            for(int i = 0; i < productionList.size(); i++){
+                if(productionList.get(i).getProductionNum()==index){
+                    return productionList.get(i);
+                }
+            }
+        }
+
+        return null;
+    }
+
 }

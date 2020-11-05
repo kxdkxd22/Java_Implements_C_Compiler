@@ -79,6 +79,23 @@ public class GrammarStateManager {
         return state;
     }
 
+    public GrammarState getGrammarState(Integer stateNum){
+        Iterator it = null;
+        if(isTransitionTableCompressed){
+            it = compressedStateList.iterator();
+        }else{
+            it = stateList.iterator();
+        }
+        while(it.hasNext()){
+            GrammarState state = (GrammarState) it.next();
+            if(state.stateNum==stateNum){
+                return state;
+            }
+        }
+
+        return null;
+    }
+
     public void addTransition(GrammarState from,GrammarState to,int on){
         if(isTransitionTableCompressed){
             from = getAndMergeSimilarStates(from);
