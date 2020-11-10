@@ -65,6 +65,7 @@ public class LRStateTableParser {
                 text = lexer.yytext;
 
                 if(CTokenType.isTerminal(lexerInput)){
+                    System.out.println("Shift for input: "+CTokenType.values()[lexerInput].toString());
                     lexer.advance();
                     lexerInput=lexer.look_ahead;
                  //   valueStack.push(null);
@@ -83,6 +84,8 @@ public class LRStateTableParser {
 
                 int reduceProduction = -action;
                 Production product = ProductionManager.getProductionManager().getProductionByIndex(reduceProduction);
+                System.out.println("reduce by product: ");
+                product.print();
 
                 int rightSize = product.getRight().size();
                 while(rightSize>0){

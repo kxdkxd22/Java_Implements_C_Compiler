@@ -70,7 +70,7 @@ public class Production {
                     break;
                 }
 
-                if(i==lookAhead.size()-1){
+                if(i==set.size()-1){
                     firstSet.addAll(this.lookAhead);
                 }
             }
@@ -129,26 +129,8 @@ public class Production {
     }
 
     private int lookAheadSetComparing(Production product){
-        /*if(this.lookAhead.size()>product.lookAhead.size()){
-            return 1;
-        }
-
-        if(this.lookAhead.size()<product.lookAhead.size()){
-            return -1;
-        }
-
-        if(this.lookAhead.size()==product.lookAhead.size()){
-            for(int i = 0; i < this.lookAhead.size(); i++){
-                if(this.lookAhead.get(i)!=product.lookAhead.get(i)){
-                    return -1;
-                }
-            }
-        }
-
-        return 0;*/
 
         if (this.lookAhead.size() > product.lookAhead.size()) {
-            //looAhead 集合不但要比对方大，而且对方lookAhead的所有元素都在本方的lookAhead中，这样本方才算是覆盖对方
             for (int i = 0; i < product.lookAhead.size(); i++) {
                 if (this.lookAhead.contains(product.lookAhead.get(i)) == false) {
                     return -1;
