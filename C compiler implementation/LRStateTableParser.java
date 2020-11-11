@@ -4,9 +4,11 @@ import java.util.Stack;
 public class LRStateTableParser {
     private Lexer lexer = null;
     int lexerInput = 0;
+    int nestingLevel = 0;
     private String text = "";
     private String[] names = new String[]{"t0","t1","t2","t3","t4","t5","t6","t7"};
     private int curName = 0;
+    private TypeSystem typeSystem = new TypeSystem();
 
     public String new_name(){
         if(curName >= names.length){
@@ -31,12 +33,13 @@ public class LRStateTableParser {
     public LRStateTableParser(Lexer lexer){
         this.lexer = lexer;
         statusStack.push(0);
+        valueStack.push(null);
         lexer.advance();
         lexerInput = CTokenType.EXT_DEF_LIST.ordinal();
 
         lrStateTable = GrammarStateManager.getGrammarManager().getLRStateTable();
 
-        showCurrentStateInfo(0);
+       // showCurrentStateInfo(0);
     }
 
     private void showCurrentStateInfo(int stateNum){
@@ -68,7 +71,7 @@ public class LRStateTableParser {
                     System.out.println("Shift for input: "+CTokenType.values()[lexerInput].toString());
                     lexer.advance();
                     lexerInput=lexer.look_ahead;
-                 //   valueStack.push(null);
+                    valueStack.push(null);
                 }else{
                     lexerInput = lexer.look_ahead;
                    // lexerInput = parserStack.pop();
@@ -87,20 +90,59 @@ public class LRStateTableParser {
                 System.out.println("reduce by product: ");
                 product.print();
 
+                takeActionForReduce(reduceProduction);
+
                 int rightSize = product.getRight().size();
                 while(rightSize>0){
                     parserStack.pop();
-                 //   valueStack.pop();
+                    valueStack.pop();
                     statusStack.pop();
                     rightSize--;
                 }
                 lexerInput = product.getLeft();
                 parserStack.push(lexerInput);
-               // valueStack.push(attributeForParentNode);
+                valueStack.push(attributeForParentNode);
 
             }
 
         }
+    }
+
+    private void takeActionForReduce(int productNum){
+
+        switch (productNum){
+            case CGrammarInitializer.TYPE_TO_TYPE_SPECIFIER:
+                attributeForParentNode = typeSystem.newType(text);
+                break;
+            case CGrammarInitializer.CLASS_TO_TypeOrClass:
+                attributeForParentNode = typeSystem.newClass(text);
+                break;
+            case CGrammarInitializer.SPECIFIERS_TypeOrClass_TO_SPECIFIERS:
+                attributeForParentNode = valueStack.peek();
+                Specifier last = (Specifier) ((TypeLink)valueStack.get(valueStack.size()-2)).getTypeObject();
+                Specifier dst = (Specifier)((TypeLink)attributeForParentNode).getTypeObject();
+                typeSystem.specifierCpy(dst,last);
+                break;
+            case CGrammarInitializer.NAME_TO_NewName:
+                attributeForParentNode = typeSystem.newSymbol(text,nestingLevel);
+                break;
+            case CGrammarInitializer.START_VarDecl_TO_VarDecl:
+                typeSystem.addDeclarator((Symbol) attributeForParentNode,Declarator.POINTER);
+                break;
+            case CGrammarInitializer.ExtDeclList_COMMA_ExtDecl_TO_EXTDecllist:
+                Symbol currentSym = (Symbol) attributeForParentNode;
+                Symbol lastSym = (Symbol) valueStack.get(valueStack.size()-3);
+                currentSym.setNextSymbol(lastSym);
+                break;
+            case CGrammarInitializer.OptSpecifier_ExtDeclList_Semi_TO_ExtDef:
+                Symbol symbol = (Symbol) attributeForParentNode;
+                TypeLink link = (TypeLink) valueStack.get(valueStack.size()-3);
+                typeSystem.addSpecifierToDeclarator(link,symbol);
+                typeSystem.addSymbolsToTable(symbol);
+                break;
+
+        }
+
     }
 
     private Integer getAction(Integer currentState,Integer currentInput){

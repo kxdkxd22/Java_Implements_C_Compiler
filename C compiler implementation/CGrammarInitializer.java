@@ -2,6 +2,14 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public class CGrammarInitializer {
+    public static final int TYPE_TO_TYPE_SPECIFIER = 12;
+    public static final int CLASS_TO_TypeOrClass = 11;
+    public static final int SPECIFIERS_TypeOrClass_TO_SPECIFIERS = 9;
+    public static final int NAME_TO_NewName = 13;
+    public static final int START_VarDecl_TO_VarDecl = 15;
+    public static final int ExtDeclList_COMMA_ExtDecl_TO_EXTDecllist = 5;
+    public static final int OptSpecifier_ExtDeclList_Semi_TO_ExtDef = 2;
+
     private static CGrammarInitializer instance = null;
     private HashMap<Integer, ArrayList<Production>> productionMap = new HashMap<Integer, ArrayList<Production>>();
     private HashMap<Integer,Symbols> symbolMap = new HashMap<Integer, Symbols>();
@@ -146,10 +154,10 @@ public class CGrammarInitializer {
         addProduction(production,false);
 
         //TYPE_OR_CLASS-> CLASS
-        /*right = getProductionRight(new int[]{CTokenType.CLASS.ordinal()});
+        right = getProductionRight(new int[]{CTokenType.CLASS.ordinal()});
         production = new Production(productionNum,CTokenType.TYPE_OR_CLASS.ordinal(),0,right);
         productionNum++;
-        addProduction(production,false);*/
+        addProduction(production,false);
 
         //TYPE_SPECIFIER -> TYPE
         right = getProductionRight(new int[]{CTokenType.TYPE.ordinal()});
