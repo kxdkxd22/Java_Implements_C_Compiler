@@ -69,12 +69,12 @@ public class LRStateTableParser {
 
                 if(CTokenType.isTerminal(lexerInput)){
                     System.out.println("Shift for input: "+CTokenType.values()[lexerInput].toString());
+                    takeActionForShift(lexerInput);
                     lexer.advance();
                     lexerInput=lexer.look_ahead;
                     valueStack.push(null);
                 }else{
                     lexerInput = lexer.look_ahead;
-                   // lexerInput = parserStack.pop();
                 }
 
             }
@@ -108,15 +108,25 @@ public class LRStateTableParser {
         }
     }
 
+    private void takeActionForShift(int token){
+        if(token == CTokenType.LP.ordinal()){
+            nestingLevel++;
+        }
+
+        if(token == CTokenType.RP.ordinal()){
+            nestingLevel--;
+        }
+    }
+
     private void takeActionForReduce(int productNum){
 
         switch (productNum){
             case CGrammarInitializer.TYPE_TO_TYPE_SPECIFIER:
                 attributeForParentNode = typeSystem.newType(text);
                 break;
-            case CGrammarInitializer.CLASS_TO_TypeOrClass:
+           /* case CGrammarInitializer.CLASS_TO_TypeOrClass:
                 attributeForParentNode = typeSystem.newClass(text);
-                break;
+                break;*/
             case CGrammarInitializer.SPECIFIERS_TypeOrClass_TO_SPECIFIERS:
                 attributeForParentNode = valueStack.peek();
                 Specifier last = (Specifier) ((TypeLink)valueStack.get(valueStack.size()-2)).getTypeObject();
@@ -130,6 +140,7 @@ public class LRStateTableParser {
                 typeSystem.addDeclarator((Symbol) attributeForParentNode,Declarator.POINTER);
                 break;
             case CGrammarInitializer.ExtDeclList_COMMA_ExtDecl_TO_EXTDecllist:
+            case CGrammarInitializer.VarList_COMMA_ParamDeclaration_TO_VarList:
                 Symbol currentSym = (Symbol) attributeForParentNode;
                 Symbol lastSym = (Symbol) valueStack.get(valueStack.size()-3);
                 currentSym.setNextSymbol(lastSym);
@@ -140,9 +151,28 @@ public class LRStateTableParser {
                 typeSystem.addSpecifierToDeclarator(link,symbol);
                 typeSystem.addSymbolsToTable(symbol);
                 break;
-
+            case CGrammarInitializer.TypeNT_VarDecl_TO_ParamDeclaration:
+                Symbol symbol1 = (Symbol) attributeForParentNode;
+                TypeLink link1 = (TypeLink) valueStack.get(valueStack.size()-2);
+                typeSystem.addSpecifierToDeclarator(link1,symbol1);
+                typeSystem.addSymbolsToTable(symbol1);
+                break;
+            case CGrammarInitializer.NewName_LP_VarList_RP_TO_FunctDecl:
+                setFunctionSymbol();
+                Symbol argList = (Symbol) valueStack.get(valueStack.size()-2);
+                ((Symbol)attributeForParentNode).args = argList;
+                break;
+            case CGrammarInitializer.NewName_LP_RP_TO_FunctDecl:
+                setFunctionSymbol();
+                break;
         }
 
+    }
+
+    private void setFunctionSymbol(){
+        Symbol funcSymbol = (Symbol) valueStack.get(valueStack.size()-4);
+        typeSystem.addDeclarator(funcSymbol,Declarator.FUNCTION);
+        attributeForParentNode = funcSymbol;
     }
 
     private Integer getAction(Integer currentState,Integer currentInput){

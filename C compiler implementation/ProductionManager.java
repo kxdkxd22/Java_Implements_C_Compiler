@@ -17,7 +17,7 @@ public class ProductionManager {
 
     public void initProductions(){
         CGrammarInitializer cGrammarInitializer = CGrammarInitializer.getInstance();
-        cGrammarInitializer.initVariableDecalationProduction();
+
         productionMap = cGrammarInitializer.getProductionMap();
 
     }

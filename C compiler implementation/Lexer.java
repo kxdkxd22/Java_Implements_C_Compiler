@@ -7,7 +7,7 @@ public class Lexer {
     public int yylineno=0;
     public int yyleng=0;
     public String input_buffer="";
-    public int look_ahead = -1;
+    public int look_ahead = CTokenType.UNKNOWN_TOKEN.ordinal();
 
     private HashMap<String,Integer> keywordMap = new HashMap<String,Integer>();
     public Lexer(){
@@ -24,6 +24,7 @@ public class Lexer {
         keywordMap.put("double",CTokenType.TYPE.ordinal());
         keywordMap.put("long",CTokenType.TYPE.ordinal());
         keywordMap.put("void",CTokenType.TYPE.ordinal());
+        keywordMap.put("short",CTokenType.TYPE.ordinal());
 
     }
 
