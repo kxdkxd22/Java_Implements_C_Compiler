@@ -20,4 +20,8 @@ public class StructDefine {
     public Symbol getFields() {
         return fields;
     }
+
+    public void setFields(Symbol field){
+        this.fields = field;
+    }
 }

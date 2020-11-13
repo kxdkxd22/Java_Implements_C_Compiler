@@ -85,4 +85,8 @@ public class Specifier {
     }
 
     private  StructDefine vStruct;
+
+    public void setStructObj(StructDefine struct){
+        this.vStruct = struct;
+    }
 }

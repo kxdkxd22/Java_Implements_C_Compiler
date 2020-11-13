@@ -1,3 +1,5 @@
+import com.sun.org.apache.xpath.internal.compiler.Keywords;
+
 import java.util.HashMap;
 import java.util.Scanner;
 
@@ -25,6 +27,7 @@ public class Lexer {
         keywordMap.put("long",CTokenType.TYPE.ordinal());
         keywordMap.put("void",CTokenType.TYPE.ordinal());
         keywordMap.put("short",CTokenType.TYPE.ordinal());
+        keywordMap.put("struct",CTokenType.STRUCT.ordinal());
 
     }
 
@@ -67,6 +70,9 @@ public class Lexer {
                     case "*":current=current.substring(1);return CTokenType.STAR.ordinal();
                     case ")":current=current.substring(1);return CTokenType.RP.ordinal();
                     case ",":current=current.substring(1);return CTokenType.COMMA.ordinal();
+                    case "{":current=current.substring(1);return CTokenType.LC.ordinal();
+                    case "}":current=current.substring(1);return CTokenType.RC.ordinal();
+
                     case " ":
                     case "\t":
                     case "\n":

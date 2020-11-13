@@ -136,16 +136,21 @@ public class LRStateTableParser {
             case CGrammarInitializer.NAME_TO_NewName:
                 attributeForParentNode = typeSystem.newSymbol(text,nestingLevel);
                 break;
+
             case CGrammarInitializer.START_VarDecl_TO_VarDecl:
+            case CGrammarInitializer.Start_VarDecl_TO_VarDecl:
                 typeSystem.addDeclarator((Symbol) attributeForParentNode,Declarator.POINTER);
                 break;
+
             case CGrammarInitializer.ExtDeclList_COMMA_ExtDecl_TO_EXTDecllist:
             case CGrammarInitializer.VarList_COMMA_ParamDeclaration_TO_VarList:
+            case CGrammarInitializer.DeclList_Comma_Decl_TO_DeclList:
                 Symbol currentSym = (Symbol) attributeForParentNode;
                 Symbol lastSym = (Symbol) valueStack.get(valueStack.size()-3);
                 currentSym.setNextSymbol(lastSym);
                 break;
             case CGrammarInitializer.OptSpecifier_ExtDeclList_Semi_TO_ExtDef:
+            case CGrammarInitializer.Specifiers_DeclList_Semi_TO_Def:
                 Symbol symbol = (Symbol) attributeForParentNode;
                 TypeLink link = (TypeLink) valueStack.get(valueStack.size()-3);
                 typeSystem.addSpecifierToDeclarator(link,symbol);
@@ -164,6 +169,35 @@ public class LRStateTableParser {
                 break;
             case CGrammarInitializer.NewName_LP_RP_TO_FunctDecl:
                 setFunctionSymbol();
+                break;
+
+            case CGrammarInitializer.Name_TO_Tag:
+                attributeForParentNode = typeSystem.getStructObjFromTable(text);
+                if(attributeForParentNode == null){
+                    attributeForParentNode = new StructDefine(text,nestingLevel,null);
+                    typeSystem.addStructToTable((StructDefine) attributeForParentNode);
+                }
+
+                break;
+
+            case CGrammarInitializer.Struct_OptTag_LC_DefList_RC_TO_StructSpecifier:
+                Symbol defList = (Symbol) valueStack.get(valueStack.size()-2);
+                StructDefine structObj = (StructDefine)valueStack.get(valueStack.size()-4);
+                structObj.setFields(defList);
+                attributeForParentNode = structObj;
+                break;
+            case CGrammarInitializer.DefList_Def_TO_DefList:
+                Symbol currentSym1 = (Symbol) attributeForParentNode;
+                Symbol lastSym1 = (Symbol) valueStack.get(valueStack.size()-2);
+                currentSym1.setNextSymbol(lastSym1);
+                break;
+            case CGrammarInitializer.StructSpecifier_TO_TypeSpecifier:
+                attributeForParentNode = typeSystem.newType(text);
+                TypeLink typeLink = (TypeLink) attributeForParentNode;
+                Specifier specifier = (Specifier) typeLink.getTypeObject();
+                specifier.setType(Specifier.STRUCTURE);
+                StructDefine structDefine = (StructDefine) valueStack.get(0);
+                specifier.setStructObj(structDefine);
                 break;
         }
 

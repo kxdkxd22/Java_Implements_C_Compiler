@@ -3,6 +3,20 @@ import java.util.HashMap;
 
 public class TypeSystem {
     HashMap<String, ArrayList<Symbol>> symbolTable = new HashMap<String,ArrayList<Symbol>>();
+    HashMap<String,StructDefine> structTable = new HashMap<String,StructDefine>();
+
+    public void addStructToTable(StructDefine structDefine){
+        if(structTable.containsKey(structDefine.getTag())){
+            System.err.println("Struct with name: "+structDefine.getTag()+"is already exist!");
+            return;
+        }
+        structTable.put(structDefine.getTag(),structDefine);
+    }
+
+    public StructDefine getStructObjFromTable(String name){
+        return structTable.get(name);
+    }
+
     public void addSymbolsToTable(Symbol headSymbol){
         while(headSymbol!=null){
             ArrayList<Symbol> symbolList = symbolTable.get(headSymbol.name);
@@ -46,7 +60,7 @@ public class TypeSystem {
                 isSigned = false;
                 break;
             case 'v':
-                if(typeText.charAt(1)=='h'){
+                if(typeText.charAt(1)=='o'){
                     type = Specifier.VOID;
                 }
                 break;

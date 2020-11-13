@@ -15,6 +15,14 @@ public class CGrammarInitializer {
     public static final int NewName_LP_VarList_RP_TO_FunctDecl = 16;
     public static final int NewName_LP_RP_TO_FunctDecl = 17;
 
+    public static final int Start_VarDecl_TO_VarDecl = 39;
+    public static final int DeclList_Comma_Decl_TO_DeclList = 33;
+    public static final int Specifiers_DeclList_Semi_TO_Def = 30;
+    public static final int DefList_Def_TO_DefList = 29;
+    public static final int Name_TO_Tag = 27;
+    public static final int Struct_OptTag_LC_DefList_RC_TO_StructSpecifier = 24;
+    public static final int StructSpecifier_TO_TypeSpecifier = 23;
+
     private int productionNum = 0;
     private static CGrammarInitializer instance = null;
     private HashMap<Integer, ArrayList<Production>> productionMap = new HashMap<Integer, ArrayList<Production>>();
@@ -31,6 +39,7 @@ public class CGrammarInitializer {
     private CGrammarInitializer(){
         initVariableDecalationProduction();
         initFunctionProductions();
+        initStructureProductions();
         addTerminalToSymbolMapArray();
     }
 
@@ -275,7 +284,157 @@ public class CGrammarInitializer {
         productionNum++;
         addProduction(production,false);
 
+    }
 
+    private void initStructureProductions(){
+        /*
+        *production number begin from 23
+        *
+        * TYPE_SPECIFIER->STRUCT_SPECIFIER
+        *
+        * STRUCT_SPECIFIER->STRUCT OPT_TAG LC DEF_LIST RC
+        *                   |STRUCT TAG
+        *
+        * OPT_TAG->TAG
+        *
+        * TAG->NAME
+        *
+        * DEF_LIST->DEF_LIST DEF
+        *
+        * DEF->SPECIFIERS DECL_LIST SEMI
+        *       |SPECIFIERS SEMI
+        *
+        * DECL_LIST->DECL
+        *           |DECL_LIST COMMA DECL
+        *
+        * DECL->VAR_DECL
+        *
+        *VAR_DECL->NEW_NAME
+        *          |VAR_DECL LP RP
+        *          |VAR_DECL LP VAR_LIST RP
+        *          |LP VAR_DECL RP
+        *          |START VAR_DECL
+        *
+         */
+
+        //TYPE_SPECIFIER->STRUCT_SPECIFIER  (23)
+        ArrayList<Integer> right = null;
+        right = getProductionRight(new int[]{CTokenType.STRUCT_SPECIFIER.ordinal()});
+        Production production = new Production(productionNum,CTokenType.TYPE_SPECIFIER.ordinal(),0,right);
+        productionNum++;
+        addProduction(production,false);
+
+        //STRUCT_SPECIFIER->STRUCT OPT_TAG LC DEF_LIST RC  (24)
+        right = null;
+        right = getProductionRight(new int[]{CTokenType.STRUCT.ordinal(),CTokenType.OPT_TAG.ordinal(),CTokenType.LC.ordinal(),CTokenType.DEF_LIST.ordinal(),CTokenType.RC.ordinal()});
+        production = new Production(productionNum,CTokenType.STRUCT_SPECIFIER.ordinal(),0,right);
+        productionNum++;
+        addProduction(production,false);
+
+        //STRUCT_SPECIFIER->STRUCT TAG  (25)
+        right = null;
+        right = getProductionRight(new int[]{CTokenType.STRUCT.ordinal(),CTokenType.TAG.ordinal()});
+        production = new Production(productionNum,CTokenType.STRUCT_SPECIFIER.ordinal(),0,right);
+        productionNum++;
+        addProduction(production,false);
+
+        //OPT_TAG->TAG  (26)
+        right = null;
+        right = getProductionRight(new int[]{CTokenType.TAG.ordinal()});
+        production = new Production(productionNum,CTokenType.OPT_TAG.ordinal(),0,right);
+        productionNum++;
+        addProduction(production,false);
+
+        //TAG->NAME  (27)
+        right = null;
+        right = getProductionRight(new int[]{CTokenType.NAME.ordinal()});
+        production = new Production(productionNum,CTokenType.TAG.ordinal(),0,right);
+        productionNum++;
+        addProduction(production,false);
+
+        //DEF_LIST->DEF (28)
+        right = null;
+        right = getProductionRight(new int[]{CTokenType.DEF.ordinal()});
+        production = new Production(productionNum,CTokenType.DEF_LIST.ordinal(),0,right);
+        productionNum++;
+        addProduction(production,false);
+
+        //DEF_LIST->DEF_LIST DEF (29)
+        right = null;
+        right = getProductionRight(new int[]{CTokenType.DEF_LIST.ordinal(),CTokenType.DEF.ordinal()});
+        production = new Production(productionNum,CTokenType.DEF_LIST.ordinal(),0,right);
+        productionNum++;
+        addProduction(production,false);
+
+        //DEF->SPECIFIERS DECL_LIST SEMI  (30)
+        right = null;
+        right = getProductionRight(new int[]{CTokenType.SPECIFIERS.ordinal(),CTokenType.DECL_LIST.ordinal(),CTokenType.SEMI.ordinal()});
+        production = new Production(productionNum,CTokenType.DEF.ordinal(),0,right);
+        productionNum++;
+        addProduction(production,false);
+
+        //DEF->SPECIFIERS SEMI  (31)
+        right = null;
+        right = getProductionRight(new int[]{CTokenType.SPECIFIERS.ordinal(),CTokenType.SEMI.ordinal()});
+        production = new Production(productionNum,CTokenType.DEF.ordinal(),0,right);
+        productionNum++;
+        addProduction(production,false);
+
+        //DECL_LIST->DECL  (32)
+        right = null;
+        right = getProductionRight(new int[]{CTokenType.DECL.ordinal()});
+        production = new Production(productionNum,CTokenType.DECL_LIST.ordinal(),0,right);
+        productionNum++;
+        addProduction(production,false);
+
+        //DECL_LIST->DECL_LIST COMMA DECL   (33)
+        right = null;
+        right = getProductionRight(new int[]{CTokenType.DECL_LIST.ordinal(),CTokenType.COMMA.ordinal(),CTokenType.DECL.ordinal()});
+        production = new Production(productionNum,CTokenType.DECL_LIST.ordinal(),0,right);
+        productionNum++;
+        addProduction(production,false);
+
+        //DECL->VAR_DECL  (34)
+        right = null;
+        right = getProductionRight(new int[]{CTokenType.VAR_DECL.ordinal()});
+        production = new Production(productionNum,CTokenType.DECL.ordinal(),0,right);
+        productionNum++;
+        addProduction(production,false);
+
+        //VAR_DECL->NEW_NAME  (35)
+        right = null;
+        right = getProductionRight(new int[]{CTokenType.NEW_NAME.ordinal()});
+        production = new Production(productionNum,CTokenType.VAR_DECL.ordinal(),0,right);
+        productionNum++;
+        addProduction(production,false);
+
+        //VAR_DECL->VAR_DECL LP RP  (36)
+        right = null;
+        right = getProductionRight(new int[]{CTokenType.VAR_DECL.ordinal(),CTokenType.LP.ordinal(),CTokenType.RP.ordinal()});
+        production = new Production(productionNum,CTokenType.VAR_DECL.ordinal(),0,right);
+        productionNum++;
+        addProduction(production,false);
+
+        //VAR_DECL->VAR_DECL LP VAR_LIST RP  (37)
+        right = null;
+        right = getProductionRight(new int[]{CTokenType.VAR_DECL.ordinal(),CTokenType.LP.ordinal(),CTokenType.VAR_LIST.ordinal(),CTokenType.RP.ordinal()});
+        production = new Production(productionNum,CTokenType.VAR_DECL.ordinal(),0,right);
+        productionNum++;
+        addProduction(production,false);
+
+        //VAR_DECL->LP VAR_DECL RP  (38)
+        right = null;
+        right = getProductionRight(new int[]{CTokenType.LP.ordinal(),CTokenType.VAR_DECL.ordinal(),CTokenType.RP.ordinal()});
+        production = new Production(productionNum,CTokenType.VAR_DECL.ordinal(),0,right);
+        productionNum++;
+        addProduction(production,false);
+
+        //VAR_DECL->STAR VAR_DECL  (39)
+        right = null;
+        right = getProductionRight(new int[]{CTokenType.STAR.ordinal(),CTokenType.VAR_DECL.ordinal()});
+        production = new Production(productionNum,CTokenType.VAR_DECL.ordinal(),0,right);
+        productionNum++;
+        addProduction(production,false);
     }
 
     private void addProduction(Production production,boolean nullable){
