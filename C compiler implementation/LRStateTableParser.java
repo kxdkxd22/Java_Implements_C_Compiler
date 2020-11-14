@@ -5,6 +5,7 @@ public class LRStateTableParser {
     private Lexer lexer = null;
     int lexerInput = 0;
     int nestingLevel = 0;
+    int enumVal = 0;
     private String text = "";
     private String[] names = new String[]{"t0","t1","t2","t3","t4","t5","t6","t7"};
     private int curName = 0;
@@ -133,6 +134,7 @@ public class LRStateTableParser {
                 Specifier dst = (Specifier)((TypeLink)attributeForParentNode).getTypeObject();
                 typeSystem.specifierCpy(dst,last);
                 break;
+            case CGrammarInitializer.Name_TO_NameNT:
             case CGrammarInitializer.NAME_TO_NewName:
                 attributeForParentNode = typeSystem.newSymbol(text,nestingLevel);
                 break;
@@ -199,8 +201,49 @@ public class LRStateTableParser {
                 StructDefine structDefine = (StructDefine) valueStack.get(0);
                 specifier.setStructObj(structDefine);
                 break;
+            case CGrammarInitializer.Enum_TO_EnumNT:
+                enumVal = 0;
+                break;
+            case CGrammarInitializer.EnumSpecifier_TO_TypeSpecifier:
+                attributeForParentNode = typeSystem.newType("int");
+                break;
+            case CGrammarInitializer.Name_Equal_ConstExpr_TO_Enumerator:
+                enumVal = (Integer) valueStack.get(valueStack.size()-1);
+                attributeForParentNode = (Symbol)valueStack.get(valueStack.size()-3);
+                doEnum();
+                break;
+            case CGrammarInitializer.NameNT_TO_Enumerator:
+                doEnum();
+                break;
+            case CGrammarInitializer.Number_TO_ConstExpr:
+                attributeForParentNode = Integer.valueOf(text);
+                break;
         }
 
+    }
+
+    private void doEnum(){
+        Symbol symbol = (Symbol)attributeForParentNode;
+        if(convSymToIntConst(symbol,enumVal)){
+            typeSystem.addSymbolsToTable(symbol);
+            enumVal++;
+        }else{
+            System.err.println("enum symbol redefinition: "+symbol.name);
+        }
+    }
+
+    private boolean convSymToIntConst(Symbol symbol,int val){
+        if(symbol.getTypeLinkBegin()!=null){
+            return false;
+        }
+
+        TypeLink typeLink = typeSystem.newType("int");
+        Specifier specifier = (Specifier) typeLink.getTypeObject();
+        specifier.setType(Specifier.CONSTANT);
+        specifier.setConstantValue(val);
+        symbol.addSpecifier(typeLink);
+
+        return true;
     }
 
     private void setFunctionSymbol(){

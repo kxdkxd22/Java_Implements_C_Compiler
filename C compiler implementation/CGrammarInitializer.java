@@ -23,6 +23,13 @@ public class CGrammarInitializer {
     public static final int Struct_OptTag_LC_DefList_RC_TO_StructSpecifier = 24;
     public static final int StructSpecifier_TO_TypeSpecifier = 23;
 
+    public static final int Enum_TO_EnumNT = 41;
+    public static final int NameNT_TO_Enumerator = 44;
+    public static final int Name_TO_NameNT = 45;
+    public static final int Name_Equal_ConstExpr_TO_Enumerator = 46;
+    public static final int Number_TO_ConstExpr = 47;
+    public static final int EnumSpecifier_TO_TypeSpecifier = 49;
+
     private int productionNum = 0;
     private static CGrammarInitializer instance = null;
     private HashMap<Integer, ArrayList<Production>> productionMap = new HashMap<Integer, ArrayList<Production>>();
@@ -40,6 +47,7 @@ public class CGrammarInitializer {
         initVariableDecalationProduction();
         initFunctionProductions();
         initStructureProductions();
+        initEmunProductions();
         addTerminalToSymbolMapArray();
     }
 
@@ -435,6 +443,83 @@ public class CGrammarInitializer {
         production = new Production(productionNum,CTokenType.VAR_DECL.ordinal(),0,right);
         productionNum++;
         addProduction(production,false);
+    }
+
+    private void initEmunProductions(){
+        /*
+        *begin from production number 40
+        *
+         */
+        //ENUM_SPECIFIER -> ENUM_NT NAME_NT OPT_ENUM_LIST (40)
+        ArrayList<Integer> right = null;
+        right = getProductionRight(new int[]{CTokenType.ENUM_NT.ordinal(),CTokenType.NAME_NT.ordinal(),CTokenType.OPT_ENUM_LIST.ordinal()});
+        Production production = new Production(productionNum,CTokenType.ENUM_SPECIFIER.ordinal(),0,right);
+        productionNum++;
+        addProduction(production,false);
+
+        //ENUM_NT->ENUM (41)
+        right = null;
+        right = getProductionRight(new int[]{CTokenType.ENUM.ordinal()});
+        production = new Production(productionNum,CTokenType.ENUM_NT.ordinal(),0,right);
+        productionNum++;
+        addProduction(production,false);
+
+        //ENUMERATOR_LIST->ENUMERATOR (42)
+        right = null;
+        right = getProductionRight(new int[]{CTokenType.ENUMERATOR.ordinal()});
+        production = new Production(productionNum,CTokenType.ENUMERATOR_LIST.ordinal(),0,right);
+        productionNum++;
+        addProduction(production,false);
+
+        //ENUMERATOR_LIST->ENUMERATOR_LIST COMMA ENUMERATOR (43)
+        right = null;
+        right = getProductionRight(new int[]{CTokenType.ENUMERATOR_LIST.ordinal(),CTokenType.COMMA.ordinal(),CTokenType.ENUMERATOR.ordinal()});
+        production = new Production(productionNum,CTokenType.ENUMERATOR_LIST.ordinal(),0,right);
+        productionNum++;
+        addProduction(production,false);
+
+        //ENUMERATOR->NAME_NT (44)
+        right = null;
+        right = getProductionRight(new int[]{CTokenType.NAME_NT.ordinal()});
+        production = new Production(productionNum,CTokenType.ENUMERATOR.ordinal(),0,right);
+        productionNum++;
+        addProduction(production,false);
+
+        //NAME_NT->NAME (45)
+        right = null;
+        right = getProductionRight(new int[]{CTokenType.NAME.ordinal()});
+        production = new Production(productionNum,CTokenType.NAME_NT.ordinal(),0,right);
+        productionNum++;
+        addProduction(production,false);
+
+        //ENUMERATOR->NAME_NT EQUAL CONST_EXPR(46)
+        right = null;
+        right = getProductionRight(new int[]{CTokenType.NAME_NT.ordinal(),CTokenType.EQUAL.ordinal(),CTokenType.CONST_EXPR.ordinal()});
+        production = new Production(productionNum,CTokenType.ENUMERATOR.ordinal(),0,right);
+        productionNum++;
+        addProduction(production,false);
+
+        //CONST_EXPR->NUMBER (47)
+        right = null;
+        right = getProductionRight(new int[]{CTokenType.NUMBER.ordinal()});
+        production = new Production(productionNum,CTokenType.CONST_EXPR.ordinal(),0,right);
+        productionNum++;
+        addProduction(production,false);
+
+        //OPT_ENUM_LIST->LC ENUMERATOR_LIST RC (48)
+        right = null;
+        right = getProductionRight(new int[]{CTokenType.LC.ordinal(),CTokenType.ENUMERATOR_LIST.ordinal(),CTokenType.RC.ordinal()});
+        production = new Production(productionNum,CTokenType.OPT_ENUM_LIST.ordinal(),0,right);
+        productionNum++;
+        addProduction(production,false);
+
+        //TYPE_SPECIFIER -> ENUM_SPECIFIER (49)
+        right = null;
+        right = getProductionRight(new int[]{CTokenType.ENUM_SPECIFIER.ordinal()});
+        production = new Production(productionNum,CTokenType.TYPE_SPECIFIER.ordinal(),0,right);
+        productionNum++;
+        addProduction(production,false);
+
     }
 
     private void addProduction(Production production,boolean nullable){

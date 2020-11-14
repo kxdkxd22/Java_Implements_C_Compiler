@@ -45,4 +45,8 @@ public class Symbol {
     public Symbol getNextSymbol() {
         return next;
     }
+
+    public TypeLink getTypeLinkBegin(){
+        return typeLinkBegin;
+    }
 }

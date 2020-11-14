@@ -28,6 +28,7 @@ public class Lexer {
         keywordMap.put("void",CTokenType.TYPE.ordinal());
         keywordMap.put("short",CTokenType.TYPE.ordinal());
         keywordMap.put("struct",CTokenType.STRUCT.ordinal());
+        keywordMap.put("enum",CTokenType.ENUM.ordinal());
 
     }
 
@@ -72,6 +73,7 @@ public class Lexer {
                     case ",":current=current.substring(1);return CTokenType.COMMA.ordinal();
                     case "{":current=current.substring(1);return CTokenType.LC.ordinal();
                     case "}":current=current.substring(1);return CTokenType.RC.ordinal();
+                    case "=":current=current.substring(1);return CTokenType.EQUAL.ordinal();
 
                     case " ":
                     case "\t":
@@ -100,8 +102,26 @@ public class Lexer {
         int type = CTokenType.UNKNOWN_TOKEN.ordinal();
         if(Character.isAlphabetic(yytext.charAt(0))){
             type = isKeyWord(yytext);
+        }else{
+            if(isNum()){
+                type = CTokenType.NUMBER.ordinal();
+            }
         }
         return type;
+    }
+
+    private boolean isNum(){
+        int pos = 0;
+        if(yytext.charAt(0)=='-'||yytext.charAt(0)=='+'){
+           pos++;
+        }
+
+        for(;pos<yytext.length();pos++){
+            if(Character.isDigit(yytext.charAt(pos))!=true){
+                break;
+            }
+        }
+        return pos==yytext.length();
     }
 
     private int isKeyWord(String str){
