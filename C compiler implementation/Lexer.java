@@ -1,5 +1,3 @@
-import com.sun.org.apache.xpath.internal.compiler.Keywords;
-
 import java.util.HashMap;
 import java.util.Scanner;
 
@@ -29,6 +27,7 @@ public class Lexer {
         keywordMap.put("short",CTokenType.TYPE.ordinal());
         keywordMap.put("struct",CTokenType.STRUCT.ordinal());
         keywordMap.put("enum",CTokenType.ENUM.ordinal());
+        keywordMap.put("return",CTokenType.RETURN.ordinal());
 
     }
 
@@ -61,8 +60,10 @@ public class Lexer {
                 return CTokenType.SEMI.ordinal();
             }
 
+            boolean inString = false;
+
             for(int i = 0;i<current.length();i++){
-                yytext=current.substring(0,1);
+                yytext=current.substring(i,i+1);
                 yyleng=0;
                 switch(yytext){
                     case ";":current=current.substring(1);return CTokenType.SEMI.ordinal();
@@ -74,6 +75,25 @@ public class Lexer {
                     case "{":current=current.substring(1);return CTokenType.LC.ordinal();
                     case "}":current=current.substring(1);return CTokenType.RC.ordinal();
                     case "=":current=current.substring(1);return CTokenType.EQUAL.ordinal();
+                    case "?":current=current.substring(1);return CTokenType.QUEST.ordinal();
+                    case ":":current=current.substring(1);return CTokenType.COLON.ordinal();
+                    case "&":current=current.substring(1);return CTokenType.AND.ordinal();
+                    case "|":current=current.substring(1);return CTokenType.OR.ordinal();
+
+                    case "/":
+                    case "%":
+                        current=current.substring(1);return CTokenType.DIVOP.ordinal();
+                    case ">":
+                    case "<":
+                        if(current.charAt(i+1)=='='){
+                            current = current.substring(2);
+                        }else if((current.charAt(i)=='<'&&current.charAt(i+1)=='<')||(current.charAt(i)=='>'&&current.charAt(i+1)=='>')){
+                            current = current.substring(2);
+                            return CTokenType.SHIFTOP.ordinal();
+                        }else{
+                            current = current.substring(1);
+                        }
+                        return CTokenType.RELOP.ordinal();
 
                     case " ":
                     case "\t":
@@ -87,6 +107,8 @@ public class Lexer {
                                 i++;
                                 yyleng++;
                             }
+
+
                             yytext=current.substring(0,i);
                             current=current.substring(i);
                             return id_keyword_or_number();

@@ -165,12 +165,12 @@ public class LRStateTableParser {
                 typeSystem.addSymbolsToTable(symbol1);
                 break;
             case CGrammarInitializer.NewName_LP_VarList_RP_TO_FunctDecl:
-                setFunctionSymbol();
+                setFunctionSymbol(true);
                 Symbol argList = (Symbol) valueStack.get(valueStack.size()-2);
                 ((Symbol)attributeForParentNode).args = argList;
                 break;
             case CGrammarInitializer.NewName_LP_RP_TO_FunctDecl:
-                setFunctionSymbol();
+                setFunctionSymbol(false);
                 break;
 
             case CGrammarInitializer.Name_TO_Tag:
@@ -246,8 +246,14 @@ public class LRStateTableParser {
         return true;
     }
 
-    private void setFunctionSymbol(){
-        Symbol funcSymbol = (Symbol) valueStack.get(valueStack.size()-4);
+    private void setFunctionSymbol(boolean hasArgs){
+        Symbol funcSymbol = null;
+        if(hasArgs){
+            funcSymbol = (Symbol) valueStack.get(valueStack.size()-4);
+        }else{
+            funcSymbol = (Symbol) valueStack.get(valueStack.size()-3);
+        }
+
         typeSystem.addDeclarator(funcSymbol,Declarator.FUNCTION);
         attributeForParentNode = funcSymbol;
     }
