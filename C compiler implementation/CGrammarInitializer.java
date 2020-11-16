@@ -50,6 +50,11 @@ public class CGrammarInitializer {
         initEmunProductions();
         initFunctionDefinition();
         initFunctionDefinition2();
+        initFunctionDefinitionWithIfElse();
+        initFunctionDefinitionWithSwitchCase();
+        initFunctionDefinitionWithLoop();
+        initComputingOperation();
+        initRemaindingProduction();
         addTerminalToSymbolMapArray();
     }
 
@@ -678,6 +683,231 @@ public class CGrammarInitializer {
         production = new Production(productionNum,CTokenType.COMPOUND_STMT.ordinal(),0,right);
         productionNum++;
         addProduction(production,false);
+    }
+
+    private void initFunctionDefinitionWithIfElse(){
+        // STATEMENT -> COMPOUND_STMT  (71)
+        ArrayList<Integer> right = null;
+        right = getProductionRight(new int[]{CTokenType.COMPOUND_STMT.ordinal()});
+        Production production = new Production(productionNum,CTokenType.STATEMENT.ordinal(),0,right);
+        productionNum++;
+        addProduction(production,false);
+
+        //IF_STATEMENT -> IF LP TEST RP STATEMENT (72)
+        right = null;
+        right = getProductionRight(new int[]{CTokenType.IF.ordinal(),CTokenType.LP.ordinal(),CTokenType.TEST.ordinal(),CTokenType.RP.ordinal(),CTokenType.STATEMENT.ordinal()});
+        production = new Production(productionNum,CTokenType.IF_STATEMENT.ordinal(),0,right);
+        productionNum++;
+        addProduction(production,false);
+
+        //IF_ELSE_STATEMENT -> IF_STATEMENT (73)
+        right = null;
+        right = getProductionRight(new int[]{CTokenType.IF_STATEMENT.ordinal()});
+        production = new Production(productionNum,CTokenType.IF_ELSE_STATEMENT.ordinal(),0,right);
+        productionNum++;
+        addProduction(production,false);
+
+        //IF_ELSE_STATEMENT ->IF_ELSE_STATEMENT ELSE STATEMENT (74)
+        right = null;
+        right = getProductionRight(new int[]{CTokenType.IF_ELSE_STATEMENT.ordinal(),CTokenType.ELSE.ordinal(),CTokenType.STATEMENT.ordinal()});
+        production = new Production(productionNum,CTokenType.IF_ELSE_STATEMENT.ordinal(),0,right);
+        productionNum++;
+        addProduction(production,false);
+
+        //STATEMENT -> IF_ELSE_STATEMENT  (75)
+        right = null;
+        right = getProductionRight(new int[]{CTokenType.IF_ELSE_STATEMENT.ordinal()});
+        production = new Production(productionNum,CTokenType.STATEMENT.ordinal(),0,right);
+        productionNum++;
+        addProduction(production,false);
+
+        //TEST -> EXPR  (76)
+        right = null;
+        right = getProductionRight(new int[]{CTokenType.EXPR.ordinal()});
+        production = new Production(productionNum,CTokenType.TEST.ordinal(),0,right);
+        productionNum++;
+        addProduction(production,false);
+
+        //DECL -> VAR_DECL EQUAL INITIALIZER  (77)
+        right = null;
+        right = getProductionRight(new int[]{CTokenType.VAR_DECL.ordinal(),CTokenType.EQUAL.ordinal(),CTokenType.INITIALIZER.ordinal()});
+        production = new Production(productionNum,CTokenType.DECL.ordinal(),0,right);
+        productionNum++;
+        addProduction(production,false);
+
+        //INITIALIZER -> EXPR  (78)
+        right = null;
+        right = getProductionRight(new int[]{CTokenType.EXPR.ordinal()});
+        production = new Production(productionNum,CTokenType.INITIALIZER.ordinal(),0,right);
+        productionNum++;
+        addProduction(production,false);
+
+    }
+
+    private void initFunctionDefinitionWithSwitchCase(){
+        //STATEMENT->SWITCH LP EXPR RP COMPOUND_STATEMENT (79)
+        ArrayList<Integer> right = null;
+        right = getProductionRight(new int[]{CTokenType.SWITCH.ordinal(),CTokenType.LP.ordinal(),CTokenType.EXPR.ordinal(),CTokenType.RP.ordinal(),CTokenType.COMPOUND_STMT.ordinal()});
+        Production production = new Production(productionNum,CTokenType.STATEMENT.ordinal(),0,right);
+        productionNum++;
+        addProduction(production,false);
+
+        //STATEMENT->CASE CONST_EXPR COLON  (80)
+        right = null;
+        right = getProductionRight(new int[]{CTokenType.CASE.ordinal(),CTokenType.CONST_EXPR.ordinal(),CTokenType.COLON.ordinal()});
+        production = new Production(productionNum,CTokenType.STATEMENT.ordinal(),0,right);
+        productionNum++;
+        addProduction(production,false);
+
+        //STATEMENT->DEFAULT COLON (81)
+        right = null;
+        right = getProductionRight(new int[]{CTokenType.DEFAULT.ordinal(),CTokenType.COLON.ordinal()});
+        production = new Production(productionNum,CTokenType.STATEMENT.ordinal(),0,right);
+        productionNum++;
+        addProduction(production,false);
+
+        //STATEMENT->BREAK SEMI;  (82)
+        right = null;
+        right = getProductionRight(new int[]{CTokenType.BREAK.ordinal(),CTokenType.SEMI.ordinal()});
+        production = new Production(productionNum,CTokenType.STATEMENT.ordinal(),0,right);
+        productionNum++;
+        addProduction(production,false);
+
+    }
+
+    private void initFunctionDefinitionWithLoop(){
+        //STATEMENT->WHILE LP TEST RP STATEMENT  (83)
+        ArrayList<Integer> right = null;
+        right = getProductionRight(new int[]{CTokenType.WHILE.ordinal(),CTokenType.LP.ordinal(),CTokenType.TEST.ordinal(),CTokenType.RP.ordinal(),CTokenType.STATEMENT.ordinal()});
+        Production production = new Production(productionNum,CTokenType.STATEMENT.ordinal(),0,right);
+        productionNum++;
+        addProduction(production,false);
+
+        //STATEMENT -> FOR LP OPT_EXPR TEST SEMI END_OPT_EXPR RP STATEMENT (84)
+        right = null;
+        right = getProductionRight(new int[]{CTokenType.FOR.ordinal(),CTokenType.LP.ordinal(),CTokenType.OPT_EXPR.ordinal(),CTokenType.TEST.ordinal(),CTokenType.SEMI.ordinal(),CTokenType.END_OPT_EXPR.ordinal(),CTokenType.RP.ordinal(),CTokenType.STATEMENT.ordinal()});
+        production = new Production(productionNum,CTokenType.STATEMENT.ordinal(),0,right);
+        productionNum++;
+        addProduction(production,false);
+
+        //OPT_EXPR->EXPR SEMI (85)
+        right = null;
+        right = getProductionRight(new int[]{CTokenType.EXPR.ordinal(),CTokenType.SEMI.ordinal()});
+        production = new Production(productionNum,CTokenType.OPT_EXPR.ordinal(),0,right);
+        productionNum++;
+        addProduction(production,false);
+
+        //OPT_EXPR->SEMI  (86)
+        right = null;
+        right = getProductionRight(new int[]{CTokenType.SEMI.ordinal()});
+        production = new Production(productionNum,CTokenType.OPT_EXPR.ordinal(),0,right);
+        productionNum++;
+        addProduction(production,false);
+
+        //END_OPT_EXPR->EXPR  (87)
+        right = null;
+        right = getProductionRight(new int[]{CTokenType.EXPR.ordinal()});
+        production = new Production(productionNum,CTokenType.END_OPT_EXPR.ordinal(),0,right);
+        productionNum++;
+        addProduction(production,false);
+
+        //STATEMENT->DO STATEMENT WHILE LP TEST RP SEMI (88)
+        right = null;
+        right = getProductionRight(new int[]{CTokenType.DO.ordinal(),CTokenType.STATEMENT.ordinal(),CTokenType.WHILE.ordinal(),CTokenType.LP.ordinal(),CTokenType.TEST.ordinal(),CTokenType.RP.ordinal(),CTokenType.SEMI.ordinal()});
+        production = new Production(productionNum,CTokenType.STATEMENT.ordinal(),0,right);
+        productionNum++;
+        addProduction(production,false);
+
+    }
+
+    private void initComputingOperation(){
+        //BINARY -> BINARY STAR BINARY (89)
+        ArrayList<Integer> right = null;
+        right = getProductionRight(new int[]{CTokenType.BINARY.ordinal(),CTokenType.STAR.ordinal(),CTokenType.BINARY.ordinal()});
+        Production production = new Production(productionNum,CTokenType.BINARY.ordinal(),0,right);
+        productionNum++;
+        addProduction(production,false);
+
+        //BINARY -> BINARY DIVOP BINARY (90)
+        right = null;
+        right = getProductionRight(new int[]{CTokenType.BINARY.ordinal(),CTokenType.DIVOP.ordinal(),CTokenType.BINARY.ordinal()});
+        production = new Production(productionNum,CTokenType.BINARY.ordinal(),0,right);
+        productionNum++;
+        addProduction(production,false);
+
+        //BINARY->BINARY SHIFTOP BINARY (91)
+        right = null;
+        right = getProductionRight(new int[]{CTokenType.BINARY.ordinal(),CTokenType.SHIFTOP.ordinal(),CTokenType.BINARY.ordinal()});
+        production = new Production(productionNum,CTokenType.BINARY.ordinal(),0,right);
+        productionNum++;
+        addProduction(production,false);
+
+        //BINARY-> BINARY AND BINARY  (92)
+        right = null;
+        right = getProductionRight(new int[]{CTokenType.BINARY.ordinal(),CTokenType.AND.ordinal(),CTokenType.BINARY.ordinal()});
+        production = new Production(productionNum,CTokenType.BINARY.ordinal(),0,right);
+        productionNum++;
+        addProduction(production,false);
+
+        //BINARY ->BINARY XOR BINARY  (93)
+        right = null;
+        right = getProductionRight(new int[]{CTokenType.BINARY.ordinal(),CTokenType.XOR.ordinal(),CTokenType.BINARY.ordinal()});
+        production = new Production(productionNum,CTokenType.BINARY.ordinal(),0,right);
+        productionNum++;
+        addProduction(production,false);
+
+        //BINARY -> BINARY PLUS BINARY  (94)
+        right = null;
+        right = getProductionRight(new int[]{CTokenType.BINARY.ordinal(),CTokenType.PLUS.ordinal(),CTokenType.BINARY.ordinal()});
+        production = new Production(productionNum,CTokenType.BINARY.ordinal(),0,right);
+        productionNum++;
+        addProduction(production,false);
+
+        //BINARY -> BINARY MINUS BINARY  (95)
+        right = null;
+        right = getProductionRight(new int[]{CTokenType.BINARY.ordinal(),CTokenType.MINUS.ordinal(),CTokenType.BINARY.ordinal()});
+        production = new Production(productionNum,CTokenType.BINARY.ordinal(),0,right);
+        productionNum++;
+        addProduction(production,false);
+
+        //UNARY -> UNARY INCOP  (96)
+        right = null;
+        right = getProductionRight(new int[]{CTokenType.UNARY.ordinal(),CTokenType.INCOP.ordinal()});
+        production = new Production(productionNum,CTokenType.UNARY.ordinal(),0,right);
+        productionNum++;
+        addProduction(production,false);
+
+        //UNARY -> INCOP UNARY  (97)
+        right = null;
+        right = getProductionRight(new int[]{CTokenType.INCOP.ordinal(),CTokenType.UNARY.ordinal()});
+        production = new Production(productionNum,CTokenType.UNARY.ordinal(),0,right);
+        productionNum++;
+        addProduction(production,false);
+
+    }
+
+    private void initRemaindingProduction(){
+        //STATEMENT -> TARGET COLON STATEMENT
+        ArrayList<Integer> right = null;
+        right = getProductionRight(new int[]{CTokenType.TARGET.ordinal(),CTokenType.COLON.ordinal(),CTokenType.STATEMENT.ordinal()});
+        Production production = new Production(productionNum,CTokenType.STATEMENT.ordinal(),0,right);
+        productionNum++;
+        addProduction(production,false);
+
+        //STATEMENT -> GOTO TARGET SEMI
+        right = null;
+        right = getProductionRight(new int[]{CTokenType.GOTO.ordinal(),CTokenType.TARGET.ordinal(),CTokenType.SEMI.ordinal()});
+        production = new Production(productionNum,CTokenType.STATEMENT.ordinal(),0,right);
+        productionNum++;
+        addProduction(production,false);
+
+        //TARGET -> NAME
+        right = null;
+        right = getProductionRight(new int[]{CTokenType.NAME.ordinal()});
+        production = new Production(productionNum,CTokenType.TARGET.ordinal(),0,right);
+        productionNum++;
+        addProduction(production,false);
+
     }
 
     private void addProduction(Production production,boolean nullable){

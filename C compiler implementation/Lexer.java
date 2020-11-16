@@ -28,6 +28,16 @@ public class Lexer {
         keywordMap.put("struct",CTokenType.STRUCT.ordinal());
         keywordMap.put("enum",CTokenType.ENUM.ordinal());
         keywordMap.put("return",CTokenType.RETURN.ordinal());
+        keywordMap.put("if",CTokenType.IF.ordinal());
+        keywordMap.put("else",CTokenType.ELSE.ordinal());
+        keywordMap.put("switch",CTokenType.SWITCH.ordinal());
+        keywordMap.put("case",CTokenType.CASE.ordinal());
+        keywordMap.put("default",CTokenType.DEFAULT.ordinal());
+        keywordMap.put("break",CTokenType.BREAK.ordinal());
+        keywordMap.put("for",CTokenType.FOR.ordinal());
+        keywordMap.put("while",CTokenType.WHILE.ordinal());
+        keywordMap.put("do",CTokenType.DO.ordinal());
+        keywordMap.put("goto",CTokenType.GOTO.ordinal());
 
     }
 
@@ -67,18 +77,35 @@ public class Lexer {
                 yyleng=0;
                 switch(yytext){
                     case ";":current=current.substring(1);return CTokenType.SEMI.ordinal();
-                    case "+":current=current.substring(1);return CTokenType.PLUS.ordinal();
+                    case "+":
+                        if(current.charAt(i+1)=='+'){
+                            current = current.substring(2);
+                            return CTokenType.INCOP.ordinal();
+                        }
+
+                        current=current.substring(1);
+                        return CTokenType.PLUS.ordinal();
+
                     case "(":current=current.substring(1);return CTokenType.LP.ordinal();
                     case "*":current=current.substring(1);return CTokenType.STAR.ordinal();
                     case ")":current=current.substring(1);return CTokenType.RP.ordinal();
                     case ",":current=current.substring(1);return CTokenType.COMMA.ordinal();
                     case "{":current=current.substring(1);return CTokenType.LC.ordinal();
                     case "}":current=current.substring(1);return CTokenType.RC.ordinal();
-                    case "=":current=current.substring(1);return CTokenType.EQUAL.ordinal();
+                    case "=":
+                        if(current.charAt(i+1)=='='){
+                            current = current.substring(2);
+                            return CTokenType.RELOP.ordinal();
+                        }
+
+                        current=current.substring(1);
+                        return CTokenType.EQUAL.ordinal();
+
                     case "?":current=current.substring(1);return CTokenType.QUEST.ordinal();
                     case ":":current=current.substring(1);return CTokenType.COLON.ordinal();
                     case "&":current=current.substring(1);return CTokenType.AND.ordinal();
                     case "|":current=current.substring(1);return CTokenType.OR.ordinal();
+                    case "^":current=current.substring(1);return CTokenType.XOR.ordinal();
 
                     case "/":
                     case "%":
