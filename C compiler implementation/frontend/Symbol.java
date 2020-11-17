@@ -1,3 +1,5 @@
+package frontend;
+
 public class Symbol {
     String name;
     String rname;
@@ -49,4 +51,6 @@ public class Symbol {
     public TypeLink getTypeLinkBegin(){
         return typeLinkBegin;
     }
+
+    public int getLevel(){return level;}
 }

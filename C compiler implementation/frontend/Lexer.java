@@ -1,3 +1,5 @@
+package frontend;
+
 import java.util.HashMap;
 import java.util.Scanner;
 
@@ -15,29 +17,29 @@ public class Lexer {
     }
 
     private void initKeywordMap(){
-        keywordMap.put("auto",CTokenType.CLASS.ordinal());
-        keywordMap.put("static",CTokenType.CLASS.ordinal());
-        keywordMap.put("register",CTokenType.CLASS.ordinal());
-        keywordMap.put("int",CTokenType.TYPE.ordinal());
-        keywordMap.put("float",CTokenType.TYPE.ordinal());
-        keywordMap.put("char",CTokenType.TYPE.ordinal());
-        keywordMap.put("double",CTokenType.TYPE.ordinal());
-        keywordMap.put("long",CTokenType.TYPE.ordinal());
-        keywordMap.put("void",CTokenType.TYPE.ordinal());
-        keywordMap.put("short",CTokenType.TYPE.ordinal());
-        keywordMap.put("struct",CTokenType.STRUCT.ordinal());
-        keywordMap.put("enum",CTokenType.ENUM.ordinal());
-        keywordMap.put("return",CTokenType.RETURN.ordinal());
-        keywordMap.put("if",CTokenType.IF.ordinal());
-        keywordMap.put("else",CTokenType.ELSE.ordinal());
-        keywordMap.put("switch",CTokenType.SWITCH.ordinal());
-        keywordMap.put("case",CTokenType.CASE.ordinal());
-        keywordMap.put("default",CTokenType.DEFAULT.ordinal());
-        keywordMap.put("break",CTokenType.BREAK.ordinal());
-        keywordMap.put("for",CTokenType.FOR.ordinal());
-        keywordMap.put("while",CTokenType.WHILE.ordinal());
-        keywordMap.put("do",CTokenType.DO.ordinal());
-        keywordMap.put("goto",CTokenType.GOTO.ordinal());
+        keywordMap.put("auto", CTokenType.CLASS.ordinal());
+        keywordMap.put("static", CTokenType.CLASS.ordinal());
+        keywordMap.put("register", CTokenType.CLASS.ordinal());
+        keywordMap.put("int", CTokenType.TYPE.ordinal());
+        keywordMap.put("float", CTokenType.TYPE.ordinal());
+        keywordMap.put("char", CTokenType.TYPE.ordinal());
+        keywordMap.put("double", CTokenType.TYPE.ordinal());
+        keywordMap.put("long", CTokenType.TYPE.ordinal());
+        keywordMap.put("void", CTokenType.TYPE.ordinal());
+        keywordMap.put("short", CTokenType.TYPE.ordinal());
+        keywordMap.put("struct", CTokenType.STRUCT.ordinal());
+        keywordMap.put("enum", CTokenType.ENUM.ordinal());
+        keywordMap.put("return", CTokenType.RETURN.ordinal());
+        keywordMap.put("if", CTokenType.IF.ordinal());
+        keywordMap.put("else", CTokenType.ELSE.ordinal());
+        keywordMap.put("switch", CTokenType.SWITCH.ordinal());
+        keywordMap.put("case", CTokenType.CASE.ordinal());
+        keywordMap.put("default", CTokenType.DEFAULT.ordinal());
+        keywordMap.put("break", CTokenType.BREAK.ordinal());
+        keywordMap.put("for", CTokenType.FOR.ordinal());
+        keywordMap.put("while", CTokenType.WHILE.ordinal());
+        keywordMap.put("do", CTokenType.DO.ordinal());
+        keywordMap.put("goto", CTokenType.GOTO.ordinal());
 
     }
 
@@ -189,7 +191,7 @@ public class Lexer {
 
     public void advance(){
         look_ahead = lex();
-        while(look_ahead==CTokenType.WHITE_SPACE.ordinal()){
+        while(look_ahead== CTokenType.WHITE_SPACE.ordinal()){
             look_ahead = lex();
         }
     }

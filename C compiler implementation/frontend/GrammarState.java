@@ -1,3 +1,5 @@
+package frontend;
+
 import java.util.*;
 
 public class GrammarState {
@@ -8,7 +10,7 @@ public class GrammarState {
     public int stateNum = -1;
     private GrammarStateManager stateManager = GrammarStateManager.getGrammarManager();
     private ArrayList<Production> productions = new ArrayList<Production>();
-    private HashMap<Integer,GrammarState> transition = new HashMap<Integer, GrammarState>();
+    private HashMap<Integer, GrammarState> transition = new HashMap<Integer, GrammarState>();
     private ArrayList<Production> closureSet = new ArrayList<Production>();
     private ProductionManager productionManager = ProductionManager.getProductionManager();
     private HashMap<Integer,ArrayList<Production>> partition = new HashMap<Integer,ArrayList<Production>>();
@@ -51,8 +53,8 @@ public class GrammarState {
     }
 
     public void printTransition(){
-        for(Map.Entry<Integer,GrammarState> entry:transition.entrySet()){
-            System.out.println("transfer on "+CTokenType.getSymbolStr(entry.getKey())+" to state ");
+        for(Map.Entry<Integer, GrammarState> entry:transition.entrySet()){
+            System.out.println("transfer on "+ CTokenType.getSymbolStr(entry.getKey())+" to state ");
             entry.getValue().print();
             System.out.print("\n");
         }
@@ -157,7 +159,7 @@ public class GrammarState {
     private void partition(){
         for(int i = 0; i < closureSet.size(); i++){
             int symbol = closureSet.get(i).getDotSymbol();
-            if(symbol==CTokenType.UNKNOWN_TOKEN.ordinal()){
+            if(symbol== CTokenType.UNKNOWN_TOKEN.ordinal()){
                 continue;
             }
 
@@ -182,7 +184,7 @@ public class GrammarState {
         }
 
         for(Map.Entry<Integer,ArrayList<Production>>entry:partition.entrySet()){
-            System.out.println("partition for symbol: "+CTokenType.getSymbolStr(entry.getKey()));
+            System.out.println("partition for symbol: "+ CTokenType.getSymbolStr(entry.getKey()));
 
             ArrayList<Production> productionList = entry.getValue();
             for(int i = 0; i < productionList.size(); i++){
@@ -218,7 +220,7 @@ public class GrammarState {
     }
 
     private void extendFollowingTransition(){
-        for(Map.Entry<Integer,GrammarState>entry:transition.entrySet()){
+        for(Map.Entry<Integer, GrammarState>entry:transition.entrySet()){
             GrammarState state = entry.getValue();
             if(state.isTransitionDone()==false){
                 state.createTransition();

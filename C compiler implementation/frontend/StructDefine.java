@@ -1,9 +1,11 @@
+package frontend;
+
 public class StructDefine {
     private String tag;
     private int level;
     private Symbol fields;
 
-    public StructDefine(String tag,int level,Symbol fields){
+    public StructDefine(String tag, int level, Symbol fields){
         this.tag = tag;
         this.level = level;
         this.fields = fields;

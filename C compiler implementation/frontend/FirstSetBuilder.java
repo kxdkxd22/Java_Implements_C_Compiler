@@ -1,10 +1,12 @@
+package frontend;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 
 public class FirstSetBuilder {
 
-    private HashMap<Integer,Symbols> symbolMap = new HashMap<Integer, Symbols>();
+    private HashMap<Integer, Symbols> symbolMap = new HashMap<Integer, Symbols>();
     private ArrayList<Symbols> symbolArray = new ArrayList<Symbols>();
     private boolean runFirstSetPass = true;
 
@@ -100,7 +102,7 @@ public class FirstSetBuilder {
         s += "{";
 
         for(int i = 0; i < symbol.firstSet.size(); i++){
-            s+=CTokenType.getSymbolStr(symbol.firstSet.get(i))+" ";
+            s+= CTokenType.getSymbolStr(symbol.firstSet.get(i))+" ";
         }
         s += "}";
         System.out.println(s);

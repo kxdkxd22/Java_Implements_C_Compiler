@@ -1,3 +1,5 @@
+package frontend;
+
 public class Declarator {
     public static int POINTER = 0;
     public static int ARRAY = 1;

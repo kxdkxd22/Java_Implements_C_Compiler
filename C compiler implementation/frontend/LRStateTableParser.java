@@ -1,3 +1,7 @@
+package frontend;
+
+import backend.CodeTreeBuilder;
+
 import java.util.HashMap;
 import java.util.Stack;
 
@@ -9,7 +13,7 @@ public class LRStateTableParser {
     private String text = "";
     private String[] names = new String[]{"t0","t1","t2","t3","t4","t5","t6","t7"};
     private int curName = 0;
-    private TypeSystem typeSystem = new TypeSystem();
+    private TypeSystem typeSystem = TypeSystem.getTypeSystem();
 
     public String new_name(){
         if(curName >= names.length){
@@ -18,6 +22,10 @@ public class LRStateTableParser {
         }
         return names[curName++];
     }
+
+    public int getCurrentLevel(){return nestingLevel;}
+
+    public TypeSystem getTypeSystem(){return typeSystem;}
 
     public void free_name(String name){
         names[--curName] = name;
@@ -31,6 +39,8 @@ public class LRStateTableParser {
     Stack<Object> valueStack = new Stack<Object>();
     HashMap<Integer,HashMap<Integer,Integer>> lrStateTable = null;
 
+    CodeTreeBuilder treeBuilder = CodeTreeBuilder.getCodeTreeBuilder();
+
     public LRStateTableParser(Lexer lexer){
         this.lexer = lexer;
         statusStack.push(0);
@@ -40,11 +50,12 @@ public class LRStateTableParser {
 
         lrStateTable = GrammarStateManager.getGrammarManager().getLRStateTable();
 
+        treeBuilder.setParser(this);
        // showCurrentStateInfo(0);
     }
 
     private void showCurrentStateInfo(int stateNum){
-        System.out.println("current input is: "+CTokenType.getSymbolStr(lexerInput));
+        System.out.println("current input is: "+ CTokenType.getSymbolStr(lexerInput));
 
         System.out.println("current state is: ");
         GrammarState state = GrammarStateManager.getGrammarManager().getGrammarState(stateNum);
@@ -69,7 +80,7 @@ public class LRStateTableParser {
                 text = lexer.yytext;
 
                 if(CTokenType.isTerminal(lexerInput)){
-                    System.out.println("Shift for input: "+CTokenType.values()[lexerInput].toString());
+                    System.out.println("Shift for input: "+ CTokenType.values()[lexerInput].toString());
                     takeActionForShift(lexerInput);
                     lexer.advance();
                     lexerInput=lexer.look_ahead;
@@ -110,11 +121,11 @@ public class LRStateTableParser {
     }
 
     private void takeActionForShift(int token){
-        if(token == CTokenType.LP.ordinal()){
+        if(token == CTokenType.LP.ordinal()||token == CTokenType.LC.ordinal()){
             nestingLevel++;
         }
 
-        if(token == CTokenType.RP.ordinal()){
+        if(token == CTokenType.RP.ordinal()||token == CTokenType.RC.ordinal()){
             nestingLevel--;
         }
     }
@@ -141,7 +152,7 @@ public class LRStateTableParser {
 
             case CGrammarInitializer.START_VarDecl_TO_VarDecl:
             case CGrammarInitializer.Start_VarDecl_TO_VarDecl:
-                typeSystem.addDeclarator((Symbol) attributeForParentNode,Declarator.POINTER);
+                typeSystem.addDeclarator((Symbol) attributeForParentNode, Declarator.POINTER);
                 break;
 
             case CGrammarInitializer.ExtDeclList_COMMA_ExtDecl_TO_EXTDecllist:
@@ -220,6 +231,8 @@ public class LRStateTableParser {
                 break;
         }
 
+        treeBuilder.buildCodeTree(productNum,text);
+
     }
 
     private void doEnum(){
@@ -232,7 +245,7 @@ public class LRStateTableParser {
         }
     }
 
-    private boolean convSymToIntConst(Symbol symbol,int val){
+    private boolean convSymToIntConst(Symbol symbol, int val){
         if(symbol.getTypeLinkBegin()!=null){
             return false;
         }
@@ -254,7 +267,7 @@ public class LRStateTableParser {
             funcSymbol = (Symbol) valueStack.get(valueStack.size()-3);
         }
 
-        typeSystem.addDeclarator(funcSymbol,Declarator.FUNCTION);
+        typeSystem.addDeclarator(funcSymbol, Declarator.FUNCTION);
         attributeForParentNode = funcSymbol;
     }
 

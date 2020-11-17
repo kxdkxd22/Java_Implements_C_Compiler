@@ -1,3 +1,5 @@
+package frontend;
+
 public class TypeLink {
     boolean isDeclarator = true;
     boolean isTypeDef = false;

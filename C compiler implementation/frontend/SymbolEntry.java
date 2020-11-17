@@ -1,3 +1,5 @@
+package frontend;
+
 public class SymbolEntry {
     private Symbol symbol;
     private SymbolEntry prev,next;

@@ -1,3 +1,5 @@
+package frontend;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -7,7 +9,7 @@ public class GrammarStateManager {
 
     private ArrayList<GrammarState> stateList = new ArrayList<GrammarState>();
     private static GrammarStateManager self = null;
-    private HashMap<GrammarState,HashMap<Integer,GrammarState>> transitionMap = new HashMap<GrammarState,HashMap<Integer, GrammarState>>();
+    private HashMap<GrammarState,HashMap<Integer, GrammarState>> transitionMap = new HashMap<GrammarState,HashMap<Integer, GrammarState>>();
     private ArrayList<GrammarState> compressedStateList = new ArrayList<GrammarState>();
     private HashMap<Integer,HashMap<Integer,Integer>> lrStateTable = new HashMap<Integer, HashMap<Integer, Integer>>();
 
@@ -37,7 +39,7 @@ public class GrammarStateManager {
             HashMap<Integer,Integer> jump = new HashMap<Integer, Integer>();
             HashMap<Integer, GrammarState> map = transitionMap.get(state);
             if(map!=null){
-                for(Map.Entry <Integer,GrammarState> entry:map.entrySet()){
+                for(Map.Entry <Integer, GrammarState> entry:map.entrySet()){
                     jump.put(entry.getKey(),entry.getValue().stateNum);
                 }
             }
@@ -96,13 +98,13 @@ public class GrammarStateManager {
         return null;
     }
 
-    public void addTransition(GrammarState from,GrammarState to,int on){
+    public void addTransition(GrammarState from, GrammarState to, int on){
         if(isTransitionTableCompressed){
             from = getAndMergeSimilarStates(from);
             to = getAndMergeSimilarStates(to);
         }
 
-        HashMap<Integer,GrammarState> map = transitionMap.get(from);
+        HashMap<Integer, GrammarState> map = transitionMap.get(from);
         if(map == null){
             map = new HashMap<Integer, GrammarState>();
         }
@@ -140,16 +142,16 @@ public class GrammarStateManager {
 
     public void printStateMap(){
         System.out.println("the map size："+transitionMap.size());
-        for(Map.Entry<GrammarState,HashMap<Integer,GrammarState>>entry:transitionMap.entrySet()){
+        for(Map.Entry<GrammarState,HashMap<Integer, GrammarState>>entry:transitionMap.entrySet()){
             GrammarState from = entry.getKey();
             System.out.println("**********begin to print a map row*********");
             System.out.println("from state: ");
             from.print();
 
             HashMap<Integer, GrammarState> map = entry.getValue();
-            for(Map.Entry<Integer,GrammarState>item:map.entrySet()){
+            for(Map.Entry<Integer, GrammarState>item:map.entrySet()){
                 int on = item.getKey();
-                System.out.println("on symbol: "+CTokenType.getSymbolStr(on));
+                System.out.println("on symbol: "+ CTokenType.getSymbolStr(on));
                 System.out.println("to state: ");
                 GrammarState to = item.getValue();
                 to.print();
@@ -178,7 +180,7 @@ public class GrammarStateManager {
             }
 
             for(Map.Entry<Integer,Integer>entry:map.entrySet()){
-                System.out.println("Reduce on symbol: "+CTokenType.getSymbolStr(entry.getKey())+" to  Production "+entry.getValue());
+                System.out.println("Reduce on symbol: "+ CTokenType.getSymbolStr(entry.getKey())+" to  Production "+entry.getValue());
             }
 
         }

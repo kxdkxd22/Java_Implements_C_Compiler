@@ -1,3 +1,5 @@
+package frontend;
+
 public class Specifier {
     //type
     public static int NONE = -1;
@@ -84,7 +86,7 @@ public class Specifier {
         return constantValue;
     }
 
-    private  StructDefine vStruct;
+    private StructDefine vStruct;
 
     public void setStructObj(StructDefine struct){
         this.vStruct = struct;

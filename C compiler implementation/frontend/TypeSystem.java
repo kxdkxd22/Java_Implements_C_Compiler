@@ -1,9 +1,25 @@
+package frontend;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 
 public class TypeSystem {
+    private static TypeSystem typeSystem = null;
+
+    public static TypeSystem getTypeSystem(){
+        if(typeSystem==null){
+            typeSystem = new TypeSystem();
+        }
+        return typeSystem;
+
+    }
+
+    private TypeSystem(){
+
+    }
+
     HashMap<String, ArrayList<Symbol>> symbolTable = new HashMap<String,ArrayList<Symbol>>();
-    HashMap<String,StructDefine> structTable = new HashMap<String,StructDefine>();
+    HashMap<String, StructDefine> structTable = new HashMap<String, StructDefine>();
 
     public void addStructToTable(StructDefine structDefine){
         if(structTable.containsKey(structDefine.getTag())){
@@ -31,7 +47,11 @@ public class TypeSystem {
         }
     }
 
-    private void handleDuplicateSymbol(Symbol symbol,ArrayList<Symbol> symList){
+    public ArrayList<Symbol> getSymbol(String text){
+        return symbolTable.get(text);
+    }
+
+    private void handleDuplicateSymbol(Symbol symbol, ArrayList<Symbol> symList){
 
     }
 
@@ -79,7 +99,7 @@ public class TypeSystem {
         return link;
     }
 
-    public void specifierCpy(Specifier dst,Specifier org){
+    public void specifierCpy(Specifier dst, Specifier org){
         dst.setSigned(org.isSigned());
         dst.setLong(org.getLong());
         dst.setConstantValue(org.getConstantValue());
@@ -126,15 +146,15 @@ public class TypeSystem {
 
     }
 
-    public Symbol newSymbol(String name,int level){return new Symbol(name,level);}
+    public Symbol newSymbol(String name, int level){return new Symbol(name,level);}
 
-    public void addDeclarator(Symbol symbol,int declaratroType){
+    public void addDeclarator(Symbol symbol, int declaratroType){
         Declarator declarator = new Declarator(declaratroType);
         TypeLink link = new TypeLink(true,false,declarator);
         symbol.addDeclarator(link);
     }
 
-    public void addSpecifierToDeclarator(TypeLink specifier,Symbol symbol){
+    public void addSpecifierToDeclarator(TypeLink specifier, Symbol symbol){
         while(symbol!=null){
             symbol.addSpecifier(specifier);
             symbol=symbol.getNextSymbol();

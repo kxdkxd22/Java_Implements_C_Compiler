@@ -1,3 +1,5 @@
+package frontend;
+
 public enum CTokenType {
     //non-termals
     PROGRAM,EXT_DEF_LIST,EXT_DEF,OPT_SPECIFIERS,EXT_DECL_LIST,
