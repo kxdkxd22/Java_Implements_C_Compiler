@@ -15,6 +15,8 @@ public class Symbol {
     TypeLink typeLinkBegin;
     TypeLink typeLinkEnd;
 
+    private Object value = null;
+
     public Symbol(String name,int level){
         this.name = name;
         this.level = level;
@@ -39,6 +41,12 @@ public class Symbol {
             typeLinkEnd= link;
         }
     }
+
+    public String getName(){return name;}
+
+    public void setValue(Object obj){this.value = obj;}
+
+    public Object getValue(){return value;}
 
     public void setNextSymbol(Symbol symbol){
         this.next = symbol;
