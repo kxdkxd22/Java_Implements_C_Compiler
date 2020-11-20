@@ -84,6 +84,11 @@ public class CodeTreeBuilder {
                 node.addChild(codeNodeStack.pop());
                 node.addChild(codeNodeStack.pop());
                 break;
+            case CGrammarInitializer.Unary_LB_Expr_RB_TO_Unary:
+                node = ICodeFactory.createICodeNode(CTokenType.UNARY);
+                node.addChild(codeNodeStack.pop());
+                node.addChild(codeNodeStack.pop());
+                break;
         }
 
         if(node!=null){

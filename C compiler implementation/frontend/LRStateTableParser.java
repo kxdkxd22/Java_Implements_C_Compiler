@@ -227,7 +227,15 @@ public class LRStateTableParser {
                 doEnum();
                 break;
             case CGrammarInitializer.Number_TO_ConstExpr:
+            case CGrammarInitializer.Number_TO_Unary:
                 attributeForParentNode = Integer.valueOf(text);
+                break;
+
+            case CGrammarInitializer.VarDecl_LB_ConstExpr_RB_TO_VarDecl:
+                Declarator declarator = typeSystem.addDeclarator((Symbol)valueStack.get(valueStack.size()-4),Declarator.ARRAY);
+                int arrayNum = (Integer) attributeForParentNode;
+                declarator.setElementNum(arrayNum);
+                attributeForParentNode = valueStack.get(valueStack.size()-4);
                 break;
         }
 

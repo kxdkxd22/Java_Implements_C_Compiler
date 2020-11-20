@@ -2,6 +2,7 @@ package frontend;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 
 public class TypeSystem {
     private static TypeSystem typeSystem = null;
@@ -52,6 +53,20 @@ public class TypeSystem {
     }
 
     private void handleDuplicateSymbol(Symbol symbol, ArrayList<Symbol> symList){
+        boolean harmless = true;
+        Iterator it = symList.iterator();
+        while(it.hasNext()){
+            Symbol sym = (Symbol) it.next();
+            if(symbol.level==sym.level){
+                System.err.println("Symbol definition replicate: "+sym.name);
+                System.exit(1);
+            }
+        }
+
+        if(harmless==true){
+            symList.add(symbol);
+        }
+
 
     }
 
@@ -148,10 +163,11 @@ public class TypeSystem {
 
     public Symbol newSymbol(String name, int level){return new Symbol(name,level);}
 
-    public void addDeclarator(Symbol symbol, int declaratroType){
+    public Declarator addDeclarator(Symbol symbol, int declaratroType){
         Declarator declarator = new Declarator(declaratroType);
         TypeLink link = new TypeLink(true,false,declarator);
         symbol.addDeclarator(link);
+        return declarator;
     }
 
     public void addSpecifierToDeclarator(TypeLink specifier, Symbol symbol){

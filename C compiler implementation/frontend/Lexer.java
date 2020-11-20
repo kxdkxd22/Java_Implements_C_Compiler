@@ -88,6 +88,19 @@ public class Lexer {
                         current=current.substring(1);
                         return CTokenType.PLUS.ordinal();
 
+                    case "-":
+                        if(current.charAt(i+1)=='>'){
+                            current= current.substring(2);
+                            return CTokenType.STRUCTOP.ordinal();
+                        }else if(current.charAt(i+1)=='-'){
+                            current= current.substring(2);
+                            return CTokenType.INCOP.ordinal();
+                        }
+                        current = current.substring(1);
+                        return CTokenType.MINUS.ordinal();
+
+                    case "[":current=current.substring(1);return CTokenType.LB.ordinal();
+                    case "]":current=current.substring(1);return CTokenType.RB.ordinal();
                     case "(":current=current.substring(1);return CTokenType.LP.ordinal();
                     case "*":current=current.substring(1);return CTokenType.STAR.ordinal();
                     case ")":current=current.substring(1);return CTokenType.RP.ordinal();

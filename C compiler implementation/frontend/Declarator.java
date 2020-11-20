@@ -1,5 +1,7 @@
 package frontend;
 
+import java.util.HashMap;
+
 public class Declarator {
     public static int POINTER = 0;
     public static int ARRAY = 1;
@@ -8,13 +10,16 @@ public class Declarator {
     private int declareType = POINTER;
     private int numberOfElements = 0;
 
+    HashMap<Integer,Object> elements = null;
+
     public Declarator(int type){
         if(type<POINTER){
             declareType = POINTER;
         }
-
-        if(type>FUNCTION){
+        else if(type>FUNCTION){
             declareType = FUNCTION;
+        }else{
+            declareType = type;
         }
     }
 
@@ -23,7 +28,29 @@ public class Declarator {
             numberOfElements = 0;
         }else{
             numberOfElements = num;
+            elements = new HashMap<Integer, Object>();
         }
+    }
+
+    public void addElements(int index,Object object) throws Exception {
+        if(elements==null){
+            throw new Exception("This is not an array");
+        }
+
+        if(index>=numberOfElements){
+            throw new Exception("Array out of Range");
+        }
+
+        if(elements!=null){
+            elements.put(index,object);
+        }
+    }
+
+    public Object getElement(int index) throws Exception {
+        if(index>=numberOfElements||elements==null){
+            throw new Exception("element list is null or index out of range");
+        }
+        return elements.get(index);
     }
 
     public int getDeclareType(){

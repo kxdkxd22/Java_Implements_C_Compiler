@@ -1,6 +1,8 @@
 package frontend;
 
-public class Symbol {
+import backend.IValueSetter;
+
+public class Symbol implements IValueSetter {
     String name;
     String rname;
 
@@ -10,10 +12,10 @@ public class Symbol {
 
     Symbol args;
 
-    private Symbol next;
+    private Symbol next = null;
 
-    TypeLink typeLinkBegin;
-    TypeLink typeLinkEnd;
+    TypeLink typeLinkBegin = null;
+    TypeLink typeLinkEnd = null;
 
     private Object value = null;
 
@@ -44,7 +46,10 @@ public class Symbol {
 
     public String getName(){return name;}
 
-    public void setValue(Object obj){this.value = obj;}
+    public void setValue(Object obj){
+        System.out.println("Assign value of "+obj.toString()+" to variable " +name);
+        this.value = obj;
+    }
 
     public Object getValue(){return value;}
 
@@ -58,6 +63,21 @@ public class Symbol {
 
     public TypeLink getTypeLinkBegin(){
         return typeLinkBegin;
+    }
+
+    public Declarator getDeclarator(int type){
+        TypeLink begin = typeLinkBegin;
+        while(begin!=null&&begin.getTypeObject()!=null){
+            if(begin.isDeclarator==true){
+                Declarator declarator = (Declarator) begin.getTypeObject();
+                if(declarator.getDeclareType()==type){
+                    return declarator;
+                }
+            }
+            begin = begin.toNext();
+        }
+
+        return null;
     }
 
     public int getLevel(){return level;}

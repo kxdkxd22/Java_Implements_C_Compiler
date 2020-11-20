@@ -19,14 +19,23 @@ public class NoCommaExprExecutor extends BaseExecutor {
                 break;
             case CGrammarInitializer.NoCommaExpr_Equal_NoCommaExpr_TO_NoCommaExpr:
                 child = root.getChildren().get(0);
-                symbol = (Symbol) child.getAttribute(ICodeKey.SYMBOL);
+                IValueSetter setter;
+                setter = (IValueSetter) child.getAttribute(ICodeKey.SYMBOL);
+
                 child = root.getChildren().get(1);
                 value = child.getAttribute(ICodeKey.VALUE);
-                symbol.setValue(value);
+
+                try {
+                    setter.setValue(value);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    System.err.println("Runtime Error: Assign value Error");
+                }
+
                 child = root.getChildren().get(0);
                 child.setAttribute(ICodeKey.VALUE,value);
                 copy(root,root.getChildren().get(0));
-                System.out.println(" Variable "+(String)root.getAttribute(ICodeKey.TEXT)+" is assigned to value of "+value.toString());
+
                 break;
         }
 

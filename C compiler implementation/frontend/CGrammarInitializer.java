@@ -46,6 +46,9 @@ public class CGrammarInitializer {
     public static final int Binary_Plus_Binary_TO_Binary = 94;
     public static final int LocalDefs_TO_Statement = 68;
 
+    public static final int VarDecl_LB_ConstExpr_RB_TO_VarDecl = 109;
+    public static final int Unary_LB_Expr_RB_TO_Unary = 101;
+
     private int productionNum = 0;
     private static CGrammarInitializer instance = null;
     private HashMap<Integer, ArrayList<Production>> productionMap = new HashMap<Integer, ArrayList<Production>>();
@@ -886,19 +889,76 @@ public class CGrammarInitializer {
         productionNum++;
         addProduction(production,false);
 
-        //UNARY -> UNARY INCOP  (96)
+        //UNARY -> UNARY INCOP  i++(96)
         right = null;
         right = getProductionRight(new int[]{CTokenType.UNARY.ordinal(), CTokenType.INCOP.ordinal()});
         production = new Production(productionNum, CTokenType.UNARY.ordinal(),0,right);
         productionNum++;
         addProduction(production,false);
 
-        //UNARY -> INCOP UNARY  (97)
+        //UNARY -> INCOP UNARY  ++i(97)
         right = null;
         right = getProductionRight(new int[]{CTokenType.INCOP.ordinal(), CTokenType.UNARY.ordinal()});
         production = new Production(productionNum, CTokenType.UNARY.ordinal(),0,right);
         productionNum++;
         addProduction(production,false);
+
+        //UNARY->MINUS UNARY a=-a
+        right = null;
+        right = getProductionRight(new int[]{CTokenType.MINUS.ordinal(), CTokenType.UNARY.ordinal()});
+        production = new Production(productionNum, CTokenType.UNARY.ordinal(),0,right);
+        productionNum++;
+        addProduction(production,false);
+
+        //UNARY->STAR UNARY b=*a
+        right = null;
+        right = getProductionRight(new int[]{CTokenType.STAR.ordinal(), CTokenType.UNARY.ordinal()});
+        production = new Production(productionNum, CTokenType.UNARY.ordinal(),0,right);
+        productionNum++;
+        addProduction(production,false);
+
+        //UNARY->UNARY STRUCTOP NAME a=tag->name
+        right = null;
+        right = getProductionRight(new int[]{CTokenType.UNARY.ordinal(), CTokenType.STRUCTOP.ordinal(),CTokenType.NAME.ordinal()});
+        production = new Production(productionNum, CTokenType.UNARY.ordinal(),0,right);
+        productionNum++;
+        addProduction(production,false);
+
+        //UNARY->UNARY LB EXPR RB b=a[2]
+        right = null;
+        right = getProductionRight(new int[]{CTokenType.UNARY.ordinal(),CTokenType.LB.ordinal(), CTokenType.EXPR.ordinal(),CTokenType.RB.ordinal()});
+        production = new Production(productionNum, CTokenType.UNARY.ordinal(),0,right);
+        productionNum++;
+        addProduction(production,false);
+
+        //UNARY->UNARY LP ARGS RP fun(a,b,c)
+        right = null;
+        right = getProductionRight(new int[]{CTokenType.UNARY.ordinal(), CTokenType.LP.ordinal(),CTokenType.ARGS.ordinal(),CTokenType.RP.ordinal()});
+        production = new Production(productionNum, CTokenType.UNARY.ordinal(),0,right);
+        productionNum++;
+        addProduction(production,false);
+
+        //UNARY->UNARY LP RP fun()
+        right = null;
+        right = getProductionRight(new int[]{CTokenType.UNARY.ordinal(), CTokenType.LP.ordinal(),CTokenType.RP.ordinal()});
+        production = new Production(productionNum, CTokenType.UNARY.ordinal(),0,right);
+        productionNum++;
+        addProduction(production,false);
+
+        //ARGS->NO_COMMA_EXPR
+        right = null;
+        right = getProductionRight(new int[]{CTokenType.NO_COMMA_EXPR.ordinal()});
+        production = new Production(productionNum, CTokenType.ARGS.ordinal(),0,right);
+        productionNum++;
+        addProduction(production,false);
+
+        //ARGS->NO_COMMA_EXPR COMMA ARGS
+        right = null;
+        right = getProductionRight(new int[]{CTokenType.NO_COMMA_EXPR.ordinal(), CTokenType.COMMA.ordinal(),CTokenType.ARGS.ordinal()});
+        production = new Production(productionNum, CTokenType.ARGS.ordinal(),0,right);
+        productionNum++;
+        addProduction(production,false);
+
 
     }
 
@@ -924,6 +984,12 @@ public class CGrammarInitializer {
         productionNum++;
         addProduction(production,false);
 
+        //VAR_DECL->VAR_DECL LB CONST_EXPR RB a[5] (109)
+        right = null;
+        right = getProductionRight(new int[]{CTokenType.VAR_DECL.ordinal(),CTokenType.LB.ordinal(),CTokenType.CONST_EXPR.ordinal(),CTokenType.RB.ordinal()});
+        production = new Production(productionNum,CTokenType.VAR_DECL.ordinal(),0,right);
+        productionNum++;
+        addProduction(production,false);
     }
 
     private void addProduction(Production production, boolean nullable){
