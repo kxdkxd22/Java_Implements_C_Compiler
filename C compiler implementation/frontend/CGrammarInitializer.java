@@ -49,6 +49,11 @@ public class CGrammarInitializer {
     public static final int VarDecl_LB_ConstExpr_RB_TO_VarDecl = 109;
     public static final int Unary_LB_Expr_RB_TO_Unary = 101;
 
+    public static final int Expr_TO_Test = 76;
+    public static final int If_Test_Statement_TO_IFStatement = 72;
+    public static final int Binary_RelOP_Binary_TO_Binary = 65;
+    public static final int IfElseStatement_Else_Statement_TO_IfElseStatement = 74;
+
     private int productionNum = 0;
     private static CGrammarInitializer instance = null;
     private HashMap<Integer, ArrayList<Production>> productionMap = new HashMap<Integer, ArrayList<Production>>();
@@ -955,7 +960,7 @@ public class CGrammarInitializer {
         //ARGS->NO_COMMA_EXPR COMMA ARGS
         right = null;
         right = getProductionRight(new int[]{CTokenType.NO_COMMA_EXPR.ordinal(), CTokenType.COMMA.ordinal(),CTokenType.ARGS.ordinal()});
-        production = new Production(productionNum, CTokenType.ARGS.ordinal(),0,right);
+        production = new Production(productionNum, CTokenType.UNARY.ordinal(),0,right);
         productionNum++;
         addProduction(production,false);
 

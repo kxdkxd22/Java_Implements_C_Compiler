@@ -33,10 +33,10 @@ public class LRStateTableParser {
 
     private Object attributeForParentNode = null;
 
-    Stack<Integer> statusStack = new Stack<Integer>();
+    private Stack<Integer> statusStack = new Stack<Integer>();
 
-    Stack<Integer> parserStack = new Stack<Integer>();
-    Stack<Object> valueStack = new Stack<Object>();
+    private Stack<Integer> parserStack = new Stack<Integer>();
+    private Stack<Object> valueStack = new Stack<Object>();
     HashMap<Integer,HashMap<Integer,Integer>> lrStateTable = null;
 
     CodeTreeBuilder treeBuilder = CodeTreeBuilder.getCodeTreeBuilder();
@@ -53,6 +53,9 @@ public class LRStateTableParser {
         treeBuilder.setParser(this);
        // showCurrentStateInfo(0);
     }
+
+    private String relOperationText;
+    public String getRelOperationText(){return relOperationText;}
 
     private void showCurrentStateInfo(int stateNum){
         System.out.println("current input is: "+ CTokenType.getSymbolStr(lexerInput));
@@ -78,6 +81,9 @@ public class LRStateTableParser {
                 parserStack.push(lexerInput);
 
                 text = lexer.yytext;
+                if(lexerInput==CTokenType.RELOP.ordinal()){
+                    relOperationText = text;
+                }
 
                 if(CTokenType.isTerminal(lexerInput)){
                     System.out.println("Shift for input: "+ CTokenType.values()[lexerInput].toString());

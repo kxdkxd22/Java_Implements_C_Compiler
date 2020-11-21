@@ -9,6 +9,7 @@ public class ICodeNodeImpl extends HashMap<ICodeKey,Object> implements ICodeNode
     private CTokenType type;
     private ICodeNode parent;
     private ArrayList<ICodeNode> children;
+    String name;
 
     public ICodeNodeImpl(CTokenType type){
         this.type = type;
@@ -39,6 +40,9 @@ public class ICodeNodeImpl extends HashMap<ICodeKey,Object> implements ICodeNode
 
     @Override
     public void setAttribute(ICodeKey key, Object value) {
+        if(key==ICodeKey.TEXT){
+            name = (String) value;
+        }
         put(key,value);
     }
 
@@ -62,6 +66,16 @@ public class ICodeNodeImpl extends HashMap<ICodeKey,Object> implements ICodeNode
     }
 
     public String toString(){
-        return type.toString();
+        String info = "";
+        if(get(ICodeKey.VALUE)!=null){
+            info+="Node Value is "+get(ICodeKey.VALUE).toString();
+        }
+        if(get(ICodeKey.TEXT)!=null){
+            info+="\nNode Text is "+get(ICodeKey.TEXT).toString();
+        }
+        if(get(ICodeKey.SYMBOL)!=null){
+            info+="\nNode Symbol is "+get(ICodeKey.SYMBOL).toString();
+        }
+        return info+"\n Node Type is "+type.toString();
     }
 }

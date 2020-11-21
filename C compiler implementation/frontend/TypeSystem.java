@@ -177,4 +177,22 @@ public class TypeSystem {
         }
     }
 
+    public Symbol getSymbolByText(String text,int level){
+        ArrayList<Symbol> symbolList = typeSystem.getSymbol(text);
+        int i = 0;
+        Symbol symbol = null;
+        while(i < symbolList.size()){
+            symbol = symbolList.get(0);
+            if(symbolList.get(i).getLevel()==level){
+                return symbolList.get(i);
+            }else if(symbolList.get(i).getLevel()>=symbol.getLevel()){
+                symbol = symbolList.get(i);
+            }
+
+            i++;
+        }
+
+        return symbol;
+    }
+
 }

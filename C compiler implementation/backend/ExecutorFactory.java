@@ -30,6 +30,12 @@ public class ExecutorFactory {
                  return new StatementExecutor();
              case STMT_LIST:
                  return new StatementListExecutor();
+             case TEST:
+                 return new TestExecutor();
+             case IF_STATEMENT:
+                 return new IfStatementExecutor();
+             case IF_ELSE_STATEMENT:
+                 return new ElseStatementExecutor();
          }
 
          return null;

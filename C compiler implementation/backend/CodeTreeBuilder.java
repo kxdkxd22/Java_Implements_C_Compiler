@@ -21,6 +21,7 @@ public class CodeTreeBuilder {
     public void setParser(LRStateTableParser parser){
         this.parser = parser;
         typeSystem = parser.getTypeSystem();
+
     }
 
     public ICodeNode buildCodeTree(int production,String text){
@@ -33,7 +34,7 @@ public class CodeTreeBuilder {
             case CGrammarInitializer.String_TO_Unary:
                 node = ICodeFactory.createICodeNode(CTokenType.UNARY);
                 if(production == CGrammarInitializer.Name_TO_Unary){
-                    symbol = getSymbolByText(text);
+                    symbol = typeSystem.getSymbolByText(text,parser.getCurrentLevel());
                     node.setAttribute(ICodeKey.SYMBOL,symbol);
                 }
                 node.setAttribute(ICodeKey.TEXT,text);
@@ -60,6 +61,15 @@ public class CodeTreeBuilder {
                 node = ICodeFactory.createICodeNode(CTokenType.BINARY);
 
                 node.addChild(codeNodeStack.pop());
+                node.addChild(codeNodeStack.pop());
+                break;
+
+            case CGrammarInitializer.Binary_RelOP_Binary_TO_Binary:
+                node = ICodeFactory.createICodeNode(CTokenType.BINARY);
+                node.addChild(codeNodeStack.pop());
+                ICodeNode operator = ICodeFactory.createICodeNode(CTokenType.RELOP);
+                operator.setAttribute(ICodeKey.TEXT,parser.getRelOperationText());
+                node.addChild(operator);
                 node.addChild(codeNodeStack.pop());
                 break;
             case CGrammarInitializer.NoCommaExpr_TO_Expr:
@@ -89,6 +99,20 @@ public class CodeTreeBuilder {
                 node.addChild(codeNodeStack.pop());
                 node.addChild(codeNodeStack.pop());
                 break;
+            case CGrammarInitializer.Expr_TO_Test:
+                node = ICodeFactory.createICodeNode(CTokenType.TEST);
+                node.addChild(codeNodeStack.pop());
+                break;
+            case CGrammarInitializer.If_Test_Statement_TO_IFStatement:
+                node = ICodeFactory.createICodeNode(CTokenType.IF_STATEMENT);
+                node.addChild(codeNodeStack.pop());//statement
+                node.addChild(codeNodeStack.pop());//test
+                break;
+            case CGrammarInitializer.IfElseStatement_Else_Statement_TO_IfElseStatement:
+                node = ICodeFactory.createICodeNode(CTokenType.IF_ELSE_STATEMENT);
+                node.addChild(codeNodeStack.pop());//statement
+                node.addChild(codeNodeStack.pop());//Ifstatement
+                break;
         }
 
         if(node!=null){
@@ -99,18 +123,7 @@ public class CodeTreeBuilder {
         return node;
     }
 
-    private Symbol getSymbolByText(String text){
-        ArrayList<Symbol> symbolList = typeSystem.getSymbol(text);
-        int i = 0;
-        int level = parser.getCurrentLevel();
-        while(i < symbolList.size()){
-            if(symbolList.get(i).getLevel()==level){
-                return symbolList.get(i);
-            }
-        }
 
-        return null;
-    }
 
     public ICodeNode getCodeTreeRoot(){
         return codeNodeStack.pop();
