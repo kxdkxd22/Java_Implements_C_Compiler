@@ -960,7 +960,7 @@ public class CGrammarInitializer {
         //ARGS->NO_COMMA_EXPR COMMA ARGS
         right = null;
         right = getProductionRight(new int[]{CTokenType.NO_COMMA_EXPR.ordinal(), CTokenType.COMMA.ordinal(),CTokenType.ARGS.ordinal()});
-        production = new Production(productionNum, CTokenType.UNARY.ordinal(),0,right);
+        production = new Production(productionNum, CTokenType.ARGS.ordinal(),0,right);
         productionNum++;
         addProduction(production,false);
 
