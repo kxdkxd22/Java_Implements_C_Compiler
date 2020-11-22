@@ -34,8 +34,10 @@ public class TypeSystem {
         return structTable.get(name);
     }
 
-    public void addSymbolsToTable(Symbol headSymbol){
+    public void addSymbolsToTable(Symbol headSymbol,String scope){
         while(headSymbol!=null){
+            headSymbol.addScope(scope);
+
             ArrayList<Symbol> symbolList = symbolTable.get(headSymbol.name);
             if(symbolList==null){
                 symbolList = new ArrayList<Symbol>();

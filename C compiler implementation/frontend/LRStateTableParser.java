@@ -14,6 +14,8 @@ public class LRStateTableParser {
     private String[] names = new String[]{"t0","t1","t2","t3","t4","t5","t6","t7"};
     private int curName = 0;
     private TypeSystem typeSystem = TypeSystem.getTypeSystem();
+    public static final String GLOBAL_SCOPE = "global";
+    public String symbolScope = GLOBAL_SCOPE;
 
     public String new_name(){
         if(curName >= names.length){
@@ -173,13 +175,13 @@ public class LRStateTableParser {
                 Symbol symbol = (Symbol) attributeForParentNode;
                 TypeLink link = (TypeLink) valueStack.get(valueStack.size()-3);
                 typeSystem.addSpecifierToDeclarator(link,symbol);
-                typeSystem.addSymbolsToTable(symbol);
+                typeSystem.addSymbolsToTable(symbol,symbolScope);
                 break;
             case CGrammarInitializer.TypeNT_VarDecl_TO_ParamDeclaration:
                 Symbol symbol1 = (Symbol) attributeForParentNode;
                 TypeLink link1 = (TypeLink) valueStack.get(valueStack.size()-2);
                 typeSystem.addSpecifierToDeclarator(link1,symbol1);
-                typeSystem.addSymbolsToTable(symbol1);
+                typeSystem.addSymbolsToTable(symbol1,symbolScope);
                 break;
             case CGrammarInitializer.VarDecl_Equal_Intializer_TO_Decl:
                 attributeForParentNode = (Symbol) valueStack.get(valueStack.size()-2);
@@ -187,10 +189,19 @@ public class LRStateTableParser {
             case CGrammarInitializer.NewName_LP_VarList_RP_TO_FunctDecl:
                 setFunctionSymbol(true);
                 Symbol argList = (Symbol) valueStack.get(valueStack.size()-2);
+                typeSystem.addSymbolsToTable((Symbol) attributeForParentNode,symbolScope);
                 ((Symbol)attributeForParentNode).args = argList;
+                symbolScope = ((Symbol)attributeForParentNode).getName();
+                Symbol sym = argList;
+                while(sym!=null){
+                    sym.addScope(symbolScope);
+                    sym=sym.getNextSymbol();
+                }
                 break;
             case CGrammarInitializer.NewName_LP_RP_TO_FunctDecl:
                 setFunctionSymbol(false);
+                typeSystem.addSymbolsToTable((Symbol) attributeForParentNode,symbolScope);
+                symbolScope = ((Symbol)attributeForParentNode).getName();
                 break;
 
             case CGrammarInitializer.Name_TO_Tag:
@@ -250,7 +261,7 @@ public class LRStateTableParser {
                 symbol = (Symbol) valueStack.get(valueStack.size()-2);
                 TypeLink link2 = (TypeLink) valueStack.get(valueStack.size()-3);
                 typeSystem.addSpecifierToDeclarator(link2,symbol);
-                typeSystem.addSymbolsToTable(symbol);
+                symbolScope = GLOBAL_SCOPE;
                 break;
         }
 
@@ -261,7 +272,7 @@ public class LRStateTableParser {
     private void doEnum(){
         Symbol symbol = (Symbol)attributeForParentNode;
         if(convSymToIntConst(symbol,enumVal)){
-            typeSystem.addSymbolsToTable(symbol);
+            typeSystem.addSymbolsToTable(symbol,symbolScope);
             enumVal++;
         }else{
             System.err.println("enum symbol redefinition: "+symbol.name);

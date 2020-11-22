@@ -19,6 +19,20 @@ public class Symbol implements IValueSetter {
 
     private Object value = null;
 
+    private String symbolScope = LRStateTableParser.GLOBAL_SCOPE;
+
+    public void addScope(String scope){
+        this.symbolScope = scope;
+    }
+
+    public boolean equals(Symbol symbol){
+        if(this.getLevel()==symbol.getLevel()&&this.symbolScope.equals(symbol.symbolScope)&&this.name.equals(symbol.name)){
+            return true;
+        }
+
+        return false;
+    }
+
     public Symbol(String name,int level){
         this.name = name;
         this.level = level;
