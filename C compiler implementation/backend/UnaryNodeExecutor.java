@@ -70,6 +70,16 @@ public class UnaryNodeExecutor extends BaseExecutor {
                 }
 
                 break;
+
+            case CGrammarInitializer.Unary_LP_RP_TO_Unary:
+                String funcName = (String) root.getChildren().get(0).getAttribute(ICodeKey.TEXT);
+                ICodeNode func = CodeTreeBuilder.getCodeTreeBuilder().getFunctionNodeByName(funcName);
+
+                if(func!=null){
+                    Executor executor = ExecutorFactory.getExecutorFactory().getExecutor(func);
+                    executor.Execute(func);
+                }
+                break;
         }
         return root;
     }

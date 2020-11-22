@@ -3,12 +3,15 @@ package backend;
 import frontend.*;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Stack;
 
 public class CodeTreeBuilder {
     private Stack<ICodeNode> codeNodeStack = new Stack<ICodeNode>();
     private LRStateTableParser parser = null;
     private TypeSystem typeSystem = null;
+    private HashMap<String,ICodeNode> funcMap = new HashMap<String,ICodeNode>();
+    private String functionName;
 
     private static CodeTreeBuilder treeBuilder = null;
     public static CodeTreeBuilder getCodeTreeBuilder(){
@@ -17,6 +20,8 @@ public class CodeTreeBuilder {
         }
         return treeBuilder;
     }
+
+    public ICodeNode getFunctionNodeByName(String name){return funcMap.get(name);}
 
     public void setParser(LRStateTableParser parser){
         this.parser = parser;
@@ -136,7 +141,34 @@ public class CodeTreeBuilder {
                 node = ICodeFactory.createICodeNode(CTokenType.END_OPT_EXPR);
                 node.addChild(codeNodeStack.pop());
                 break;
+            case CGrammarInitializer.LocalDefs_StmtList_TO_CompoundStmt:
+                node = ICodeFactory.createICodeNode(CTokenType.COMPOUND_STMT);
+                node.addChild(codeNodeStack.pop());
+                break;
+            case CGrammarInitializer.NewName_LP_RP_TO_FunctDecl:
+                node = ICodeFactory.createICodeNode(CTokenType.FUNCT_DECL);
+                node.addChild(codeNodeStack.pop());
+                child = node.getChildren().get(0);
+                functionName = (String) child.getAttribute(ICodeKey.TEXT);
+                break;
 
+            case CGrammarInitializer.NewName_TO_VarDecl:
+                codeNodeStack.pop();
+                break;
+            case CGrammarInitializer.NAME_TO_NewName:
+                node = ICodeFactory.createICodeNode(CTokenType.NEW_NAME);
+                node.setAttribute(ICodeKey.TEXT,text);
+                break;
+            case CGrammarInitializer.OptSpecifiers_FunctDecl_CompoundStmt_TO_ExtDef:
+                node = ICodeFactory.createICodeNode(CTokenType.EXT_DEF);
+                node.addChild(codeNodeStack.pop());
+                node.addChild(codeNodeStack.pop());
+                funcMap.put(functionName,node);
+                break;
+            case CGrammarInitializer.Unary_LP_RP_TO_Unary:
+                node = ICodeFactory.createICodeNode(CTokenType.UNARY);
+                node.addChild(codeNodeStack.pop());
+                break;
         }
 
         if(node!=null){
@@ -150,7 +182,8 @@ public class CodeTreeBuilder {
 
 
     public ICodeNode getCodeTreeRoot(){
-        return codeNodeStack.pop();
+        ICodeNode mainNode = funcMap.get("main");
+        return mainNode;
     }
 
 }

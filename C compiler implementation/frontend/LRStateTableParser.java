@@ -246,6 +246,12 @@ public class LRStateTableParser {
                 declarator.setElementNum(arrayNum);
                 attributeForParentNode = valueStack.get(valueStack.size()-4);
                 break;
+            case CGrammarInitializer.OptSpecifiers_FunctDecl_CompoundStmt_TO_ExtDef:
+                symbol = (Symbol) valueStack.get(valueStack.size()-2);
+                TypeLink link2 = (TypeLink) valueStack.get(valueStack.size()-3);
+                typeSystem.addSpecifierToDeclarator(link2,symbol);
+                typeSystem.addSymbolsToTable(symbol);
+                break;
         }
 
         treeBuilder.buildCodeTree(productNum,text);

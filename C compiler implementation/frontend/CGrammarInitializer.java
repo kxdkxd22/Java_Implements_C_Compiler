@@ -72,6 +72,9 @@ public class CGrammarInitializer {
     public final static int DefList_TO_LocalDefs = 52;
     public final static int NewName_TO_VarDecl = 13;
 
+    public final static int LocalDefs_StmtList_TO_CompoundStmt = 51;
+    public final static int OptSpecifiers_FunctDecl_CompoundStmt_TO_ExtDef = 50;
+    public static final int Unary_LP_RP_TO_Unary = 103;
 
     private int productionNum = 0;
     private static CGrammarInitializer instance = null;
