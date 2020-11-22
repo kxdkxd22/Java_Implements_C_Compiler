@@ -39,6 +39,10 @@ public class CodeTreeBuilder {
                 }
                 node.setAttribute(ICodeKey.TEXT,text);
                 break;
+            case CGrammarInitializer.Unary_Incop_TO_Unary:
+                node = ICodeFactory.createICodeNode(CTokenType.UNARY);
+                node.addChild(codeNodeStack.pop());
+                break;
             case CGrammarInitializer.Unary_TO_binary:
                 node = ICodeFactory.createICodeNode(CTokenType.BINARY);
                 ICodeNode child = codeNodeStack.pop();
@@ -77,6 +81,7 @@ public class CodeTreeBuilder {
                 node.addChild(codeNodeStack.pop());
                 break;
             case CGrammarInitializer.Expr_Semi_TO_Statement:
+            case CGrammarInitializer.CompountStmt_TO_Statement:
                 node = ICodeFactory.createICodeNode(CTokenType.STATEMENT);
                 node.addChild(codeNodeStack.pop());
                 break;
@@ -88,6 +93,13 @@ public class CodeTreeBuilder {
                 if(codeNodeStack.size()>0){
                     node.addChild(codeNodeStack.pop());
                 }
+                break;
+            case CGrammarInitializer.FOR_OptExpr_Test_EndOptExpr_Statement_TO_Statement:
+                node = ICodeFactory.createICodeNode(CTokenType.STATEMENT);
+                node.addChild(codeNodeStack.pop());
+                node.addChild(codeNodeStack.pop());
+                node.addChild(codeNodeStack.pop());
+                node.addChild(codeNodeStack.pop());
                 break;
             case CGrammarInitializer.StmtList_Statement_TO_StmtList:
                 node = ICodeFactory.createICodeNode(CTokenType.STMT_LIST);
@@ -113,6 +125,18 @@ public class CodeTreeBuilder {
                 node.addChild(codeNodeStack.pop());//statement
                 node.addChild(codeNodeStack.pop());//Ifstatement
                 break;
+            case CGrammarInitializer.Expr_Semi_TO_OptExpr:
+            case CGrammarInitializer.Semi_TO_OptExpr:
+                node = ICodeFactory.createICodeNode(CTokenType.OPT_EXPR);
+                if(production == CGrammarInitializer.Expr_Semi_TO_OptExpr){
+                    node.addChild(codeNodeStack.pop());
+                }
+                break;
+            case CGrammarInitializer.Expr_TO_EndOpt:
+                node = ICodeFactory.createICodeNode(CTokenType.END_OPT_EXPR);
+                node.addChild(codeNodeStack.pop());
+                break;
+
         }
 
         if(node!=null){

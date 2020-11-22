@@ -54,6 +54,25 @@ public class CGrammarInitializer {
     public static final int Binary_RelOP_Binary_TO_Binary = 65;
     public static final int IfElseStatement_Else_Statement_TO_IfElseStatement = 74;
 
+    //OPT_EXPR->EXPR SEMI (85)
+    public final static int Expr_Semi_TO_OptExpr = 85;
+    //OPT_EXPR->SEMI (86)
+    public final static int Semi_TO_OptExpr = 86;
+    //END_OPT_EXPR->EXPR (87)
+    public final static int Expr_TO_EndOpt = 87;
+    //STATEMENT->FOR LP OPT_EXPR TEST SEMI END_OPT_EXPR RP STATEMENT (84)
+    public final static int FOR_OptExpr_Test_EndOptExpr_Statement_TO_Statement = 84;
+
+    public final static int Unary_Incop_TO_Unary = 96;
+    public final static int Incop_Unary_TO_Unary = 97;
+    public final static int CompountStmt_TO_Statement = 71;
+
+    public final static int VarDecl_Equal_Intializer_TO_Decl = 77;
+    public final static int Expr_TO_Initializer = 78;
+    public final static int DefList_TO_LocalDefs = 52;
+    public final static int NewName_TO_VarDecl = 13;
+
+
     private int productionNum = 0;
     private static CGrammarInitializer instance = null;
     private HashMap<Integer, ArrayList<Production>> productionMap = new HashMap<Integer, ArrayList<Production>>();

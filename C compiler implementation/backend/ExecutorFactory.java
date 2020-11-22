@@ -36,6 +36,12 @@ public class ExecutorFactory {
                  return new IfStatementExecutor();
              case IF_ELSE_STATEMENT:
                  return new ElseStatementExecutor();
+             case OPT_EXPR:
+                 return new OptExprExecutor();
+             case END_OPT_EXPR:
+                 return new EndOptExecutor();
+             case INITIALIZER:
+                 return new InitializerExecutor();
          }
 
          return null;

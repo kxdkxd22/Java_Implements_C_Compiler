@@ -57,6 +57,19 @@ public class UnaryNodeExecutor extends BaseExecutor {
                     System.exit(1);
                 }
                 break;
+            case CGrammarInitializer.Unary_Incop_TO_Unary:
+                symbol = (Symbol) root.getChildren().get(0).getAttribute(ICodeKey.SYMBOL);
+                Integer val = (Integer) symbol.getValue();
+                IValueSetter setter = (IValueSetter) symbol;
+
+                try {
+                    setter.setValue(val+1);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    System.err.println("Runtime Error: Assign Value Error");
+                }
+
+                break;
         }
         return root;
     }

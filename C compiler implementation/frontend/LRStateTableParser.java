@@ -181,6 +181,9 @@ public class LRStateTableParser {
                 typeSystem.addSpecifierToDeclarator(link1,symbol1);
                 typeSystem.addSymbolsToTable(symbol1);
                 break;
+            case CGrammarInitializer.VarDecl_Equal_Intializer_TO_Decl:
+                attributeForParentNode = (Symbol) valueStack.get(valueStack.size()-2);
+                break;
             case CGrammarInitializer.NewName_LP_VarList_RP_TO_FunctDecl:
                 setFunctionSymbol(true);
                 Symbol argList = (Symbol) valueStack.get(valueStack.size()-2);

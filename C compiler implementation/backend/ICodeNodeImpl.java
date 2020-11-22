@@ -10,6 +10,7 @@ public class ICodeNodeImpl extends HashMap<ICodeKey,Object> implements ICodeNode
     private ICodeNode parent;
     private ArrayList<ICodeNode> children;
     String name;
+    private boolean isChildrenReverse = false;
 
     public ICodeNodeImpl(CTokenType type){
         this.type = type;
@@ -63,6 +64,21 @@ public class ICodeNodeImpl extends HashMap<ICodeKey,Object> implements ICodeNode
         }
 
         return copy;
+    }
+
+    @Override
+    public boolean isChildrenReverse() {
+        return isChildrenReverse;
+    }
+
+    @Override
+    public void reverseChildren() {
+        if(isChildrenReverse == true){
+            return;
+        }
+
+        Collections.reverse(this.getChildren());
+        isChildrenReverse = true;
     }
 
     public String toString(){

@@ -16,4 +16,7 @@ public interface ICodeNode {
 
     public ICodeNode copy();
 
+    public boolean isChildrenReverse();
+
+    public void reverseChildren();
 }

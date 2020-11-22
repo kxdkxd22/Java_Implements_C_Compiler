@@ -5,7 +5,8 @@ import java.util.Collections;
 public abstract class BaseExecutor implements Executor{
     protected void executeChildren(ICodeNode root){
         ExecutorFactory factory = ExecutorFactory.getExecutorFactory();
-        Collections.reverse(root.getChildren());
+        //Collections.reverse(root.getChildren());
+        root.reverseChildren();
         int i = 0;
         while(i<root.getChildren().size()){
             ICodeNode child = root.getChildren().get(i);
@@ -27,13 +28,14 @@ public abstract class BaseExecutor implements Executor{
     }
 
     protected ICodeNode executeChild(ICodeNode root,int childIndex){
-        Collections.reverse(root.getChildren());
+        //Collections.reverse(root.getChildren());
+        root.reverseChildren();
         ICodeNode child;
         child = root.getChildren().get(childIndex);
         ExecutorFactory factory = ExecutorFactory.getExecutorFactory();
         Executor executor =  factory.getExecutor(child);
         ICodeNode res= (ICodeNode) executor.Execute(child);
-        Collections.reverse(root.getChildren());
+        //Collections.reverse(root.getChildren());
 
         return res;
     }
