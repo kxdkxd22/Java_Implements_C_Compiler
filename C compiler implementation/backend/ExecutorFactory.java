@@ -16,6 +16,9 @@ public class ExecutorFactory {
      }
 
      public Executor getExecutor(ICodeNode root){
+         if(root==null){
+             return null;
+         }
          CTokenType type = (CTokenType) root.getAttribute(ICodeKey.TokenType);
          switch (type){
              case UNARY:
@@ -48,6 +51,8 @@ public class ExecutorFactory {
                  return new ExtDefExecutor();
              case FUNCT_DECL:
                  return new FunctDeclExecutor();
+             case ARGS:
+                 return new ArgsExecutor();
          }
 
          return null;

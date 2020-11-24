@@ -1,4 +1,5 @@
 package backend;
+
 import frontend.CGrammarInitializer;
 
 import java.util.Collections;

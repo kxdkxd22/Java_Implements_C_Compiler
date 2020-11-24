@@ -25,6 +25,8 @@ public class Symbol implements IValueSetter {
         this.symbolScope = scope;
     }
 
+    public Symbol getArgList(){return args;}
+
     public boolean equals(Symbol symbol){
         if(this.getLevel()==symbol.getLevel()&&this.symbolScope.equals(symbol.symbolScope)&&this.name.equals(symbol.name)){
             return true;

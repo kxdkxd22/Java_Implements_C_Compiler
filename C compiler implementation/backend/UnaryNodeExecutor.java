@@ -1,8 +1,10 @@
 package backend;
 
+import frontend.CGrammarInitializer;
 import frontend.Declarator;
 import frontend.Symbol;
-import frontend.CGrammarInitializer;
+
+import java.util.ArrayList;
 
 public class UnaryNodeExecutor extends BaseExecutor {
     @Override
@@ -72,7 +74,15 @@ public class UnaryNodeExecutor extends BaseExecutor {
                 break;
 
             case CGrammarInitializer.Unary_LP_RP_TO_Unary:
+            case CGrammarInitializer.Unary_LP_ARGS_RP_TO_Unary:
+
                 String funcName = (String) root.getChildren().get(0).getAttribute(ICodeKey.TEXT);
+                if(production== CGrammarInitializer.Unary_LP_ARGS_RP_TO_Unary){
+                    ICodeNode argsNode = root.getChildren().get(1);
+                    ArrayList<Object> argList = (ArrayList<Object>) argsNode.getAttribute(ICodeKey.VALUE);
+                    FunctionArgumentList.getFunctionArgumentList().setFuncArgList(argList);
+                }
+
                 ICodeNode func = CodeTreeBuilder.getCodeTreeBuilder().getFunctionNodeByName(funcName);
 
                 if(func!=null){
@@ -80,6 +90,7 @@ public class UnaryNodeExecutor extends BaseExecutor {
                     executor.Execute(func);
                 }
                 break;
+
         }
         return root;
     }

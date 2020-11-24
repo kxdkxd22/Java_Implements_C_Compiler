@@ -1,114 +1,12 @@
-package frontend;
+package backend;
+
+import frontend.CTokenType;
+import frontend.Production;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
-public class CGrammarInitializer {
-    public static final int TYPE_TO_TYPE_SPECIFIER = 11;
-   // public static final int CLASS_TO_TypeOrClass = 11;
-    public static final int SPECIFIERS_TypeOrClass_TO_SPECIFIERS = 9;
-    public static final int NAME_TO_NewName = 12;
-    public static final int START_VarDecl_TO_VarDecl = 14;
-    public static final int ExtDeclList_COMMA_ExtDecl_TO_EXTDecllist = 5;
-    public static final int OptSpecifier_ExtDeclList_Semi_TO_ExtDef = 2;
-
-    public static final int TypeNT_VarDecl_TO_ParamDeclaration = 20;
-    public static final int VarList_COMMA_ParamDeclaration_TO_VarList = 19;
-    public static final int NewName_LP_VarList_RP_TO_FunctDecl = 16;
-    public static final int NewName_LP_RP_TO_FunctDecl = 17;
-
-    public static final int Start_VarDecl_TO_VarDecl = 39;
-    public static final int DeclList_Comma_Decl_TO_DeclList = 33;
-    public static final int Specifiers_DeclList_Semi_TO_Def = 30;
-    public static final int DefList_Def_TO_DefList = 29;
-    public static final int Name_TO_Tag = 27;
-    public static final int Struct_OptTag_LC_DefList_RC_TO_StructSpecifier = 24;
-    public static final int StructSpecifier_TO_TypeSpecifier = 23;
-
-    public static final int Enum_TO_EnumNT = 41;
-    public static final int NameNT_TO_Enumerator = 44;
-    public static final int Name_TO_NameNT = 45;
-    public static final int Name_Equal_ConstExpr_TO_Enumerator = 46;
-    public static final int Number_TO_ConstExpr = 47;
-    public static final int EnumSpecifier_TO_TypeSpecifier = 49;
-
-    public static final int NoCommaExpr_TO_Expr = 53;
-    public static final int NoCommaExpr_Equal_NoCommaExpr_TO_NoCommaExpr = 54;
-    public static final int Binary_TO_NoCommaExpr = 56;
-    public static final int Unary_TO_binary = 57;
-    public static final int Number_TO_Unary = 58;
-    public static final int Name_TO_Unary = 59;
-    public static final int String_TO_Unary = 60;
-
-    public static final int Expr_Semi_TO_Statement = 63;
-    public static final int Statement_TO_StmtList = 62;
-    public static final int StmtList_Statement_TO_StmtList = 61;
-    public static final int Binary_Plus_Binary_TO_Binary = 94;
-    public static final int LocalDefs_TO_Statement = 68;
-
-    public static final int VarDecl_LB_ConstExpr_RB_TO_VarDecl = 109;
-    public static final int Unary_LB_Expr_RB_TO_Unary = 101;
-
-    public static final int Expr_TO_Test = 76;
-    public static final int If_Test_Statement_TO_IFStatement = 72;
-    public static final int Binary_RelOP_Binary_TO_Binary = 65;
-    public static final int IfElseStatement_Else_Statement_TO_IfElseStatement = 74;
-
-    //OPT_EXPR->EXPR SEMI (85)
-    public final static int Expr_Semi_TO_OptExpr = 85;
-    //OPT_EXPR->SEMI (86)
-    public final static int Semi_TO_OptExpr = 86;
-    //END_OPT_EXPR->EXPR (87)
-    public final static int Expr_TO_EndOpt = 87;
-    //STATEMENT->FOR LP OPT_EXPR TEST SEMI END_OPT_EXPR RP STATEMENT (84)
-    public final static int FOR_OptExpr_Test_EndOptExpr_Statement_TO_Statement = 84;
-
-    public final static int Unary_Incop_TO_Unary = 96;
-    public final static int Incop_Unary_TO_Unary = 97;
-    public final static int CompountStmt_TO_Statement = 71;
-
-    public final static int VarDecl_Equal_Intializer_TO_Decl = 77;
-    public final static int Expr_TO_Initializer = 78;
-    public final static int DefList_TO_LocalDefs = 52;
-    public final static int NewName_TO_VarDecl = 13;
-
-    public final static int LocalDefs_StmtList_TO_CompoundStmt = 51;
-    public final static int OptSpecifiers_FunctDecl_CompoundStmt_TO_ExtDef = 50;
-    public static final int Unary_LP_RP_TO_Unary = 103;
-
-    public static final int Unary_LP_ARGS_RP_TO_Unary = 102;
-    public static final int NoCommaExpr_TO_Args = 104;
-    public static final int NoCommaExpr_Comma_Args_TO_Args = 105;
-
-    private int productionNum = 0;
-    private static CGrammarInitializer instance = null;
-    private HashMap<Integer, ArrayList<Production>> productionMap = new HashMap<Integer, ArrayList<Production>>();
-    private HashMap<Integer, Symbols> symbolMap = new HashMap<Integer, Symbols>();
-    private ArrayList<Symbols> symbolArray = new ArrayList<Symbols>();
-
-    public static CGrammarInitializer getInstance(){
-        if(instance==null){
-            instance = new CGrammarInitializer();
-        }
-        return instance;
-    }
-
-    private CGrammarInitializer(){
-        initVariableDecalationProduction();
-        initFunctionProductions();
-        initStructureProductions();
-        initEmunProductions();
-        initFunctionDefinition();
-        initFunctionDefinition2();
-        initFunctionDefinitionWithIfElse();
-        initFunctionDefinitionWithSwitchCase();
-        initFunctionDefinitionWithLoop();
-        initComputingOperation();
-        initRemaindingProduction();
-        addTerminalToSymbolMapArray();
-    }
-
-    public void initVariableDecalationProduction(){
+public class bak {
+   public void initVariableDecalationProduction(){
 
         productionMap.clear();
 
@@ -986,6 +884,7 @@ public class CGrammarInitializer {
 
 
     }
+
     private void initRemaindingProduction(){
         //STATEMENT -> TARGET COLON STATEMENT
         ArrayList<Integer> right = null;
@@ -1020,62 +919,6 @@ public class CGrammarInitializer {
         production = new Production(productionNum,CTokenType.COMPOUND_STMT.ordinal(),0,right);
         productionNum++;
         addProduction(production,false);
-    }
-
-    public HashMap<Integer, ArrayList<Production>> getProductionMap(){return productionMap;}
-
-    public HashMap<Integer, Symbols> getSymbolMap(){return symbolMap;}
-
-    public ArrayList<Symbols> getSymbolArray(){return symbolArray;}
-
-
-    private void addProduction(Production production, boolean nullable){
-        ArrayList<Production> productionList = productionMap.get(production.getLeft());
-        if(productionList==null){
-            productionList = new ArrayList<Production>();
-            productionMap.put(production.getLeft(),productionList);
-        }
-
-        if(productionList.contains(production)==false){
-            productionList.add(production);
-        }
-
-        addSymbolMapAndArray(production,nullable);
-    }
-
-    private void addSymbolMapAndArray(Production production, boolean nullable){
-        int[] right = new int[production.getRight().size()];
-        for(int i = 0; i < production.getRight().size(); i++){
-            right[i] = production.getRight().get(i);
-        }
-
-        if(symbolMap.containsKey(production.getLeft())){
-            symbolMap.get(production.getLeft()).addProduction(right);
-        }else{
-            ArrayList<int[]> productions = new ArrayList<int[]>();
-            productions.add(right);
-            Symbols symbol = new Symbols(production.getLeft(),nullable,productions);
-
-            symbolMap.put(production.getLeft(),symbol);
-            symbolArray.add(symbol);
-        }
-
-    }
-
-    private void addTerminalToSymbolMapArray(){
-        for(int i = CTokenType.FIRST_TERMINAL_INDEX; i <= CTokenType.LAST_TERMINAL_INDEX; i++){
-            Symbols symbol = new Symbols(i,false,null);
-            symbolMap.put(i,symbol);
-            symbolArray.add(symbol);
-        }
-    }
-
-    private ArrayList<Integer> getProductionRight(int[] arr){
-        ArrayList<Integer> right = new ArrayList<Integer>();
-        for(int i = 0; i < arr.length; i++){
-            right.add(arr[i]);
-        }
-        return right;
     }
 
 }

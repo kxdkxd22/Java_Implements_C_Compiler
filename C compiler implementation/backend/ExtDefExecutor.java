@@ -1,6 +1,6 @@
 package backend;
+
 import frontend.CGrammarInitializer;
-import frontend.CTokenType;
 
 public class ExtDefExecutor extends BaseExecutor {
     @Override

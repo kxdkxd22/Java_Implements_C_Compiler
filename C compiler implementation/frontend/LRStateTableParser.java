@@ -179,7 +179,7 @@ public class LRStateTableParser {
                 break;
             case CGrammarInitializer.TypeNT_VarDecl_TO_ParamDeclaration:
                 Symbol symbol1 = (Symbol) attributeForParentNode;
-                TypeLink link1 = (TypeLink) valueStack.get(valueStack.size()-2);
+                TypeLink link1 = (TypeLink) valueStack.get(valueStack.size()-3);
                 typeSystem.addSpecifierToDeclarator(link1,symbol1);
                 typeSystem.addSymbolsToTable(symbol1,symbolScope);
                 break;
@@ -189,8 +189,9 @@ public class LRStateTableParser {
             case CGrammarInitializer.NewName_LP_VarList_RP_TO_FunctDecl:
                 setFunctionSymbol(true);
                 Symbol argList = (Symbol) valueStack.get(valueStack.size()-2);
-                typeSystem.addSymbolsToTable((Symbol) attributeForParentNode,symbolScope);
                 ((Symbol)attributeForParentNode).args = argList;
+                typeSystem.addSymbolsToTable((Symbol) attributeForParentNode,symbolScope);
+
                 symbolScope = ((Symbol)attributeForParentNode).getName();
                 Symbol sym = argList;
                 while(sym!=null){
@@ -229,7 +230,7 @@ public class LRStateTableParser {
                 TypeLink typeLink = (TypeLink) attributeForParentNode;
                 Specifier specifier = (Specifier) typeLink.getTypeObject();
                 specifier.setType(Specifier.STRUCTURE);
-                StructDefine structDefine = (StructDefine) valueStack.get(0);
+                StructDefine structDefine = (StructDefine) valueStack.get(valueStack.size()-1);
                 specifier.setStructObj(structDefine);
                 break;
             case CGrammarInitializer.Enum_TO_EnumNT:
@@ -262,6 +263,9 @@ public class LRStateTableParser {
                 TypeLink link2 = (TypeLink) valueStack.get(valueStack.size()-3);
                 typeSystem.addSpecifierToDeclarator(link2,symbol);
                 symbolScope = GLOBAL_SCOPE;
+                break;
+            case CGrammarInitializer.Name_TO_Unary:
+                attributeForParentNode = typeSystem.getSymbolByText(text,nestingLevel);
                 break;
         }
 

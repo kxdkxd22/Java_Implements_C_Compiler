@@ -1,5 +1,4 @@
 package backend;
-import frontend.CGrammarInitializer;
 
 public class CompoundStmtExecutor extends BaseExecutor {
     @Override

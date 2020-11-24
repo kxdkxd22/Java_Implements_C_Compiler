@@ -49,6 +49,9 @@ public class FirstSetBuilder {
     private void addSymbolFirstSet(Symbols symbol){
 
         if(isSymbolTerminals(symbol.value)==true){
+            if (symbol.firstSet.contains(symbol.value) == false) {
+                symbol.firstSet.add(symbol.value);
+            }
             return;
         }
 

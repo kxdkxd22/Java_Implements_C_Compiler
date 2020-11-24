@@ -2,7 +2,6 @@ package backend;
 
 import frontend.*;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Stack;
 
@@ -146,10 +145,12 @@ public class CodeTreeBuilder {
                 node.addChild(codeNodeStack.pop());
                 break;
             case CGrammarInitializer.NewName_LP_RP_TO_FunctDecl:
+            case CGrammarInitializer.NewName_LP_VarList_RP_TO_FunctDecl:
                 node = ICodeFactory.createICodeNode(CTokenType.FUNCT_DECL);
                 node.addChild(codeNodeStack.pop());
                 child = node.getChildren().get(0);
                 functionName = (String) child.getAttribute(ICodeKey.TEXT);
+                assignSymbolToNode(node,functionName);
                 break;
 
             case CGrammarInitializer.NewName_TO_VarDecl:
@@ -169,6 +170,20 @@ public class CodeTreeBuilder {
                 node = ICodeFactory.createICodeNode(CTokenType.UNARY);
                 node.addChild(codeNodeStack.pop());
                 break;
+            case CGrammarInitializer.NoCommaExpr_TO_Args:
+                node = ICodeFactory.createICodeNode(CTokenType.ARGS);
+                node.addChild(codeNodeStack.pop());
+                break;
+            case CGrammarInitializer.NoCommaExpr_Comma_Args_TO_Args:
+                node = ICodeFactory.createICodeNode(CTokenType.ARGS);
+                node.addChild(codeNodeStack.pop());
+                node.addChild(codeNodeStack.pop());
+                break;
+            case CGrammarInitializer.Unary_LP_ARGS_RP_TO_Unary:
+                node = ICodeFactory.createICodeNode(CTokenType.UNARY);
+                node.addChild(codeNodeStack.pop());
+                node.addChild(codeNodeStack.pop());
+                break;
         }
 
         if(node!=null){
@@ -179,7 +194,13 @@ public class CodeTreeBuilder {
         return node;
     }
 
+    private Symbol assignSymbolToNode(ICodeNode node,String text){
+        Symbol symbol = typeSystem.getSymbolByText(text,parser.getCurrentLevel());
+        node.setAttribute(ICodeKey.SYMBOL,symbol);
+        node.setAttribute(ICodeKey.TEXT,text);
 
+        return symbol;
+    }
 
     public ICodeNode getCodeTreeRoot(){
         ICodeNode mainNode = funcMap.get("main");

@@ -86,7 +86,7 @@ public class GrammarState {
 
         //System.out.println("---begin make closure----");
 
-        while(productionStack.isEmpty()==false){
+        while(productionStack.empty()==false){
             Production production = productionStack.pop();
           //  System.out.println("\nproduction on top of stack is : ");
            // production.print();
@@ -127,7 +127,7 @@ public class GrammarState {
       //  System.out.println("----end make closure----");
     }
 
-    private void removeRedundantProduction(Production product){
+  /*  private void removeRedundantProduction(Production product){
         boolean removeHappended = true;
         while(removeHappended){
             removeHappended = false;
@@ -143,6 +143,29 @@ public class GrammarState {
             }
         }
 
+    }*/
+
+    private void removeRedundantProduction(Production product) {
+        boolean removeHappended = true;
+
+        while (removeHappended) {
+            removeHappended = false;
+
+            Iterator it = closureSet.iterator();
+            while (it.hasNext()) {
+                Production item = (Production) it.next();
+                if (product.coverUp(item)) {
+                    removeHappended = true;
+                    closureSet.remove(item);
+                    if (stateNum == 1) {
+                        //   System.out.print("remove redundant production: ");
+                        //item.print();
+                    }
+
+                    break;
+                }
+            }
+        }
     }
 
     private void printClosure(){

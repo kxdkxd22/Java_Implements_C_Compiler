@@ -39,7 +39,7 @@ public class GrammarStateManager {
             HashMap<Integer,Integer> jump = new HashMap<Integer, Integer>();
             HashMap<Integer, GrammarState> map = transitionMap.get(state);
             if(map!=null){
-                for(Map.Entry <Integer, GrammarState> entry:map.entrySet()){
+                for(Map.Entry<Integer, GrammarState> entry:map.entrySet()){
                     jump.put(entry.getKey(),entry.getValue().stateNum);
                 }
             }

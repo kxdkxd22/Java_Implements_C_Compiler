@@ -22,8 +22,8 @@ public class Symbols {
     }
 
     public void addProduction(int[] production){
-        if(this.productions.contains(production)==false){
-            this.productions.add(production);
+        if(productions.contains(production)==false){
+            productions.add(production);
         }
     }
 

@@ -28,7 +28,7 @@ public class Production {
 
     public Production dotForward(){
 
-        Production product =  new Production(productionNum,left,dotPos+1,right);
+        Production product =  new Production(productionNum,this.left,dotPos+1,this.right);
         product.lookAhead = new ArrayList<Integer>();
 
         for(int i = 0; i < this.lookAhead.size(); i++){
@@ -42,7 +42,7 @@ public class Production {
         Production product = new Production(productionNum,this.left,dotPos,this.right);
 
         product.lookAhead = new ArrayList<Integer>();
-        for(int i = 0; i < lookAhead.size(); i++){
+        for(int i = 0; i < this.lookAhead.size(); i++){
             product.lookAhead.add(this.lookAhead.get(i));
         }
 
@@ -72,7 +72,7 @@ public class Production {
                     break;
                 }
 
-                if(i==set.size()-1){
+                if(i==lookAhead.size()-1){
                     firstSet.addAll(this.lookAhead);
                 }
             }
@@ -124,7 +124,7 @@ public class Production {
     }
 
     public boolean coverUp(Production product){
-        if(this.productionEquals(product) && this.lookAheadSetComparing(product)==1){
+        if(this.productionEquals(product) && this.lookAheadSetComparing(product)>0){
             return true;
         }
         return false;

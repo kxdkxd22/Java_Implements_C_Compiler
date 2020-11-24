@@ -1,7 +1,7 @@
 package backend;
 
-import frontend.Symbol;
 import frontend.CGrammarInitializer;
+import frontend.Symbol;
 
 public class NoCommaExprExecutor extends BaseExecutor {
     @Override
