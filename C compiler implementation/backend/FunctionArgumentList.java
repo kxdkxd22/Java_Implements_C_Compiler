@@ -1,6 +1,7 @@
 package backend;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 public class FunctionArgumentList{
     private static FunctionArgumentList argumentList = null;
@@ -16,10 +17,14 @@ public class FunctionArgumentList{
     private FunctionArgumentList(){}
 
     public void setFuncArgList(ArrayList<Object> list){
+
         funcArgList = list;
     }
 
-    public ArrayList<Object> getFuncArgList(){
+    public ArrayList<Object> getFuncArgList(boolean reverse){
+        if(reverse == true){
+            Collections.reverse(funcArgList);
+        }
         return funcArgList;
     }
 

@@ -31,8 +31,11 @@ public class UnaryNodeExecutor extends BaseExecutor {
                 break;
             case CGrammarInitializer.Name_TO_Unary:
                 symbol = (Symbol)root.getAttribute(ICodeKey.SYMBOL);
-                root.setAttribute(ICodeKey.VALUE,symbol.getValue());
-                root.setAttribute(ICodeKey.TEXT,symbol.getName());
+                if(symbol!=null){
+                    root.setAttribute(ICodeKey.VALUE,symbol.getValue());
+                    root.setAttribute(ICodeKey.TEXT,symbol.getName());
+                }
+
                 break;
 
             case CGrammarInitializer.String_TO_Unary:
@@ -88,9 +91,21 @@ public class UnaryNodeExecutor extends BaseExecutor {
                 if(func!=null){
                     Executor executor = ExecutorFactory.getExecutorFactory().getExecutor(func);
                     executor.Execute(func);
-                }
-                break;
 
+                    Object returnVal = func.getAttribute(ICodeKey.VALUE);
+                    if(returnVal!=null){
+                        System.out.println("function call with name "+funcName+" has return value that is "+returnVal.toString());
+                        root.setAttribute(ICodeKey.VALUE,returnVal);
+                    }
+                }else{
+                    ClibCall libCall = ClibCall.getInstance();
+                    if(libCall.isAPICall(funcName)){
+                        Object obj = libCall.invokeAPI(funcName);
+                        root.setAttribute(ICodeKey.VALUE,obj);
+                    }
+                }
+
+                break;
         }
         return root;
     }

@@ -77,9 +77,9 @@ public class Lexer {
             for(int i = 0;i<current.length();i++){
                 yytext=current.substring(i,i+1);
                 yyleng=0;
-                switch(yytext){
-                    case ";":current=current.substring(1);return CTokenType.SEMI.ordinal();
-                    case "+":
+                switch(current.charAt(i)){
+                    case ';':current=current.substring(1);return CTokenType.SEMI.ordinal();
+                    case '+':
                         if(current.charAt(i+1)=='+'){
                             current = current.substring(2);
                             return CTokenType.INCOP.ordinal();
@@ -88,7 +88,7 @@ public class Lexer {
                         current=current.substring(1);
                         return CTokenType.PLUS.ordinal();
 
-                    case "-":
+                    case '-':
                         if(current.charAt(i+1)=='>'){
                             current= current.substring(2);
                             return CTokenType.STRUCTOP.ordinal();
@@ -99,15 +99,15 @@ public class Lexer {
                         current = current.substring(1);
                         return CTokenType.MINUS.ordinal();
 
-                    case "[":current=current.substring(1);return CTokenType.LB.ordinal();
-                    case "]":current=current.substring(1);return CTokenType.RB.ordinal();
-                    case "(":current=current.substring(1);return CTokenType.LP.ordinal();
-                    case "*":current=current.substring(1);return CTokenType.STAR.ordinal();
-                    case ")":current=current.substring(1);return CTokenType.RP.ordinal();
-                    case ",":current=current.substring(1);return CTokenType.COMMA.ordinal();
-                    case "{":current=current.substring(1);return CTokenType.LC.ordinal();
-                    case "}":current=current.substring(1);return CTokenType.RC.ordinal();
-                    case "=":
+                    case '[':current=current.substring(1);return CTokenType.LB.ordinal();
+                    case ']':current=current.substring(1);return CTokenType.RB.ordinal();
+                    case '(':current=current.substring(1);return CTokenType.LP.ordinal();
+                    case '*':current=current.substring(1);return CTokenType.STAR.ordinal();
+                    case ')':current=current.substring(1);return CTokenType.RP.ordinal();
+                    case ',':current=current.substring(1);return CTokenType.COMMA.ordinal();
+                    case '{':current=current.substring(1);return CTokenType.LC.ordinal();
+                    case '}':current=current.substring(1);return CTokenType.RC.ordinal();
+                    case '=':
                         if(current.charAt(i+1)=='='){
                             current = current.substring(2);
                             return CTokenType.RELOP.ordinal();
@@ -116,17 +116,17 @@ public class Lexer {
                         current=current.substring(1);
                         return CTokenType.EQUAL.ordinal();
 
-                    case "?":current=current.substring(1);return CTokenType.QUEST.ordinal();
-                    case ":":current=current.substring(1);return CTokenType.COLON.ordinal();
-                    case "&":current=current.substring(1);return CTokenType.AND.ordinal();
-                    case "|":current=current.substring(1);return CTokenType.OR.ordinal();
-                    case "^":current=current.substring(1);return CTokenType.XOR.ordinal();
+                    case '?':current=current.substring(1);return CTokenType.QUEST.ordinal();
+                    case ':':current=current.substring(1);return CTokenType.COLON.ordinal();
+                    case '&':current=current.substring(1);return CTokenType.AND.ordinal();
+                    case '|':current=current.substring(1);return CTokenType.OR.ordinal();
+                    case '^':current=current.substring(1);return CTokenType.XOR.ordinal();
 
-                    case "/":
-                    case "%":
+                    case '/':
+                    case '%':
                         current=current.substring(1);return CTokenType.DIVOP.ordinal();
-                    case ">":
-                    case "<":
+                    case '>':
+                    case '<':
                         if(current.charAt(i+1)=='='){
                             current = current.substring(2);
                         }else if((current.charAt(i)=='<'&&current.charAt(i+1)=='<')||(current.charAt(i)=='>'&&current.charAt(i+1)=='>')){
@@ -137,10 +137,30 @@ public class Lexer {
                         }
                         return CTokenType.RELOP.ordinal();
 
-                    case " ":
-                    case "\t":
-                    case "\n":
+                    case ' ':
+                    case '\t':
+                    case '\n':
                         current=current.substring(1);return CTokenType.WHITE_SPACE.ordinal();
+                    case '"':
+                        i++;
+                        int begin = i;
+                        while(i<current.length()){
+                            if(current.charAt(i)!='"'){
+                                yyleng++;
+                            }else{
+                                break;
+                            }
+                            i++;
+                        }
+
+                        if(i>=current.length()&&inString){
+                            System.out.println("Missing the ending quatation mark!");
+                            System.exit(1);
+                        }
+
+                        yytext = current.substring(begin,yyleng+1);
+                        current =current.substring(yyleng+2);
+                        return CTokenType.STRING.ordinal();
                     default:
                         if(isAnum(current.charAt(i))==false){
                             return CTokenType.UNKNOWN_TOKEN.ordinal();

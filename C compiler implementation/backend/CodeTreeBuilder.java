@@ -184,6 +184,13 @@ public class CodeTreeBuilder {
                 node.addChild(codeNodeStack.pop());
                 node.addChild(codeNodeStack.pop());
                 break;
+            case CGrammarInitializer.Return_Semi_TO_Statement:
+                node = ICodeFactory.createICodeNode(CTokenType.STATEMENT);
+                break;
+            case CGrammarInitializer.Return_Expr_Semi_TO_Statement:
+                node = ICodeFactory.createICodeNode(CTokenType.STATEMENT);
+                node.addChild(codeNodeStack.pop());
+                break;
         }
 
         if(node!=null){

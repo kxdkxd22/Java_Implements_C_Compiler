@@ -18,8 +18,8 @@ public class ArgsExecutor extends BaseExecutor{
                 break;
             case CGrammarInitializer.NoCommaExpr_Comma_Args_TO_Args:
                 child = executeChild(root,0);
-                val = (int) child.getAttribute(ICodeKey.VALUE);
-                argList.add(val);
+                Object objVal = child.getAttribute(ICodeKey.VALUE);
+                argList.add(objVal);
 
                 child = executeChild(root,1);
                 ArrayList<Object> list = (ArrayList<Object>)child.getAttribute(ICodeKey.VALUE);

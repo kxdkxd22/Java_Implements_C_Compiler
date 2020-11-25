@@ -1,5 +1,7 @@
 package frontend;
 
+import backend.ClibCall;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -180,6 +182,11 @@ public class TypeSystem {
     }
 
     public Symbol getSymbolByText(String text,int level){
+        ClibCall libcall = ClibCall.getInstance();
+        if(libcall.isAPICall(text)){
+            return null;
+        }
+
         ArrayList<Symbol> symbolList = typeSystem.getSymbol(text);
         int i = 0;
         Symbol symbol = null;
