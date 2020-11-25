@@ -20,6 +20,18 @@ public class StatementExecutor extends BaseExecutor {
                     executeChild(root,2);
                 }
                 break;
+            case CGrammarInitializer.Do_Statement_While_Test_To_Statement:
+                do{
+                    executeChild(root,0);
+                }while(isLoopContinue(root,LoopType.DO_WHILE));
+
+                break;
+            case CGrammarInitializer.While_LP_Test_Rp_TO_Statement:
+                while(isLoopContinue(root,LoopType.WHILE)){
+                    executeChild(root,1);
+                }
+
+                break;
             case CGrammarInitializer.Return_Semi_TO_Statement:
                 isContinueExecution(false);
                 break;
@@ -41,12 +53,15 @@ public class StatementExecutor extends BaseExecutor {
     private boolean isLoopContinue(ICodeNode root,LoopType type){
         ICodeNode res = null;
 
-        if(type == LoopType.FOR){
+        if(type == LoopType.FOR || type == LoopType.DO_WHILE){
             res = executeChild(root,1);
-            Integer val = (Integer) res.getAttribute(ICodeKey.VALUE);
-            return val!=0;
         }
 
-        return false;
+        if (type==LoopType.WHILE){
+            res = executeChild(root,0);
+        }
+
+        Integer result = (Integer) res.getAttribute(ICodeKey.VALUE);
+        return res!=null&&result!=0;
     }
 }

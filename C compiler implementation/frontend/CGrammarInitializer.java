@@ -63,6 +63,9 @@ public class CGrammarInitializer {
     //STATEMENT->FOR LP OPT_EXPR TEST SEMI END_OPT_EXPR RP STATEMENT (84)
     public final static int FOR_OptExpr_Test_EndOptExpr_Statement_TO_Statement = 84;
 
+    public static final int While_LP_Test_Rp_TO_Statement = 83;
+    public static final int Do_Statement_While_Test_To_Statement = 88;
+
     public final static int Unary_Incop_TO_Unary = 96;
     public final static int Incop_Unary_TO_Unary = 97;
     public final static int CompountStmt_TO_Statement = 71;
