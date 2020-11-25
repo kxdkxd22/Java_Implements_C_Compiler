@@ -63,19 +63,28 @@ public class UnaryNodeExecutor extends BaseExecutor {
                 }
                 break;
             case CGrammarInitializer.Unary_Incop_TO_Unary:
+            case CGrammarInitializer.Unary_DecOp_TO_Unary:
                 symbol = (Symbol) root.getChildren().get(0).getAttribute(ICodeKey.SYMBOL);
                 Integer val = (Integer) symbol.getValue();
                 IValueSetter setter = (IValueSetter) symbol;
 
                 try {
-                    setter.setValue(val+1);
+                    if(production==CGrammarInitializer.Unary_Incop_TO_Unary){
+                        setter.setValue(val+1);
+                    }else{
+                        setter.setValue(val-1);
+                    }
+
                 } catch (Exception e) {
                     e.printStackTrace();
                     System.err.println("Runtime Error: Assign Value Error");
                 }
 
                 break;
-
+            case CGrammarInitializer.LP_Expr_RP_TO_Unary:
+                child = root.getChildren().get(0);
+                copy(root,child);
+                break;
             case CGrammarInitializer.Unary_LP_RP_TO_Unary:
             case CGrammarInitializer.Unary_LP_ARGS_RP_TO_Unary:
 

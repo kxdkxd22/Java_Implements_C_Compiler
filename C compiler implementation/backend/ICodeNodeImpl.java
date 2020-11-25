@@ -77,7 +77,7 @@ public class ICodeNodeImpl extends HashMap<ICodeKey,Object> implements ICodeNode
             return;
         }
 
-        Collections.reverse(this.getChildren());
+        Collections.reverse(children);
         isChildrenReverse = true;
     }
 

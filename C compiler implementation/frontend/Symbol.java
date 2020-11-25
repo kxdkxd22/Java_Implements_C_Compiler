@@ -25,6 +25,8 @@ public class Symbol implements IValueSetter {
         this.symbolScope = scope;
     }
 
+    public String getScope(){return symbolScope;}
+
     public Symbol getArgList(){return args;}
 
     public boolean equals(Symbol symbol){
@@ -63,7 +65,10 @@ public class Symbol implements IValueSetter {
     public String getName(){return name;}
 
     public void setValue(Object obj){
-        System.out.println("Assign value of "+obj.toString()+" to variable " +name);
+        if(obj!=null){
+            System.out.println("Assign value of "+obj.toString()+" to variable " +name);
+        }
+
         this.value = obj;
     }
 

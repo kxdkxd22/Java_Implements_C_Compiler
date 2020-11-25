@@ -86,6 +86,12 @@ public class CGrammarInitializer {
     public static final int Return_Semi_TO_Statement = 111;
     public static final int Return_Expr_Semi_TO_Statement = 64;
 
+    public static final int LP_Expr_RP_TO_Unary = 112;
+    public static final int Unary_DecOp_TO_Unary = 113;
+
+    public static final int Binary_DivOp_Binary_TO_Binary = 90;
+    public static final int Binary_Minus_Binary_TO_Binary = 95;
+
     private int productionNum = 0;
     private static CGrammarInitializer instance = null;
     private HashMap<Integer, ArrayList<Production>> productionMap = new HashMap<Integer, ArrayList<Production>>();
@@ -1030,6 +1036,18 @@ public class CGrammarInitializer {
         //STATEMENT->RETURN SEMI (111)
         right = getProductionRight(new int[]{CTokenType.RETURN.ordinal(),CTokenType.SEMI.ordinal()});
         production = new Production(productionNum,CTokenType.STATEMENT.ordinal(),0,right);
+        productionNum++;
+        addProduction(production,false);
+
+        //UNARY->LP EXPR RP (112)
+        right = getProductionRight(new int[]{CTokenType.LP.ordinal(),CTokenType.EXPR.ordinal(),CTokenType.RP.ordinal()});
+        production = new Production(productionNum,CTokenType.UNARY.ordinal(),0,right);
+        productionNum++;
+        addProduction(production,false);
+
+        //UNARY->UNARY DECOP i-- (113)
+        right = getProductionRight(new int[]{CTokenType.UNARY.ordinal(),CTokenType.DECOP.ordinal()});
+        production = new Production(productionNum,CTokenType.UNARY.ordinal(),0,right);
         productionNum++;
         addProduction(production,false);
 

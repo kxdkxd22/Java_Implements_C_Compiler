@@ -38,21 +38,20 @@ public class CodeTreeBuilder {
             case CGrammarInitializer.String_TO_Unary:
                 node = ICodeFactory.createICodeNode(CTokenType.UNARY);
                 if(production == CGrammarInitializer.Name_TO_Unary){
-                    symbol = typeSystem.getSymbolByText(text,parser.getCurrentLevel());
-                    node.setAttribute(ICodeKey.SYMBOL,symbol);
+                    assignSymbolToNode(node,text);
                 }
                 node.setAttribute(ICodeKey.TEXT,text);
                 break;
             case CGrammarInitializer.Unary_Incop_TO_Unary:
+            case CGrammarInitializer.Unary_DecOp_TO_Unary:
+            case CGrammarInitializer.LP_Expr_RP_TO_Unary:
                 node = ICodeFactory.createICodeNode(CTokenType.UNARY);
                 node.addChild(codeNodeStack.pop());
                 break;
             case CGrammarInitializer.Unary_TO_binary:
                 node = ICodeFactory.createICodeNode(CTokenType.BINARY);
                 ICodeNode child = codeNodeStack.pop();
-                String t = (String) child.getAttribute(ICodeKey.TEXT);
                 node.setAttribute(ICodeKey.TEXT,child.getAttribute(ICodeKey.TEXT));
-                Symbol sym = (Symbol) child.getAttribute(ICodeKey.SYMBOL);
                 node.addChild(child);
                 break;
             case CGrammarInitializer.Binary_TO_NoCommaExpr:
@@ -66,6 +65,8 @@ public class CodeTreeBuilder {
                 }
                 break;
             case CGrammarInitializer.Binary_Plus_Binary_TO_Binary:
+            case CGrammarInitializer.Binary_Minus_Binary_TO_Binary:
+            case CGrammarInitializer.Binary_DivOp_Binary_TO_Binary:
                 node = ICodeFactory.createICodeNode(CTokenType.BINARY);
 
                 node.addChild(codeNodeStack.pop());
@@ -184,6 +185,7 @@ public class CodeTreeBuilder {
                 node.addChild(codeNodeStack.pop());
                 node.addChild(codeNodeStack.pop());
                 break;
+
             case CGrammarInitializer.Return_Semi_TO_Statement:
                 node = ICodeFactory.createICodeNode(CTokenType.STATEMENT);
                 break;

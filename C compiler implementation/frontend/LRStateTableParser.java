@@ -171,18 +171,14 @@ public class LRStateTableParser {
                 currentSym.setNextSymbol(lastSym);
                 break;
             case CGrammarInitializer.OptSpecifier_ExtDeclList_Semi_TO_ExtDef:
+            case CGrammarInitializer.TypeNT_VarDecl_TO_ParamDeclaration:
             case CGrammarInitializer.Specifiers_DeclList_Semi_TO_Def:
                 Symbol symbol = (Symbol) attributeForParentNode;
                 TypeLink link = (TypeLink) valueStack.get(valueStack.size()-3);
                 typeSystem.addSpecifierToDeclarator(link,symbol);
                 typeSystem.addSymbolsToTable(symbol,symbolScope);
                 break;
-            case CGrammarInitializer.TypeNT_VarDecl_TO_ParamDeclaration:
-                Symbol symbol1 = (Symbol) attributeForParentNode;
-                TypeLink link1 = (TypeLink) valueStack.get(valueStack.size()-3);
-                typeSystem.addSpecifierToDeclarator(link1,symbol1);
-                typeSystem.addSymbolsToTable(symbol1,symbolScope);
-                break;
+
             case CGrammarInitializer.VarDecl_Equal_Intializer_TO_Decl:
                 attributeForParentNode = (Symbol) valueStack.get(valueStack.size()-2);
                 break;

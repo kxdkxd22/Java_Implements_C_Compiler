@@ -5,6 +5,7 @@ import backend.ClibCall;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 
 public class TypeSystem {
     private static TypeSystem typeSystem = null;
@@ -72,6 +73,20 @@ public class TypeSystem {
         }
 
 
+    }
+
+    public ArrayList<Symbol> getSymbolsByScope(String scope){
+        ArrayList<Symbol> list = new ArrayList<Symbol>();
+        for(Map.Entry<String,ArrayList<Symbol>>entry:symbolTable.entrySet()){
+            ArrayList<Symbol> args = entry.getValue();
+            for(int i = 0; i<args.size();i++){
+                Symbol sym = args.get(i);
+                if(sym.getScope().equals(scope)){
+                    list.add(sym);
+                }
+            }
+        }
+        return list;
     }
 
     public TypeLink newType(String typeText){

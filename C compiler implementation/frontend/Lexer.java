@@ -128,9 +128,11 @@ public class Lexer {
                     case '>':
                     case '<':
                         if(current.charAt(i+1)=='='){
+                            yytext = current.substring(0,2);
                             current = current.substring(2);
                         }else if((current.charAt(i)=='<'&&current.charAt(i+1)=='<')||(current.charAt(i)=='>'&&current.charAt(i+1)=='>')){
                             current = current.substring(2);
+                            yytext= current.substring(0,2);
                             return CTokenType.SHIFTOP.ordinal();
                         }else{
                             current = current.substring(1);
@@ -171,8 +173,8 @@ public class Lexer {
                             }
 
 
-                            yytext=current.substring(0,i);
-                            current=current.substring(i);
+                            yytext=current.substring(0,yyleng);
+                            current=current.substring(yyleng);
                             return id_keyword_or_number();
                         }
                 }
