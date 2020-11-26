@@ -261,7 +261,7 @@ public class LRStateTableParser {
                 symbolScope = GLOBAL_SCOPE;
                 break;
             case CGrammarInitializer.Name_TO_Unary:
-                attributeForParentNode = typeSystem.getSymbolByText(text,nestingLevel);
+                attributeForParentNode = typeSystem.getSymbolByText(text,nestingLevel,symbolScope);
                 break;
         }
 

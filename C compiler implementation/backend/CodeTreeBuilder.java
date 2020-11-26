@@ -210,7 +210,7 @@ public class CodeTreeBuilder {
     }
 
     private Symbol assignSymbolToNode(ICodeNode node,String text){
-        Symbol symbol = typeSystem.getSymbolByText(text,parser.getCurrentLevel());
+        Symbol symbol = typeSystem.getSymbolByText(text,parser.getCurrentLevel(),parser.symbolScope);
         node.setAttribute(ICodeKey.SYMBOL,symbol);
         node.setAttribute(ICodeKey.TEXT,text);
 

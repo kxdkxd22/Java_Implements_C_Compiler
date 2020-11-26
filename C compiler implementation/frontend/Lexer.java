@@ -94,7 +94,7 @@ public class Lexer {
                             return CTokenType.STRUCTOP.ordinal();
                         }else if(current.charAt(i+1)=='-'){
                             current= current.substring(2);
-                            return CTokenType.INCOP.ordinal();
+                            return CTokenType.DECOP.ordinal();
                         }
                         current = current.substring(1);
                         return CTokenType.MINUS.ordinal();

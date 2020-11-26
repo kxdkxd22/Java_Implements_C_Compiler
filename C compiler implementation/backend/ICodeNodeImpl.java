@@ -36,7 +36,7 @@ public class ICodeNodeImpl extends HashMap<ICodeKey,Object> implements ICodeNode
 
     @Override
     public ArrayList<ICodeNode> getChildren() {
-        return children;
+        reverseChildren();return children;
     }
 
     @Override

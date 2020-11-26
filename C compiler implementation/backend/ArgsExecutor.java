@@ -13,7 +13,7 @@ public class ArgsExecutor extends BaseExecutor{
         switch (production){
             case CGrammarInitializer.NoCommaExpr_TO_Args:
                 child = executeChild(root,0);
-                int val = (int) child.getAttribute(ICodeKey.VALUE);
+                Object val = child.getAttribute(ICodeKey.VALUE);
                 argList.add(val);
                 break;
             case CGrammarInitializer.NoCommaExpr_Comma_Args_TO_Args:

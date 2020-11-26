@@ -62,7 +62,7 @@ public class TypeSystem {
         Iterator it = symList.iterator();
         while(it.hasNext()){
             Symbol sym = (Symbol) it.next();
-            if(symbol.level==sym.level){
+            if(sym.equals(symbol)==true){
                 System.err.println("Symbol definition replicate: "+sym.name);
                 System.exit(1);
             }
@@ -196,7 +196,7 @@ public class TypeSystem {
         }
     }
 
-    public Symbol getSymbolByText(String text,int level){
+  /*  public Symbol getSymbolByText(String text,int level){
         ClibCall libcall = ClibCall.getInstance();
         if(libcall.isAPICall(text)){
             return null;
@@ -217,6 +217,39 @@ public class TypeSystem {
         }
 
         return symbol;
-    }
+    }*/
+  public Symbol getSymbolByText(String text, int level, String scope) {
+      ClibCall libCall = ClibCall.getInstance();
+      if (libCall.isAPICall(text)) {
+          return null;
+      }
+
+      if (scope.equals(text)) {
+          scope = LRStateTableParser.GLOBAL_SCOPE;
+      }
+
+      ArrayList<Symbol> symbolList = typeSystem.getSymbol(text);
+      int i = 0;
+      Symbol symbol = null;
+
+      while (i < symbolList.size()) {
+
+          if (symbol == null && symbolList.get(i).getScope().equals(LRStateTableParser.GLOBAL_SCOPE)) {
+              symbol = symbolList.get(i);
+          }
+
+          if (symbolList.get(i).getScope().equals(scope)) {
+              symbol = symbolList.get(i);
+          }
+
+          if (symbol != null && symbolList.get(i).getLevel() >= level) {
+              symbol = symbolList.get(i);
+          }
+
+          i++;
+      }
+
+      return symbol;
+  }
 
 }

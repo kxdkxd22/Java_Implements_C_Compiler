@@ -2,8 +2,6 @@ package backend;
 
 import frontend.CGrammarInitializer;
 
-import java.util.Collections;
-
 public class BinaryExecutor extends BaseExecutor {
     @Override
     public Object Execute(ICodeNode root) {
@@ -23,7 +21,7 @@ public class BinaryExecutor extends BaseExecutor {
                 int val1 = (Integer)root.getChildren().get(0).getAttribute(ICodeKey.VALUE);
                 int val2 = (Integer)root.getChildren().get(1).getAttribute(ICodeKey.VALUE);
                 if(production==CGrammarInitializer.Binary_Plus_Binary_TO_Binary){
-                    String text = root.getChildren().get(0).getAttribute(ICodeKey.TEXT)+" plus"+root.getChildren().get(1).getAttribute(ICodeKey.TEXT);
+                    String text = root.getChildren().get(0).getAttribute(ICodeKey.TEXT)+" plus "+root.getChildren().get(1).getAttribute(ICodeKey.TEXT);
                     root.setAttribute(ICodeKey.VALUE,val1+val2);
                     root.setAttribute(ICodeKey.TEXT,text);
                     System.out.println(text+" is "+(val1+val2));

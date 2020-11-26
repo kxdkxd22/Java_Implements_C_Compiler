@@ -69,10 +69,11 @@ public class UnaryNodeExecutor extends BaseExecutor {
                 IValueSetter setter = (IValueSetter) symbol;
 
                 try {
-                    if(production==CGrammarInitializer.Unary_Incop_TO_Unary){
-                        setter.setValue(val+1);
-                    }else{
-                        setter.setValue(val-1);
+                    if(production == CGrammarInitializer.Unary_Incop_TO_Unary){
+                        setter.setValue(val + 1);
+                    }
+                    if(production == CGrammarInitializer.Unary_DecOp_TO_Unary){
+                        setter.setValue(val - 1);
                     }
 
                 } catch (Exception e) {
