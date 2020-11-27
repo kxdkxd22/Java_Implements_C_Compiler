@@ -9,6 +9,7 @@ public class ClibCall {
     private ClibCall(){
         apiSet = new HashSet<String>();
         apiSet.add("printf");
+        apiSet.add("malloc");
     }
 
     private static ClibCall instance = null;
@@ -28,9 +29,24 @@ public class ClibCall {
         switch (funcName){
             case "printf":
                 return handlePrintCall();
+            case "malloc":
+                return handleMallocCall();
             default:
                 return null;
         }
+    }
+
+    private Object handleMallocCall(){
+        ArrayList<Object> argsList = FunctionArgumentList.getFunctionArgumentList().getFuncArgList(false);
+        int size = (Integer)argsList.get(0);
+        int addr = 0;
+
+        if(size>0){
+            MemoryHeap memoryHeap = MemoryHeap.getInstance();
+            addr = memoryHeap.allocMem(size);
+        }
+
+        return addr;
     }
 
     private Object handlePrintCall(){

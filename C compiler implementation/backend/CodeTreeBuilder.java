@@ -45,6 +45,7 @@ public class CodeTreeBuilder {
             case CGrammarInitializer.Unary_Incop_TO_Unary:
             case CGrammarInitializer.Unary_DecOp_TO_Unary:
             case CGrammarInitializer.LP_Expr_RP_TO_Unary:
+            case CGrammarInitializer.Start_Unary_TO_Unary:
                 node = ICodeFactory.createICodeNode(CTokenType.UNARY);
                 node.addChild(codeNodeStack.pop());
                 break;
