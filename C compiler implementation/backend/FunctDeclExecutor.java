@@ -3,13 +3,14 @@ import frontend.CGrammarInitializer;
 import frontend.Symbol;
 
 import java.util.ArrayList;
-import java.util.Collections;
+
 
 public class FunctDeclExecutor extends BaseExecutor {
     private ArrayList<Object> argsList = null;
     private ICodeNode currentNode;
     @Override
     public Object Execute(ICodeNode root) {
+
         int production = (int) root.getAttribute(ICodeKey.PRODUCTION);
         Symbol symbol = null;
         currentNode = root;

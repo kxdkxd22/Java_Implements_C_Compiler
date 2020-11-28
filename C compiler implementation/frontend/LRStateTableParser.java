@@ -177,6 +177,8 @@ public class LRStateTableParser {
                 TypeLink link = (TypeLink) valueStack.get(valueStack.size()-3);
                 typeSystem.addSpecifierToDeclarator(link,symbol);
                 typeSystem.addSymbolsToTable(symbol,symbolScope);
+
+                handleStructVariable(symbol);
                 break;
 
             case CGrammarInitializer.VarDecl_Equal_Intializer_TO_Decl:
@@ -267,6 +269,43 @@ public class LRStateTableParser {
 
         treeBuilder.buildCodeTree(productNum,text);
 
+    }
+
+    private void handleStructVariable(Symbol symbol){
+        boolean isStruct = false;
+        TypeLink typelink = symbol.typeLinkBegin;
+        Specifier specifier = null;
+        while(typelink!=null){
+            if(typelink.isDeclarator==false){
+                specifier = (Specifier)typelink.getTypeObject();
+                if(specifier.getType()==Specifier.STRUCTURE){
+                    isStruct = true;
+                    break;
+                }
+            }
+
+            typelink = typelink.toNext();
+        }
+
+        if(isStruct==true){
+            StructDefine structDefine = specifier.getStructObj();
+            Symbol copy = null, headCopy = null,original = structDefine.getFields();
+
+            while(original!=null){
+                if(copy!=null){
+                    Symbol sym = original.copy();
+                    copy.setNextSymbol(sym);
+                    copy =sym;
+                }else{
+                    copy= original.copy();
+                    headCopy = copy;
+                }
+
+                original = original.getNextSymbol();
+            }
+
+            symbol.setArgList(headCopy);
+        }
     }
 
     private void doEnum(){

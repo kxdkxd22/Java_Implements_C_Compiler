@@ -91,4 +91,6 @@ public class Specifier {
     public void setStructObj(StructDefine struct){
         this.vStruct = struct;
     }
+
+    public StructDefine getStructObj(){return this.vStruct;}
 }

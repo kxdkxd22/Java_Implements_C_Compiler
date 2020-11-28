@@ -143,6 +143,9 @@ public class Lexer {
                     case '\t':
                     case '\n':
                         current=current.substring(1);return CTokenType.WHITE_SPACE.ordinal();
+                    case '.':
+                        current=current.substring(1);
+                        return CTokenType.STRUCTOP.ordinal();
                     case '"':
                         i++;
                         int begin = i;

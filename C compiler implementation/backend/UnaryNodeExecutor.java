@@ -143,6 +143,27 @@ public class UnaryNodeExecutor extends BaseExecutor {
                 }
 
                 break;
+            case CGrammarInitializer.Unary_StructOP_Name_TO_Unary:
+                child = root.getChildren().get(0);
+                String fileldName = (String) root.getAttribute(ICodeKey.TEXT);
+                symbol = (Symbol)child.getAttribute(ICodeKey.SYMBOL);
+
+                Symbol args = symbol.getArgList();
+                while(args!=null){
+                    if(args.getName().equals(fileldName)){
+                        break;
+                    }
+                    args = args.getNextSymbol();
+                }
+
+                if(args==null){
+                    System.err.println("access a filed not in struct object!");
+                    System.exit(1);
+                }
+
+                root.setAttribute(ICodeKey.SYMBOL,args);
+                root.setAttribute(ICodeKey.VALUE,args.getValue());
+                break;
         }
         return root;
     }

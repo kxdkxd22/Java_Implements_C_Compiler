@@ -58,7 +58,7 @@ public class ExtDefExecutor extends BaseExecutor {
         ArrayList<Symbol> args = typeSystem.getSymbolsByScope(funcName);
         int count = 0;
 
-        while(args!=null&&count<args.size()){
+        while(args!=null&&count<argsList.size()){
             IValueSetter setter = args.get(count);
 
             try {

@@ -9,7 +9,7 @@ public class NoCommaExprExecutor extends BaseExecutor {
         executeChildren(root);
 
         int production = (int)root.getAttribute(ICodeKey.PRODUCTION);
-        Symbol symbol;
+
         Object value;
         ICodeNode child;
         switch (production){

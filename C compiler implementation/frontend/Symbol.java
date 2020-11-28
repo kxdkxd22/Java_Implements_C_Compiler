@@ -10,7 +10,7 @@ public class Symbol implements IValueSetter {
     boolean implicit;
     boolean duplicate;
 
-    Symbol args;
+    Symbol args=null;
 
     private Symbol next = null;
 
@@ -29,6 +29,8 @@ public class Symbol implements IValueSetter {
 
     public Symbol getArgList(){return args;}
 
+    public void setArgList(Symbol args){this.args = args;}
+
     public boolean equals(Symbol symbol){
         if(this.getLevel()==symbol.getLevel()&&this.symbolScope.equals(symbol.symbolScope)&&this.name.equals(symbol.name)){
             return true;
@@ -40,6 +42,18 @@ public class Symbol implements IValueSetter {
     public Symbol(String name,int level){
         this.name = name;
         this.level = level;
+    }
+
+    public Symbol copy(){
+        Symbol symbol = new Symbol(this.name,this.level);
+        symbol.args = this.args;
+        symbol.next = this.next;
+        symbol.value = this.value;
+        symbol.typeLinkBegin = this.typeLinkBegin;
+        symbol.typeLinkEnd = this.typeLinkEnd;
+        symbol.symbolScope = this.symbolScope;
+
+        return symbol;
     }
 
     public void addDeclarator(TypeLink link){

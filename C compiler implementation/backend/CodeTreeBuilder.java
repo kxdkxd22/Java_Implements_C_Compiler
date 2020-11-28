@@ -200,6 +200,11 @@ public class CodeTreeBuilder {
                 node.addChild(codeNodeStack.pop());
                 node.addChild(codeNodeStack.pop());
                 break;
+            case CGrammarInitializer.Unary_StructOP_Name_TO_Unary:
+                node = ICodeFactory.createICodeNode(CTokenType.UNARY);
+                node.addChild(codeNodeStack.pop());
+                node.setAttribute(ICodeKey.TEXT,text);
+                break;
         }
 
         if(node!=null){

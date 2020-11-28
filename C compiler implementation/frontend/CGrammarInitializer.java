@@ -94,6 +94,8 @@ public class CGrammarInitializer {
 
     public static final int Start_Unary_TO_Unary = 99;
 
+    public static final int Unary_StructOP_Name_TO_Unary = 100;
+
     private int productionNum = 0;
     private static CGrammarInitializer instance = null;
     private HashMap<Integer, ArrayList<Production>> productionMap = new HashMap<Integer, ArrayList<Production>>();
@@ -207,18 +209,6 @@ public class CGrammarInitializer {
         productionNum++;
         addProduction(production,false);
 
-        //OPT_SPECIFIERS->CLASS TTYPE
-        /*right = getProductionRight(new int[]{CTokenType.CLASS.ordinal(),CTokenType.TTYPE.ordinal()});
-        production = new Production(productionNum,CTokenType.OPT_SPECIFIERS.ordinal(),0,right);
-        productionNum++;
-        addProduction(production,true);
-
-        //OPT_SPECIFIERS->TTYPE
-        right = getProductionRight(new int[]{CTokenType.TTYPE.ordinal()});
-        production = new Production(productionNum,CTokenType.OPT_SPECIFIERS.ordinal(),0,right);
-        productionNum++;
-        addProduction(production,true);
-        */
         //OPT_SPECIFIERS->SPECIFIERS
         right = getProductionRight(new int[]{CTokenType.SPECIFIERS.ordinal()});
         production = new Production(productionNum, CTokenType.OPT_SPECIFIERS.ordinal(),0,right);
@@ -243,12 +233,6 @@ public class CGrammarInitializer {
         productionNum++;
         addProduction(production,false);
 
-        //TYPE_OR_CLASS-> CLASS
-        /*right = getProductionRight(new int[]{CTokenType.CLASS.ordinal()});
-        production = new Production(productionNum,CTokenType.TYPE_OR_CLASS.ordinal(),0,right);
-        productionNum++;
-        addProduction(production,false);*/
-
         //TYPE_SPECIFIER -> TYPE
         right = getProductionRight(new int[]{CTokenType.TYPE.ordinal()});
         production = new Production(productionNum, CTokenType.TYPE_SPECIFIER.ordinal(),0,right);
@@ -260,12 +244,6 @@ public class CGrammarInitializer {
         production = new Production(productionNum, CTokenType.NEW_NAME.ordinal(),0,right);
         productionNum++;
         addProduction(production,false);
-
-        //NAME_NT -> NAME
-        /*right = getProductionRight(new int[]{CTokenType.NAME.ordinal()});
-        production = new Production(productionNum,CTokenType.NAME_NT.ordinal(),0,right);
-        productionNum++;
-        addProduction(production,false);*/
 
         //VAR_DECL ->| NEW_NAME
         right = getProductionRight(new int[]{CTokenType.NEW_NAME.ordinal()});
@@ -958,7 +936,7 @@ public class CGrammarInitializer {
 
         //UNARY->UNARY STRUCTOP NAME a=tag->name
         right = null;
-        right = getProductionRight(new int[]{CTokenType.UNARY.ordinal(), CTokenType.STRUCTOP.ordinal(),CTokenType.UNARY.ordinal()});
+        right = getProductionRight(new int[]{CTokenType.UNARY.ordinal(), CTokenType.STRUCTOP.ordinal(),CTokenType.NAME.ordinal()});
         production = new Production(productionNum, CTokenType.UNARY.ordinal(),0,right);
         productionNum++;
         addProduction(production,false);
