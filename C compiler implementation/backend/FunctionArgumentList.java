@@ -6,6 +6,7 @@ import java.util.Collections;
 public class FunctionArgumentList{
     private static FunctionArgumentList argumentList = null;
     private ArrayList<Object> funcArgList = new ArrayList<Object>();
+    private ArrayList<Object> argSymList = new ArrayList<Object>();
 
     public static FunctionArgumentList getFunctionArgumentList(){
         if(argumentList==null){
@@ -26,6 +27,15 @@ public class FunctionArgumentList{
             Collections.reverse(funcArgList);
         }
         return funcArgList;
+    }
+
+    public void setFuncArgSymbolList(ArrayList<Object> list){this.argSymList=list;}
+
+    public ArrayList<Object> getFuncArgSymsList(boolean reverse){
+        if(reverse == true){
+            Collections.reverse(argSymList);
+        }
+        return argSymList;
     }
 
 }

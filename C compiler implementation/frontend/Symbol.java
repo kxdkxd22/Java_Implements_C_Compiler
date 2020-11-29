@@ -121,7 +121,7 @@ public class Symbol implements IValueSetter {
         while(head!=null){
             if(head.isDeclarator!=true){
                 Specifier sp = (Specifier) head.typeObject;
-                if(sp.getLong()==true||sp.getType()==Specifier.INT){
+                if(sp.getLong()==true||sp.getType()==Specifier.INT||getDeclarator(Declarator.POINTER)!=null){
                     size = 4;
                     break;
                 }else{

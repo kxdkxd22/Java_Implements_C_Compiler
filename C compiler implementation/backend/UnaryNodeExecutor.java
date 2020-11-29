@@ -121,6 +121,9 @@ public class UnaryNodeExecutor extends BaseExecutor {
                     ICodeNode argsNode = root.getChildren().get(1);
                     ArrayList<Object> argList = (ArrayList<Object>) argsNode.getAttribute(ICodeKey.VALUE);
                     FunctionArgumentList.getFunctionArgumentList().setFuncArgList(argList);
+
+                    ArrayList<Object> symList = (ArrayList<Object>) argsNode.getAttribute(ICodeKey.SYMBOL);
+                    FunctionArgumentList.getFunctionArgumentList().setFuncArgSymbolList(symList);
                 }
 
                 ICodeNode func = CodeTreeBuilder.getCodeTreeBuilder().getFunctionNodeByName(funcName);
