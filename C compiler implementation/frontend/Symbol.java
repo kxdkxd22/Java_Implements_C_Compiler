@@ -86,6 +86,11 @@ public class Symbol implements IValueSetter {
         this.value = obj;
     }
 
+    @Override
+    public Symbol getSymbol() {
+        return this;
+    }
+
     public Object getValue(){return value;}
 
     public void setNextSymbol(Symbol symbol){

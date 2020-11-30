@@ -1,5 +1,6 @@
 package backend;
 
+import frontend.Declarator;
 import frontend.Symbol;
 
 import java.util.Map;
@@ -15,7 +16,12 @@ public class PointerValueSetter implements IValueSetter{
         byte[] content = entry.getValue();
         int i = (Integer) object;
 
-        if(symbol.getByteSize()==4){
+        int sz = symbol.getByteSize();
+        if(symbol.getDeclarator(Declarator.POINTER)!=null&&symbol.getArgList()!=null){
+            sz = 1;
+        }
+
+        if(sz==4){
             content[index] = (byte) ((i>>24)&(0xff));
             content[index+1] = (byte) ((i>>16)&(0xff));
             content[index+2] = (byte) ((i>>8)&(0xff));
@@ -30,4 +36,6 @@ public class PointerValueSetter implements IValueSetter{
         this.symbol = symbol;
         this.index = index;
     }
+
+    public Symbol getSymbol(){return symbol;}
 }

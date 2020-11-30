@@ -1,5 +1,7 @@
 package backend;
 
+import frontend.Symbol;
+
 import java.util.Map;
 
 public class DirectMemValueSetter implements IValueSetter {
@@ -15,5 +17,10 @@ public class DirectMemValueSetter implements IValueSetter {
         int offset = memAddr-entry.getKey();
         int i = (Integer) object;
         content[offset] = (byte) (i&(0xff));
+    }
+
+    @Override
+    public Symbol getSymbol() {
+        return null;
     }
 }

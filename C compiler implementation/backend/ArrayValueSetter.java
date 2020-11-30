@@ -23,6 +23,11 @@ public class ArrayValueSetter implements IValueSetter{
 
     }
 
+    @Override
+    public Symbol getSymbol() {
+        return symbol;
+    }
+
     public  ArrayValueSetter(Symbol symbol,int index){
         this.symbol = symbol;
         this.index = index;
