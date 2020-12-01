@@ -1,5 +1,7 @@
 package backend;
 
+import backend.Compiler.Instruction;
+import backend.Compiler.ProgramGenerator;
 import frontend.Declarator;
 import frontend.Symbol;
 
@@ -102,7 +104,17 @@ public class ClibCall {
         }
 
         System.out.println(formatStr);
+        generateJavaAssemblyForPrintf(formatStr);
         return null;
+    }
+
+    private void generateJavaAssemblyForPrintf(String s){
+        ProgramGenerator generator = ProgramGenerator.getInstance();
+        generator.emit(Instruction.GETSTATIC,"java/lang/System/out Ljava/io/PrintStream;");
+        generator.emit(Instruction.LDC,"\""+s+"\"");
+        String printMethod = "java/io/PrintStream/println(Ljava/lang/String;)V";
+        generator.emit(Instruction.INVOKEVIRTUAL,printMethod);
+        generator.emit(Instruction.RETURN);
     }
 
 }
