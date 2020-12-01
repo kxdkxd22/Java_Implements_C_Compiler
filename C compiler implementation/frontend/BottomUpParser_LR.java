@@ -23,6 +23,9 @@ public class BottomUpParser_LR {
         Intepretor intepretor = Intepretor.getIntepretor();
         intepretor.Execute(treeBuilder.getCodeTreeRoot());
 
+        System.out.println("hello world!");
+
+
     }
 
 }
