@@ -1,5 +1,7 @@
 package backend;
 
+import backend.Compiler.Instruction;
+import backend.Compiler.ProgramGenerator;
 import frontend.CGrammarInitializer;
 
 public class BinaryExecutor extends BaseExecutor {
@@ -17,6 +19,7 @@ public class BinaryExecutor extends BaseExecutor {
             case CGrammarInitializer.Binary_Plus_Binary_TO_Binary:
             case CGrammarInitializer.Binary_DivOp_Binary_TO_Binary:
             case CGrammarInitializer.Binary_Minus_Binary_TO_Binary:
+            case CGrammarInitializer.Binary_Start_Binary_TO_Binary:
 
                 int val1 = (Integer)root.getChildren().get(0).getAttribute(ICodeKey.VALUE);
                 int val2 = (Integer)root.getChildren().get(1).getAttribute(ICodeKey.VALUE);
@@ -25,11 +28,18 @@ public class BinaryExecutor extends BaseExecutor {
                     root.setAttribute(ICodeKey.VALUE,val1+val2);
                     root.setAttribute(ICodeKey.TEXT,text);
                     System.out.println(text+" is "+(val1+val2));
+                    ProgramGenerator.getInstance().emit(Instruction.IADD);
                 }else if(production == CGrammarInitializer.Binary_Minus_Binary_TO_Binary){
                     String text = root.getChildren().get(0).getAttribute(ICodeKey.TEXT)+" minus "+root.getChildren().get(1).getAttribute(ICodeKey.TEXT);
                     root.setAttribute(ICodeKey.VALUE,val1-val2);
                     root.setAttribute(ICodeKey.TEXT,text);
                     System.out.println(text+" is "+(val1-val2));
+                }else if(production == CGrammarInitializer.Binary_Start_Binary_TO_Binary){
+                    String text = root.getChildren().get(0).getAttribute(ICodeKey.TEXT)+" minus "+root.getChildren().get(1).getAttribute(ICodeKey.TEXT);
+                    root.setAttribute(ICodeKey.VALUE,val1*val2);
+                    root.setAttribute(ICodeKey.TEXT,text);
+                    System.out.println(text+" is "+(val1*val2));
+                    ProgramGenerator.getInstance().emit(Instruction.IMUL);
                 }else{
                     root.setAttribute(ICodeKey.VALUE,val1/val2);
                     System.out.println(root.getChildren().get(0).getAttribute(ICodeKey.TEXT)+" is divided by "+

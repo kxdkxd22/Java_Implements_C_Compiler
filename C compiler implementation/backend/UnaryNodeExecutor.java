@@ -1,5 +1,8 @@
 package backend;
 
+import backend.Compiler.Directive;
+import backend.Compiler.Instruction;
+import backend.Compiler.ProgramGenerator;
 import frontend.CGrammarInitializer;
 import frontend.Declarator;
 import frontend.Symbol;
@@ -34,6 +37,7 @@ public class UnaryNodeExecutor extends BaseExecutor implements IExecutorReceiver
                     value = Integer.valueOf(text);
                     root.setAttribute(ICodeKey.VALUE,value);
                 }
+                ProgramGenerator.getInstance().emit(Instruction.SIPUSH,value.toString());
                 break;
             case CGrammarInitializer.Name_TO_Unary:
                 symbol = (Symbol)root.getAttribute(ICodeKey.SYMBOL);
@@ -134,7 +138,12 @@ public class UnaryNodeExecutor extends BaseExecutor implements IExecutorReceiver
 
                 if(func!=null){
                     Executor executor = ExecutorFactory.getExecutorFactory().getExecutor(func);
+                    ProgramGenerator.getInstance().setBufferedContent(true);
                     executor.Execute(func);
+                    ProgramGenerator.getInstance().emit(Instruction.RETURN);
+                    ProgramGenerator.getInstance().emitDirective(Directive.END_METHOD);
+                    ProgramGenerator.getInstance().setBufferedContent(false);
+                    compileFunctionCall(funcName);
 
                     Object returnVal = func.getAttribute(ICodeKey.VALUE);
                     if(returnVal!=null){
@@ -186,6 +195,13 @@ public class UnaryNodeExecutor extends BaseExecutor implements IExecutorReceiver
                 break;
         }
         return root;
+    }
+
+    private void compileFunctionCall(String funcName){
+        ProgramGenerator generator = ProgramGenerator.getInstance();
+        String declaration = generator.getDeclarationByName(funcName);
+        String call = generator.getProgramName()+"/"+declaration;
+        generator.emit(Instruction.INVOKESTATIC,call);
     }
 
     private boolean isSymbolStructPointer(Symbol symbol){

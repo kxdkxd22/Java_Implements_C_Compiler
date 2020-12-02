@@ -4,9 +4,16 @@ public enum Instruction {
     LDC("ldc"),
 
     GETSTATIC("getstatic"),
+    SIPUSH("sipush"),
+    IADD("iadd"),
+    IMUL("imul"),
 
     INVOKEVIRTUAL("invokevirtual"),
-    RETURN("return");
+    INVOKESTATIC("invokestatic"),
+    RETURN("return"),
+    IRETURN("ireturn"),
+    ILOAD("iload"),
+    ISTORE("istore");
 
     private String text;
     Instruction(String s){this.text = s;}

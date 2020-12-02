@@ -12,6 +12,8 @@ public class ProgramGenerator extends CodeGenerator{
 
     private ProgramGenerator(){}
 
+    public String getProgramName(){return programName;}
+
     public void generate(){
         emitDirective(Directive.CLASS_PUBLIC,programName);
         emitDirective(Directive.SUPER,"java/lang/Object");
@@ -24,7 +26,9 @@ public class ProgramGenerator extends CodeGenerator{
     }
 
     public void finish(){
+        emit(Instruction.RETURN);
         emitDirective(Directive.END_METHOD);
+        emitBufferedContent();
         emitDirective(Directive.END_CLASS);
         super.finish();
     }

@@ -92,6 +92,7 @@ public class CGrammarInitializer {
     public static final int Binary_DivOp_Binary_TO_Binary = 90;
     public static final int Binary_Minus_Binary_TO_Binary = 95;
 
+    public static final int Binary_Start_Binary_TO_Binary = 67;
     public static final int Start_Unary_TO_Unary = 99;
 
     public static final int Unary_StructOP_Name_TO_Unary = 100;

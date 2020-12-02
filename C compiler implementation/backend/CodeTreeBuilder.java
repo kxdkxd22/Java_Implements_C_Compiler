@@ -68,6 +68,7 @@ public class CodeTreeBuilder {
             case CGrammarInitializer.Binary_Plus_Binary_TO_Binary:
             case CGrammarInitializer.Binary_Minus_Binary_TO_Binary:
             case CGrammarInitializer.Binary_DivOp_Binary_TO_Binary:
+            case CGrammarInitializer.Binary_Start_Binary_TO_Binary:
                 node = ICodeFactory.createICodeNode(CTokenType.BINARY);
 
                 node.addChild(codeNodeStack.pop());

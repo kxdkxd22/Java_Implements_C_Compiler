@@ -139,5 +139,21 @@ public class Symbol implements IValueSetter {
         return size;
     }
 
+    public boolean hasType(int type){
+        TypeLink head = typeLinkBegin;
+        while(head != null){
+            if(head.isDeclarator!=true){
+                Specifier sp = (Specifier) head.typeObject;
+                if(sp.getType()==type){
+                    return true;
+                }
+            }
+
+            head = head.toNext();
+        }
+
+        return false;
+    }
+
     public int getLevel(){return level;}
 }

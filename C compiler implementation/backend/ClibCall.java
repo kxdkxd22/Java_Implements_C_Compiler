@@ -94,9 +94,12 @@ public class ClibCall {
         int argCount = 1;
         while (i<argStr.length()){
             if(argStr.charAt(i)=='%'&&argStr.charAt(i+1)=='d'&&i+1<argStr.length()){
+                generateJavaAssemblyForPrintf(formatStr);
                 formatStr+=argsList.get(argCount);
                 i+=2;
+
                 argCount++;
+                printInteger();
             }else{
                 formatStr+=argStr.charAt(i);
                 i++;
@@ -104,7 +107,7 @@ public class ClibCall {
         }
 
         System.out.println(formatStr);
-        generateJavaAssemblyForPrintf(formatStr);
+        generateJavaAssemblyForPrintf("\n");
         return null;
     }
 
@@ -112,9 +115,19 @@ public class ClibCall {
         ProgramGenerator generator = ProgramGenerator.getInstance();
         generator.emit(Instruction.GETSTATIC,"java/lang/System/out Ljava/io/PrintStream;");
         generator.emit(Instruction.LDC,"\""+s+"\"");
-        String printMethod = "java/io/PrintStream/println(Ljava/lang/String;)V";
+        String printMethod = "java/io/PrintStream/print(Ljava/lang/String;)V";
         generator.emit(Instruction.INVOKEVIRTUAL,printMethod);
-        generator.emit(Instruction.RETURN);
+
+    }
+
+    private void printInteger(){
+        ProgramGenerator generator = ProgramGenerator.getInstance();
+        generator.emit(Instruction.ISTORE,"0");
+        generator.emit(Instruction.GETSTATIC,"java/lang/System/out Ljava/io/PrintStream;");
+        generator.emit(Instruction.ILOAD,"0");
+        String printMethod = "java/io/PrintStream/print(I)V";
+        generator.emit(Instruction.INVOKEVIRTUAL,printMethod);
+
     }
 
 }
