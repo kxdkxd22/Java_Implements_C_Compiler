@@ -1,5 +1,7 @@
 package frontend;
 
+import backend.Compiler.Instruction;
+import backend.Compiler.ProgramGenerator;
 import backend.IValueSetter;
 
 public class Symbol implements IValueSetter {
@@ -84,6 +86,12 @@ public class Symbol implements IValueSetter {
         }
 
         this.value = obj;
+
+        if(this.value != null){
+            ProgramGenerator generator = ProgramGenerator.getInstance();
+            int idx = generator.getLocalVariableIndex(this);
+            generator.emit(Instruction.ISTORE,""+idx);
+        }
     }
 
     @Override

@@ -26,8 +26,10 @@ public class FunctDeclExecutor extends BaseExecutor {
                 root.reverseChildren();
                 ICodeNode n = root.getChildren().get(0);
                 String name = (String) n.getAttribute(ICodeKey.TEXT);
+                symbol = (Symbol) root.getAttribute(ICodeKey.SYMBOL);
+                generator.setCurrentFuncName(name);
                 if(name!=null&&name.equals("main")!=true){
-                    String declaration = name+"()V";
+                    String declaration = name+emitArgs(symbol);
                     generator.emitDirective(Directive.METHOD_PUBLIC_STATIC,declaration);
                     generator.setNameAndDeclaration(name,declaration);
                 }
@@ -37,13 +39,13 @@ public class FunctDeclExecutor extends BaseExecutor {
             case CGrammarInitializer.NewName_LP_VarList_RP_TO_FunctDecl:
                 n = root.getChildren().get(0);
                 name = (String) n.getAttribute(ICodeKey.TEXT);
+                symbol = (Symbol) root.getAttribute(ICodeKey.SYMBOL);
+                generator.setCurrentFuncName(name);
                 if(name!=null&&name.equals("main")!=true){
-                    String declaration = name+emitArgs();
+                    String declaration = name+emitArgs(symbol);
                     generator.emitDirective(Directive.METHOD_PUBLIC_STATIC,declaration);
                     generator.setNameAndDeclaration(name,declaration);
                 }
-
-                symbol = (Symbol) root.getAttribute(ICodeKey.SYMBOL);
 
                 Symbol args = symbol.getArgList();
                 initArgumentList(args);
@@ -80,7 +82,7 @@ public class FunctDeclExecutor extends BaseExecutor {
         }
     }
 
-    private String emitArgs(){
+    private String emitArgs(Symbol funcSymbol){
         argsList = FunctionArgumentList.getFunctionArgumentList().getFuncArgList(true);
         String args = "(";
         for(int i = 0; i < argsList.size(); i++){
@@ -97,9 +99,11 @@ public class FunctDeclExecutor extends BaseExecutor {
             args+= arg;
         }
 
-        args += ")V";
-
-        generator.emitString(args);
+        if(funcSymbol.hasType(Specifier.INT)){
+            args += ")I";
+        }else{
+            args += ")V";
+        }
 
         return args;
     }

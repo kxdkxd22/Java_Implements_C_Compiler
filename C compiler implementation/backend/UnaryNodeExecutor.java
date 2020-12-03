@@ -5,6 +5,7 @@ import backend.Compiler.Instruction;
 import backend.Compiler.ProgramGenerator;
 import frontend.CGrammarInitializer;
 import frontend.Declarator;
+import frontend.Specifier;
 import frontend.Symbol;
 
 import java.nio.ByteBuffer;
@@ -44,8 +45,16 @@ public class UnaryNodeExecutor extends BaseExecutor implements IExecutorReceiver
                 if(symbol!=null){
                     root.setAttribute(ICodeKey.VALUE,symbol.getValue());
                     root.setAttribute(ICodeKey.TEXT,symbol.getName());
-                }
 
+                    ICodeNode func = CodeTreeBuilder.getCodeTreeBuilder().getFunctionNodeByName(symbol.getName());
+                    if(func == null && symbol.getValue()!=null){
+                        ProgramGenerator generator = ProgramGenerator.getInstance();
+                        int idx = generator.getLocalVariableIndex(symbol);
+                        generator.emit(Instruction.ILOAD,""+idx);
+
+                    }
+
+                }
                 break;
 
             case CGrammarInitializer.String_TO_Unary:
@@ -140,7 +149,8 @@ public class UnaryNodeExecutor extends BaseExecutor implements IExecutorReceiver
                     Executor executor = ExecutorFactory.getExecutorFactory().getExecutor(func);
                     ProgramGenerator.getInstance().setBufferedContent(true);
                     executor.Execute(func);
-                    ProgramGenerator.getInstance().emit(Instruction.RETURN);
+                    symbol = (Symbol) root.getChildren().get(0).getAttribute(ICodeKey.SYMBOL);
+                    emitReturnInstruction(symbol);
                     ProgramGenerator.getInstance().emitDirective(Directive.END_METHOD);
                     ProgramGenerator.getInstance().setBufferedContent(false);
                     compileFunctionCall(funcName);
@@ -195,6 +205,14 @@ public class UnaryNodeExecutor extends BaseExecutor implements IExecutorReceiver
                 break;
         }
         return root;
+    }
+
+    private void emitReturnInstruction(Symbol symbol){
+        if(symbol.hasType(Specifier.INT)){
+            ProgramGenerator.getInstance().emit(Instruction.IRETURN);
+        }else{
+            ProgramGenerator.getInstance().emit(Instruction.RETURN);
+        }
     }
 
     private void compileFunctionCall(String funcName){

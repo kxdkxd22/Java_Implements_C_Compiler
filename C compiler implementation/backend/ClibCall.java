@@ -4,6 +4,7 @@ import backend.Compiler.Instruction;
 import backend.Compiler.ProgramGenerator;
 import frontend.Declarator;
 import frontend.Symbol;
+import frontend.TypeSystem;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -122,9 +123,14 @@ public class ClibCall {
 
     private void printInteger(){
         ProgramGenerator generator = ProgramGenerator.getInstance();
-        generator.emit(Instruction.ISTORE,"0");
+        String funcName = generator.getCurrentFuncName();
+        TypeSystem typeSystem = TypeSystem.getTypeSystem();
+        ArrayList<Symbol> list = typeSystem.getSymbolsByScope(funcName);
+        int localVariableNum = list.size();
+
+        generator.emit(Instruction.ISTORE,""+localVariableNum);
         generator.emit(Instruction.GETSTATIC,"java/lang/System/out Ljava/io/PrintStream;");
-        generator.emit(Instruction.ILOAD,"0");
+        generator.emit(Instruction.ILOAD,""+localVariableNum);
         String printMethod = "java/io/PrintStream/print(I)V";
         generator.emit(Instruction.INVOKEVIRTUAL,printMethod);
 
