@@ -154,6 +154,7 @@ public class UnaryNodeExecutor extends BaseExecutor implements IExecutorReceiver
                     ProgramGenerator.getInstance().emitDirective(Directive.END_METHOD);
                     ProgramGenerator.getInstance().setBufferedContent(false);
                     compileFunctionCall(funcName);
+                    ProgramGenerator.getInstance().popFuncName();
 
                     Object returnVal = func.getAttribute(ICodeKey.VALUE);
                     if(returnVal!=null){

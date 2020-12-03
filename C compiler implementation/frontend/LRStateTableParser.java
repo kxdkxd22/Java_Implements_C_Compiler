@@ -174,7 +174,13 @@ public class LRStateTableParser {
             case CGrammarInitializer.TypeNT_VarDecl_TO_ParamDeclaration:
             case CGrammarInitializer.Specifiers_DeclList_Semi_TO_Def:
                 Symbol symbol = (Symbol) attributeForParentNode;
-                TypeLink link = (TypeLink) valueStack.get(valueStack.size()-3);
+                TypeLink link = null;
+                if(productNum == CGrammarInitializer.TypeNT_VarDecl_TO_ParamDeclaration){
+                    link = (TypeLink) valueStack.get(valueStack.size()-2);
+                }else{
+                    link = (TypeLink) valueStack.get(valueStack.size()-3);
+                }
+
                 typeSystem.addSpecifierToDeclarator(link,symbol);
                 typeSystem.addSymbolsToTable(symbol,symbolScope);
 

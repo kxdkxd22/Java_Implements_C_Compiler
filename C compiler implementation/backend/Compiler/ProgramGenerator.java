@@ -4,25 +4,47 @@ import frontend.Symbol;
 import frontend.TypeSystem;
 
 import java.util.ArrayList;
+import java.util.Stack;
 
 public class ProgramGenerator extends CodeGenerator{
     private static  ProgramGenerator instance = null;
-    private String funcName = "";
+    private Stack<String> nameStack = new Stack<String>();
+    private boolean isInitArguments = false;
+
+    public void initFuncArguments(boolean b){isInitArguments = b;}
+
+    public boolean isPassingArguments(){return isInitArguments;}
 
     public void setCurrentFuncName(String name){
-        this.funcName = name;
+        nameStack.push(name);
     }
 
     public String getCurrentFuncName(){
-        return this.funcName;
+        return nameStack.peek();
     }
+
+    public void popFuncName(){nameStack.pop();}
 
     public int getLocalVariableIndex(Symbol symbol){
         TypeSystem typeSystem = TypeSystem.getTypeSystem();
-        ArrayList<Symbol> list = typeSystem.getSymbolsByScope(symbol.getScope());
+        String funcName = nameStack.peek();
+        Symbol funcSym = typeSystem.getSymbolByText(funcName,0,"main");
+        ArrayList<Symbol> localVariables = new ArrayList<Symbol>();
+        Symbol s = funcSym.getArgList();
+        while(s!=null){
+            localVariables.add(s);
+            s = s.getNextSymbol();
+        }
 
+        ArrayList<Symbol> list = typeSystem.getSymbolsByScope(symbol.getScope());
         for(int i = 0; i < list.size(); i++){
-            if(list.get(i)==symbol){
+            if(localVariables.contains(list.get(i))==false){
+                localVariables.add(list.get(i));
+            }
+        }
+
+        for(int i = 0; i < localVariables.size(); i++){
+            if(localVariables.get(i)==symbol){
                 return i;
             }
         }

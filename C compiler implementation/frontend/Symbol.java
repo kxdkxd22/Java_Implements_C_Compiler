@@ -90,7 +90,10 @@ public class Symbol implements IValueSetter {
         if(this.value != null){
             ProgramGenerator generator = ProgramGenerator.getInstance();
             int idx = generator.getLocalVariableIndex(this);
-            generator.emit(Instruction.ISTORE,""+idx);
+            if(generator.isPassingArguments() == false){
+                generator.emit(Instruction.ISTORE,""+idx);
+            }
+
         }
     }
 

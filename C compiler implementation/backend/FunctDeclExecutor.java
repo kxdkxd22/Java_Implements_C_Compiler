@@ -7,6 +7,7 @@ import frontend.Specifier;
 import frontend.Symbol;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 
 public class FunctDeclExecutor extends BaseExecutor {
@@ -65,6 +66,7 @@ public class FunctDeclExecutor extends BaseExecutor {
             return;
         }
 
+        generator.initFuncArguments(true);
         argsList = FunctionArgumentList.getFunctionArgumentList().getFuncArgList(true);
 
         Symbol eachSym =args;
@@ -80,13 +82,20 @@ public class FunctDeclExecutor extends BaseExecutor {
             }
             eachSym=eachSym.getNextSymbol();
         }
+        generator.initFuncArguments(false);
     }
 
     private String emitArgs(Symbol funcSymbol){
-        argsList = FunctionArgumentList.getFunctionArgumentList().getFuncArgList(true);
+        Symbol s = funcSymbol.getArgList();
+        ArrayList<Symbol> params = new ArrayList<Symbol>();
+        while(s!=null){
+            params.add(s);
+            s = s.getNextSymbol();
+        }
+        Collections.reverse(params);
         String args = "(";
-        for(int i = 0; i < argsList.size(); i++){
-            Symbol symbol = (Symbol) argsList.get(i);
+        for(int i = 0; i < params.size(); i++){
+            Symbol symbol = params.get(i);
             String arg = "";
             if(symbol.getDeclarator(Declarator.ARRAY)!=null){
                 arg+="[";
