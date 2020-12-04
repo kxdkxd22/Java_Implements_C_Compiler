@@ -14,7 +14,12 @@ public enum Instruction {
     RETURN("return"),
     IRETURN("ireturn"),
     ILOAD("iload"),
-    ISTORE("istore");
+    ISTORE("istore"),
+    NEWARRAY("newarray"),
+    ASTORE("astore"),
+    IASTORE("iastore"),
+    ALOAD("aload"),
+    IALOAD("iaload");
 
     private String text;
     Instruction(String s){this.text = s;}

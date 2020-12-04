@@ -1,5 +1,6 @@
 package backend;
 
+import backend.Compiler.ProgramGenerator;
 import frontend.Declarator;
 import frontend.Symbol;
 
@@ -14,6 +15,8 @@ public class ArrayValueSetter implements IValueSetter{
 
         try {
             declarator.addElements(index,object);
+
+            ProgramGenerator.getInstance().writeArrayElement(symbol,index,object);
             System.out.println(" Set Value of "+object.toString()+" to Array of name "+symbol.getName()+" with index of "+index);
         } catch (Exception e) {
             System.err.println(e.getMessage());

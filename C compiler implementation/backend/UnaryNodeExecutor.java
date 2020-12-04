@@ -78,6 +78,9 @@ public class UnaryNodeExecutor extends BaseExecutor implements IExecutorReceiver
                         ArrayValueSetter setter = new ArrayValueSetter(symbol,index);
                         root.setAttribute(ICodeKey.SYMBOL,setter);
                         root.setAttribute(ICodeKey.TEXT,symbol.getName());
+
+                        ProgramGenerator.getInstance().createArray(symbol);
+                        ProgramGenerator.getInstance().readArrayElement(symbol,index);
                     }
                     Declarator pointer = symbol.getDeclarator(Declarator.POINTER);
                     if(pointer!=null){

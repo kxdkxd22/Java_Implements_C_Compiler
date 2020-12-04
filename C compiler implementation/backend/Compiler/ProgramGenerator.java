@@ -1,16 +1,17 @@
 package backend.Compiler;
 
+import frontend.Declarator;
+import frontend.Specifier;
 import frontend.Symbol;
 import frontend.TypeSystem;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Stack;
+import java.util.*;
 
 public class ProgramGenerator extends CodeGenerator{
     private static  ProgramGenerator instance = null;
     private Stack<String> nameStack = new Stack<String>();
     private boolean isInitArguments = false;
+    private Map<String,String> arrayNameMap = new HashMap<String,String>();
 
     public void initFuncArguments(boolean b){isInitArguments = b;}
 
@@ -52,6 +53,61 @@ public class ProgramGenerator extends CodeGenerator{
         }
 
         return -1;
+    }
+
+    public void createArray(Symbol symbol){
+        if(arrayNameMap.containsKey(symbol.getScope())){
+            if(arrayNameMap.get(symbol.getScope()).equals(symbol.getName())){
+                return;
+            }
+        }
+
+        arrayNameMap.put(symbol.getScope(),symbol.getName());
+
+        Declarator declarator = symbol.getDeclarator(Declarator.ARRAY);
+        if(declarator == null){
+            return;
+        }
+
+        String type = "";
+        if(symbol.hasType(Specifier.INT)){
+            type = "int";
+        }
+
+        int num = declarator.getNumberOfElements();
+        this.emit(Instruction.SIPUSH,""+num);
+        this.emit(Instruction.NEWARRAY,type);
+        int idx = getLocalVariableIndex(symbol);
+        this.emit(Instruction.ASTORE,""+idx);
+
+    }
+
+    public void readArrayElement(Symbol symbol,int index){
+        Declarator declarator = symbol.getDeclarator(Declarator.ARRAY);
+        if(declarator == null){
+            return;
+        }
+
+        int idx = getLocalVariableIndex(symbol);
+        this.emit(Instruction.ALOAD,""+idx);
+        this.emit(Instruction.SIPUSH,""+index);
+        this.emit(Instruction.IALOAD);
+    }
+
+    public void writeArrayElement(Symbol symbol,int index,Object value){
+        Declarator declarator = symbol.getDeclarator(Declarator.ARRAY);
+        if(declarator == null){
+            return;
+        }
+
+        int idx = getLocalVariableIndex(symbol);
+        if(symbol.hasType(Specifier.INT)){
+            int val = (int)value;
+            this.emit(Instruction.ALOAD,""+idx);
+            this.emit(Instruction.SIPUSH,""+index);
+            this.emit(Instruction.IDIV.SIPUSH,""+val);
+            this.emit(Instruction.IASTORE);
+        }
     }
 
     public static ProgramGenerator getInstance(){
