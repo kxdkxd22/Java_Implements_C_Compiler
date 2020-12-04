@@ -7,7 +7,8 @@ public enum Instruction {
     SIPUSH("sipush"),
     IADD("iadd"),
     IMUL("imul"),
-
+    ISUB("isub"),
+    IDIV("idiv"),
     INVOKEVIRTUAL("invokevirtual"),
     INVOKESTATIC("invokestatic"),
     RETURN("return"),

@@ -4,6 +4,7 @@ import frontend.Symbol;
 import frontend.TypeSystem;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Stack;
 
 public class ProgramGenerator extends CodeGenerator{
@@ -35,6 +36,7 @@ public class ProgramGenerator extends CodeGenerator{
             localVariables.add(s);
             s = s.getNextSymbol();
         }
+        Collections.reverse(localVariables);
 
         ArrayList<Symbol> list = typeSystem.getSymbolsByScope(symbol.getScope());
         for(int i = 0; i < list.size(); i++){

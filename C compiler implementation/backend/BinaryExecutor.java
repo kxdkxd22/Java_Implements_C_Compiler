@@ -34,6 +34,7 @@ public class BinaryExecutor extends BaseExecutor {
                     root.setAttribute(ICodeKey.VALUE,val1-val2);
                     root.setAttribute(ICodeKey.TEXT,text);
                     System.out.println(text+" is "+(val1-val2));
+                    ProgramGenerator.getInstance().emit(Instruction.ISUB);
                 }else if(production == CGrammarInitializer.Binary_Start_Binary_TO_Binary){
                     String text = root.getChildren().get(0).getAttribute(ICodeKey.TEXT)+" minus "+root.getChildren().get(1).getAttribute(ICodeKey.TEXT);
                     root.setAttribute(ICodeKey.VALUE,val1*val2);
@@ -44,6 +45,7 @@ public class BinaryExecutor extends BaseExecutor {
                     root.setAttribute(ICodeKey.VALUE,val1/val2);
                     System.out.println(root.getChildren().get(0).getAttribute(ICodeKey.TEXT)+" is divided by "+
                             root.getChildren().get(1).getAttribute(ICodeKey.TEXT)+" and result is "+(val1/val2));
+                    ProgramGenerator.getInstance().emit(Instruction.IDIV);
                 }
 
                 break;

@@ -95,12 +95,12 @@ public class ClibCall {
         int argCount = 1;
         while (i<argStr.length()){
             if(argStr.charAt(i)=='%'&&argStr.charAt(i+1)=='d'&&i+1<argStr.length()){
-                generateJavaAssemblyForPrintf(formatStr);
+                //generateJavaAssemblyForPrintf(formatStr);
                 formatStr+=argsList.get(argCount);
                 i+=2;
 
                 argCount++;
-                printInteger();
+                //printInteger();
             }else{
                 formatStr+=argStr.charAt(i);
                 i++;
@@ -108,29 +108,60 @@ public class ClibCall {
         }
 
         System.out.println(formatStr);
-        generateJavaAssemblyForPrintf("\n");
+        generateJavaAssemblyForPrintf(argStr,argCount-1);
         return null;
     }
 
-    private void generateJavaAssemblyForPrintf(String s){
-        ProgramGenerator generator = ProgramGenerator.getInstance();
-        generator.emit(Instruction.GETSTATIC,"java/lang/System/out Ljava/io/PrintStream;");
-        generator.emit(Instruction.LDC,"\""+s+"\"");
-        String printMethod = "java/io/PrintStream/print(Ljava/lang/String;)V";
-        generator.emit(Instruction.INVOKEVIRTUAL,printMethod);
-
-    }
-
-    private void printInteger(){
+    private void generateJavaAssemblyForPrintf(String argStr,int argCount){
         ProgramGenerator generator = ProgramGenerator.getInstance();
         String funcName = generator.getCurrentFuncName();
         TypeSystem typeSystem = TypeSystem.getTypeSystem();
         ArrayList<Symbol> list = typeSystem.getSymbolsByScope(funcName);
         int localVariableNum = list.size();
+        int count = 0;
 
-        generator.emit(Instruction.ISTORE,""+localVariableNum);
+        while(count < argCount){
+            generator.emit(Instruction.ISTORE,""+(localVariableNum+count));
+            count++;
+        }
+
+        int i = 0;
+        String str = "";
+        count = argCount-1;
+        while(i<argStr.length()){
+            if(argStr.charAt(i)=='%'&&i+1<argStr.length()&&argStr.charAt(i+1)=='d'){
+               i+=2;
+               printString(str);
+               str="";
+               printInteger(localVariableNum+count);
+               count--;
+            }else{
+                str+=argStr.charAt(i);
+                i++;
+            }
+        }
+
+        printString("\n");
+    }
+
+    private void printString(String s){
+        if(s.length() == 0){
+            return;
+        }
+
+        ProgramGenerator generator = ProgramGenerator.getInstance();
         generator.emit(Instruction.GETSTATIC,"java/lang/System/out Ljava/io/PrintStream;");
-        generator.emit(Instruction.ILOAD,""+localVariableNum);
+        generator.emit(Instruction.LDC,"\""+s+"\"");
+        String printMethod = "java/io/PrintStream/print(Ljava/lang/String;)V";
+        generator.emit(Instruction.INVOKEVIRTUAL,printMethod);
+    }
+
+    private void printInteger(int posInList){
+
+
+        ProgramGenerator generator = ProgramGenerator.getInstance();
+        generator.emit(Instruction.GETSTATIC,"java/lang/System/out Ljava/io/PrintStream;");
+        generator.emit(Instruction.ILOAD,""+posInList);
         String printMethod = "java/io/PrintStream/print(I)V";
         generator.emit(Instruction.INVOKEVIRTUAL,printMethod);
 
