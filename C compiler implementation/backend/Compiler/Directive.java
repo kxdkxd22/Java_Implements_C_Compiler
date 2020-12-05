@@ -7,6 +7,7 @@ public enum Directive {
     FIELD_PRIVATE_STATIC(".field private static"),
     METHOD_STATIC(".method static"),
     METHOD_PUBLIC(".method public"),
+    FIELD_PUBLIC(".field public"),
     METHOD_PUBLIC_STATIC(".method public static"),
     END_METHOD(".end method"),
     LIMIT_LOCALS(".limit locals"),

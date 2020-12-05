@@ -1,9 +1,6 @@
 package backend.Compiler;
 
-import frontend.Declarator;
-import frontend.Specifier;
-import frontend.Symbol;
-import frontend.TypeSystem;
+import frontend.*;
 
 import java.util.*;
 
@@ -12,6 +9,130 @@ public class ProgramGenerator extends CodeGenerator{
     private Stack<String> nameStack = new Stack<String>();
     private boolean isInitArguments = false;
     private Map<String,String> arrayNameMap = new HashMap<String,String>();
+    private ArrayList<String> structNameList = new ArrayList<String>();
+
+    public void putStructToClassDeclaration(Symbol symbol){
+        Specifier sp = symbol.getSpecifierByType(Specifier.STRUCTURE);
+        if(sp == null){
+            return;
+        }
+
+        StructDefine struct = sp.getStructObj();
+        if(structNameList.contains(struct.getTag())){
+            return;
+        }else{
+            structNameList.add(struct.getTag());
+        }
+
+        this.emit(Instruction.NEW,struct.getTag());
+        this.emit(Instruction.DUP);
+        this.emit(Instruction.INVOKESPECIAL,struct.getTag()+"/"+"<init>()V");
+        int idx = this.getLocalVariableIndex(symbol);
+        this.emit(Instruction.ASTORE,""+idx);
+
+        this.setClassDefinition(true);
+        this.emitDirective(Directive.CLASS_PUBLIC,struct.getTag());
+        this.emitDirective(Directive.SUPER,"java/lang/Object");
+
+        Symbol fields = struct.getFields();
+        do{
+            String fieldName = fields.getName()+" ";
+            if(fields.getDeclarator(Declarator.ARRAY)!=null){
+                fieldName+="[";
+            }
+
+            if(fields.hasType(Specifier.INT)){
+                fieldName+="I";
+            }else if(fields.hasType(Specifier.CHAR)){
+                fieldName+="C";
+            }else if(fields.hasType(Specifier.CHAR)&&fields.getDeclarator(Declarator.POINTER)!=null){
+                fieldName+="Ljava/lang/String;";
+            }
+
+            this.emitDirective(Directive.FIELD_PUBLIC,fieldName);
+            fields = fields.getNextSymbol();
+
+        }while(fields!=null);
+
+        this.emitDirective(Directive.METHOD_PUBLIC,"<init>()V");
+        this.emit(Instruction.ALOAD,"0");
+        String superInit = "java/lang/Object/<init>()V";
+        this.emit(Instruction.INVOKESPECIAL,superInit);
+
+        fields = struct.getFields();
+        do{
+            this.emit(Instruction.ALOAD,"0");
+            String fieldName = struct.getTag()+"/"+fields.getName();
+            String fieldType = "";
+            if(fields.hasType(Specifier.INT)){
+                fieldType="I";
+                this.emit(Instruction.SIPUSH,"0");
+            }else if(fields.hasType(Specifier.CHAR)){
+                fieldType="C";
+                this.emit(Instruction.SIPUSH,"0");
+            }else if(fields.hasType(Specifier.CHAR)&&fields.getDeclarator(Declarator.POINTER)!=null){
+                fieldType = "Ljava/lang/String;";
+                this.emit(Instruction.LDC," ");
+            }
+            String classField = fieldName+" "+fieldType;
+            this.emit(Instruction.PUTFIELD,classField);
+            fields = fields.getNextSymbol();
+
+        }while(fields!=null);
+
+        this.emit(Instruction.RETURN);
+        this.emitDirective(Directive.END_METHOD);
+        this.emitDirective(Directive.END_CLASS);
+        this.setClassDefinition(false);
+
+    }
+
+    public void assignValueToStructMember(Symbol structSym,Symbol field,Object val){
+        int idx = getLocalVariableIndex(structSym);
+        this.emit(Instruction.ALOAD,""+idx);
+
+        String value = "";
+        String fieldType = "";
+        if(field.hasType(Specifier.INT)){
+            fieldType = "I";
+            value+=(Integer)val;
+            this.emit(Instruction.SIPUSH,value);
+        }else if(field.hasType(Specifier.CHAR)){
+            fieldType ="C";
+            value+=(Integer) val;
+            this.emit(Instruction.SIPUSH,value);
+        }else if(field.hasType(Specifier.CHAR)&&field.getDeclarator(Declarator.POINTER)!=null){
+            fieldType = "Ljava/lang/String;";
+            value+=(String)val;
+            this.emit(Instruction.LDC,value);
+        }
+
+        Specifier sp = structSym.getSpecifierByType(Specifier.STRUCTURE);
+        StructDefine struct = sp.getStructObj();
+        String fieldContent = struct.getTag()+"/"+field.getName()+" "+fieldType;
+        this.emit(Instruction.PUTFIELD,fieldContent);
+
+    }
+
+    public void readValueFromStructMember(Symbol structSym,Symbol field){
+        int idx = getLocalVariableIndex(structSym);
+        this.emit(Instruction.ALOAD,""+idx);
+
+        String fieldType = "";
+        if(field.hasType(Specifier.INT)){
+            fieldType ="I";
+        }else if(field.hasType(Specifier.CHAR)){
+            fieldType="C";
+        }else if(field.hasType(Specifier.CHAR)&&field.getDeclarator(Declarator.POINTER)!=null){
+            fieldType = "Ljava/lang/String;";
+        }
+
+        Specifier sp = structSym.getSpecifierByType(Specifier.STRUCTURE);
+        StructDefine struct = sp.getStructObj();
+        String fieldContent = struct.getTag()+"/"+field.getName()+" "+fieldType;
+        this.emit(Instruction.GETFIELD,fieldContent);
+
+    }
 
     public void initFuncArguments(boolean b){isInitArguments = b;}
 
@@ -137,6 +258,7 @@ public class ProgramGenerator extends CodeGenerator{
         emitDirective(Directive.END_METHOD);
         emitBufferedContent();
         emitDirective(Directive.END_CLASS);
+        emitClassDefinition();
         super.finish();
     }
 

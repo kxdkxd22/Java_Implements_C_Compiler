@@ -11,14 +11,19 @@ public enum Instruction {
     IDIV("idiv"),
     INVOKEVIRTUAL("invokevirtual"),
     INVOKESTATIC("invokestatic"),
+    INVOKESPECIAL("invokespecial"),
     RETURN("return"),
     IRETURN("ireturn"),
     ILOAD("iload"),
     ISTORE("istore"),
     NEWARRAY("newarray"),
+    NEW("new"),
+    DUP("dup"),
     ASTORE("astore"),
     IASTORE("iastore"),
     ALOAD("aload"),
+    PUTFIELD("putfield"),
+    GETFIELD("getfield"),
     IALOAD("iaload");
 
     private String text;

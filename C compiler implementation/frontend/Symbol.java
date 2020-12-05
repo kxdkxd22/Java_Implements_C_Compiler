@@ -23,6 +23,9 @@ public class Symbol implements IValueSetter {
 
     private String symbolScope = LRStateTableParser.GLOBAL_SCOPE;
 
+    private boolean isMember = false;
+    private Symbol structParent = null;
+
     public void addScope(String scope){
         this.symbolScope = scope;
     }
@@ -32,6 +35,10 @@ public class Symbol implements IValueSetter {
     public Symbol getArgList(){return args;}
 
     public void setArgList(Symbol args){this.args = args;}
+
+    public Symbol getStructSymbol(){return this.structParent;}
+
+    public boolean isStructMember(){return isMember;}
 
     public boolean equals(Symbol symbol){
         if(this.getLevel()==symbol.getLevel()&&this.symbolScope.equals(symbol.symbolScope)&&this.name.equals(symbol.name)){
@@ -56,6 +63,11 @@ public class Symbol implements IValueSetter {
         symbol.symbolScope = this.symbolScope;
 
         return symbol;
+    }
+
+    public void setStructParent(Symbol parent){
+        this.isMember = true;
+        this.structParent = parent;
     }
 
     public void addDeclarator(TypeLink link){
@@ -89,9 +101,14 @@ public class Symbol implements IValueSetter {
 
         if(this.value != null){
             ProgramGenerator generator = ProgramGenerator.getInstance();
-            int idx = generator.getLocalVariableIndex(this);
-            if(generator.isPassingArguments() == false){
-                generator.emit(Instruction.ISTORE,""+idx);
+
+            if(this.isStructMember()==false){
+                int idx = generator.getLocalVariableIndex(this);
+                if(generator.isPassingArguments() == false){
+                    generator.emit(Instruction.ISTORE,""+idx);
+                }
+            }else{
+                generator.assignValueToStructMember(this.getStructSymbol(),this,this.value);
             }
 
         }
@@ -164,6 +181,20 @@ public class Symbol implements IValueSetter {
         }
 
         return false;
+    }
+
+    public Specifier getSpecifierByType(int type){
+        TypeLink head = typeLinkBegin;
+        while(head!=null){
+            if(head.isDeclarator!=true){
+                Specifier sp = (Specifier) head.typeObject;
+                if(sp.getType() == type){
+                    return sp;
+                }
+            }
+            head = head.toNext();
+        }
+        return null;
     }
 
     public int getLevel(){return level;}

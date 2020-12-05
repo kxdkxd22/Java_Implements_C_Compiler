@@ -178,6 +178,9 @@ public class UnaryNodeExecutor extends BaseExecutor implements IExecutorReceiver
                 String fileldName = (String) root.getAttribute(ICodeKey.TEXT);
                 symbol = (Symbol)child.getAttribute(ICodeKey.SYMBOL);
 
+                symbol.addScope(ProgramGenerator.getInstance().getCurrentFuncName());
+                ProgramGenerator.getInstance().putStructToClassDeclaration(symbol);
+
                 if(isSymbolStructPointer(symbol)){
                     copyBetweenStructAndMem(symbol,false);
                 }
@@ -185,6 +188,7 @@ public class UnaryNodeExecutor extends BaseExecutor implements IExecutorReceiver
                 Symbol args = symbol.getArgList();
                 while(args!=null){
                     if(args.getName().equals(fileldName)){
+                        args.setStructParent(symbol);
                         break;
                     }
                     args = args.getNextSymbol();
@@ -193,6 +197,10 @@ public class UnaryNodeExecutor extends BaseExecutor implements IExecutorReceiver
                 if(args==null){
                     System.err.println("access a filed not in struct object!");
                     System.exit(1);
+                }
+
+                if(args.getValue()!=null){
+                    ProgramGenerator.getInstance().readValueFromStructMember(symbol,args);
                 }
 
                 root.setAttribute(ICodeKey.SYMBOL,args);
