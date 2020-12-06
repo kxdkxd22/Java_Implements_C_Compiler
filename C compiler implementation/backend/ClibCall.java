@@ -117,10 +117,15 @@ public class ClibCall {
         String funcName = generator.getCurrentFuncName();
         TypeSystem typeSystem = TypeSystem.getTypeSystem();
         ArrayList<Symbol> list = typeSystem.getSymbolsByScope(funcName);
+        ArrayList<Object> argList = FunctionArgumentList.getFunctionArgumentList().getFuncArgSymsList(true);
         int localVariableNum = list.size();
         int count = 0;
-
+        int argSymCount = 0;
         while(count < argCount){
+            Symbol argSym = (Symbol)argList.get(argSymCount);
+            argSymCount++;
+            int d = generator.getLocalVariableIndex(argSym);
+            generator.emit(Instruction.ILOAD,""+d);
             generator.emit(Instruction.ISTORE,""+(localVariableNum+count));
             count++;
         }

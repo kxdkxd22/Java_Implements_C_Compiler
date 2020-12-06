@@ -100,12 +100,23 @@ public class Symbol implements IValueSetter {
     public void setValue(Object obj){
         if(obj!=null){
             System.out.println("Assign value of "+obj.toString()+" to variable " +name);
+        }else{
+            return;
         }
 
-        this.value = obj;
+        ProgramGenerator generator = ProgramGenerator.getInstance();
+        if(obj instanceof Symbol){
+            Symbol symbol = (Symbol) obj;
+            this.value = symbol.value;
+            int i = generator.getLocalVariableIndex(symbol);
+            generator.emit(Instruction.ILOAD,""+i);
+        }else if(obj instanceof Integer){
+            Integer val = (Integer)obj;
+            generator.emit(Instruction.SIPUSH,""+val);
+            this.value = obj;
+        }
 
         if(this.value != null){
-            ProgramGenerator generator = ProgramGenerator.getInstance();
 
             if(this.isStructMember()==false){
                 int idx = generator.getLocalVariableIndex(this);

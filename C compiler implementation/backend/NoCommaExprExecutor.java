@@ -23,7 +23,10 @@ public class NoCommaExprExecutor extends BaseExecutor {
                 setter = (IValueSetter) child.getAttribute(ICodeKey.SYMBOL);
 
                 child = root.getChildren().get(1);
-                value = child.getAttribute(ICodeKey.VALUE);
+                value = child.getAttribute(ICodeKey.SYMBOL);
+                if(value == null){
+                    value = child.getAttribute(ICodeKey.VALUE);
+                }
 
                 try {
                     setter.setValue(value);

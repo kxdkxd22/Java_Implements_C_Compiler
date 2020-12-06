@@ -11,6 +11,39 @@ public class ProgramGenerator extends CodeGenerator{
     private boolean isInitArguments = false;
     private Map<String,String> arrayNameMap = new HashMap<String,String>();
     private ArrayList<String> structNameList = new ArrayList<String>();
+    private int branch_count = 0;
+    private int branch_out = 0;
+    private String embedded = "";
+
+    public int getIfElseEmbedCount(){return embedded.length();}
+
+    public void increaseIfElseEmbed(){embedded+="i";}
+
+    public void decreaseIfElseEmbed(){embedded= embedded.substring(1);}
+
+    public void emitBranchOut(){
+        String s = "\n"+embedded+"branch_out"+branch_out+":\n";
+        this.emitString(s);
+        branch_out++;
+    }
+
+    public String getBranchOut(){
+        String s = embedded+"branch_out"+branch_out;
+        return s;
+    }
+
+    public String getCurrentBranch(){
+        String str = embedded+"branch"+branch_count;
+        return str;
+    }
+
+    public void increaseBranch(){branch_count++;}
+
+    public String getAheadBranch(int ahead){
+        String str = embedded + "branch"+branch_count+ahead+":";
+        this.emitString(str);
+        return str;
+    }
 
     public void putStructToClassDeclaration(Symbol symbol){
         Specifier sp = symbol.getSpecifierByType(Specifier.STRUCTURE);

@@ -39,7 +39,7 @@ public class UnaryNodeExecutor extends BaseExecutor implements IExecutorReceiver
                     value = Integer.valueOf(text);
                     root.setAttribute(ICodeKey.VALUE,value);
                 }
-                ProgramGenerator.getInstance().emit(Instruction.SIPUSH,value.toString());
+                //ProgramGenerator.getInstance().emit(Instruction.SIPUSH,value.toString());
                 break;
             case CGrammarInitializer.Name_TO_Unary:
                 symbol = (Symbol)root.getAttribute(ICodeKey.SYMBOL);
@@ -49,10 +49,10 @@ public class UnaryNodeExecutor extends BaseExecutor implements IExecutorReceiver
 
                     ICodeNode func = CodeTreeBuilder.getCodeTreeBuilder().getFunctionNodeByName(symbol.getName());
                     if(func == null && symbol.getValue()!=null){
-                        ProgramGenerator generator = ProgramGenerator.getInstance();
+                      /*  ProgramGenerator generator = ProgramGenerator.getInstance();
                         int idx = generator.getLocalVariableIndex(symbol);
                         generator.emit(Instruction.ILOAD,""+idx);
-
+                        */
                     }
 
                 }

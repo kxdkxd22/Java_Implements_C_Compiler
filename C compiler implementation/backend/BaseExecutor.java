@@ -1,13 +1,21 @@
 package backend;
 
+import backend.Compiler.ProgramGenerator;
+
 import java.util.Collections;
 
 public abstract class BaseExecutor implements Executor{
     private static boolean continueExecute = true;
     private static Object returnObj = null;
     IExecutorBrocaster executorBrocaster = null;
+    ProgramGenerator generator;
+    public static boolean inIfElseStatement = false;
+    public static boolean isCompileMode = false;
 
-    public BaseExecutor(){executorBrocaster = ExecutorBrocasterImpl.getInstance();}
+    public BaseExecutor(){
+        executorBrocaster = ExecutorBrocasterImpl.getInstance();
+        generator = ProgramGenerator.getInstance();
+    }
 
     protected void setReturnObj(Object obj){
         this.returnObj = obj;

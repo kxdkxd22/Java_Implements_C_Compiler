@@ -27,6 +27,13 @@ public enum Instruction {
     ANEWARRAY("anewarray"),
     AASTORE("aastore"),
     AALOAD("aaload"),
+    IF_ICMPEG("if_icmpeq"),
+    IF_ICMPNE("if_icmpne"),
+    IF_ICMPLT("if_icmplt"),
+    IF_ICMPGE("if_icmpge"),
+    IF_ICMPGT("if_icmpgt"),
+    IF_ICMPLE("if_icmple"),
+    GOTO("goto"),
     IALOAD("iaload");
 
     private String text;
