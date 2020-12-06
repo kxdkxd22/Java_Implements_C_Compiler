@@ -24,6 +24,9 @@ public enum Instruction {
     ALOAD("aload"),
     PUTFIELD("putfield"),
     GETFIELD("getfield"),
+    ANEWARRAY("anewarray"),
+    AASTORE("aastore"),
+    AALOAD("aaload"),
     IALOAD("iaload");
 
     private String text;

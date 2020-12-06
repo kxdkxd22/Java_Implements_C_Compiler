@@ -31,6 +31,8 @@ public class ArrayValueSetter implements IValueSetter{
         return symbol;
     }
 
+    public int getIndex(){return index;}
+
     public  ArrayValueSetter(Symbol symbol,int index){
         this.symbol = symbol;
         this.index = index;

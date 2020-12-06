@@ -3,6 +3,7 @@ package backend;
 import backend.Compiler.Directive;
 import backend.Compiler.Instruction;
 import backend.Compiler.ProgramGenerator;
+import com.sun.org.apache.xpath.internal.objects.XObject;
 import frontend.CGrammarInitializer;
 import frontend.Declarator;
 import frontend.Specifier;
@@ -79,8 +80,11 @@ public class UnaryNodeExecutor extends BaseExecutor implements IExecutorReceiver
                         root.setAttribute(ICodeKey.SYMBOL,setter);
                         root.setAttribute(ICodeKey.TEXT,symbol.getName());
 
-                        ProgramGenerator.getInstance().createArray(symbol);
-                        ProgramGenerator.getInstance().readArrayElement(symbol,index);
+                        if(symbol.getSpecifierByType(Specifier.STRUCTURE)==null){
+                            ProgramGenerator.getInstance().createArray(symbol);
+                            ProgramGenerator.getInstance().readArrayElement(symbol,index);
+                        }
+
                     }
                     Declarator pointer = symbol.getDeclarator(Declarator.POINTER);
                     if(pointer!=null){
@@ -176,9 +180,25 @@ public class UnaryNodeExecutor extends BaseExecutor implements IExecutorReceiver
             case CGrammarInitializer.Unary_StructOP_Name_TO_Unary:
                 child = root.getChildren().get(0);
                 String fileldName = (String) root.getAttribute(ICodeKey.TEXT);
-                symbol = (Symbol)child.getAttribute(ICodeKey.SYMBOL);
+                Object object = child.getAttribute(ICodeKey.SYMBOL);
+                boolean isStructArray = false;
 
-                symbol.addScope(ProgramGenerator.getInstance().getCurrentFuncName());
+                if(object instanceof ArrayValueSetter){
+                    symbol = getStructSymbolFromStructArray(object);
+                    symbol.addValueSetter(object);
+                    isStructArray = true;
+                }else{
+                    symbol = (Symbol) child.getAttribute(ICodeKey.SYMBOL);
+                }
+
+                if(isStructArray == true){
+                    ArrayValueSetter vs =(ArrayValueSetter)object;
+                    Symbol structArray = vs.getSymbol();
+                    structArray.addScope(ProgramGenerator.getInstance().getCurrentFuncName());
+                }else{
+                    symbol.addScope(ProgramGenerator.getInstance().getCurrentFuncName());
+                }
+
                 ProgramGenerator.getInstance().putStructToClassDeclaration(symbol);
 
                 if(isSymbolStructPointer(symbol)){
@@ -217,6 +237,38 @@ public class UnaryNodeExecutor extends BaseExecutor implements IExecutorReceiver
                 break;
         }
         return root;
+    }
+
+    private Symbol getStructSymbolFromStructArray(Object object){
+        ArrayValueSetter vs = (ArrayValueSetter) object;
+        Symbol symbol = vs.getSymbol();
+        int idx = vs.getIndex();
+        Declarator declarator = symbol.getDeclarator(Declarator.ARRAY);
+        if(declarator == null){
+            return null;
+        }
+        ProgramGenerator.getInstance().createStructArray(symbol);
+
+        Symbol struct = null;
+        try {
+            struct = (Symbol) declarator.getElement(idx);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        if(struct == null){
+            struct = symbol.copy();
+
+            try {
+                declarator.addElements(idx,(Object) struct);
+                ProgramGenerator.getInstance().createInstanceForStructArray(symbol,idx);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+        }
+
+        return struct;
     }
 
     private void emitReturnInstruction(Symbol symbol){

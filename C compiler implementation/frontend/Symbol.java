@@ -22,9 +22,14 @@ public class Symbol implements IValueSetter {
     private Object value = null;
 
     private String symbolScope = LRStateTableParser.GLOBAL_SCOPE;
+    private Object valueSetter = null;
 
     private boolean isMember = false;
     private Symbol structParent = null;
+
+    public void addValueSetter(Object valueSetter){this.valueSetter = valueSetter;}
+
+    public Object getValueSetter(){return this.valueSetter;}
 
     public void addScope(String scope){
         this.symbolScope = scope;
@@ -108,7 +113,11 @@ public class Symbol implements IValueSetter {
                     generator.emit(Instruction.ISTORE,""+idx);
                 }
             }else{
-                generator.assignValueToStructMember(this.getStructSymbol(),this,this.value);
+                if(this.getStructSymbol().getValueSetter()!=null){
+                    generator.assignValueToStructMemberFromArray(this.getStructSymbol().getValueSetter(),this,this.value);
+                }else{
+                    generator.assignValueToStructMember(this.getStructSymbol(),this,this.value);
+                }
             }
 
         }

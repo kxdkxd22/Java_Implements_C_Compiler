@@ -1,5 +1,6 @@
 package backend.Compiler;
 
+import backend.ArrayValueSetter;
 import frontend.*;
 
 import java.util.*;
@@ -24,12 +25,18 @@ public class ProgramGenerator extends CodeGenerator{
             structNameList.add(struct.getTag());
         }
 
-        this.emit(Instruction.NEW,struct.getTag());
-        this.emit(Instruction.DUP);
-        this.emit(Instruction.INVOKESPECIAL,struct.getTag()+"/"+"<init>()V");
-        int idx = this.getLocalVariableIndex(symbol);
-        this.emit(Instruction.ASTORE,""+idx);
+        if(symbol.getValueSetter()==null){
+            this.emit(Instruction.NEW,struct.getTag());
+            this.emit(Instruction.DUP);
+            this.emit(Instruction.INVOKESPECIAL,struct.getTag()+"/"+"<init>()V");
+            int idx = this.getLocalVariableIndex(symbol);
+            this.emit(Instruction.ASTORE,""+idx);
+        }
 
+        declareStructAsClass(struct);
+    }
+
+    private void declareStructAsClass(StructDefine struct){
         this.setClassDefinition(true);
         this.emitDirective(Directive.CLASS_PUBLIC,struct.getTag());
         this.emitDirective(Directive.SUPER,"java/lang/Object");
@@ -84,10 +91,42 @@ public class ProgramGenerator extends CodeGenerator{
         this.emitDirective(Directive.END_METHOD);
         this.emitDirective(Directive.END_CLASS);
         this.setClassDefinition(false);
-
     }
 
-    public void assignValueToStructMember(Symbol structSym,Symbol field,Object val){
+    public void createStructArray(Symbol structSymArray){
+        Specifier sp = structSymArray.getSpecifierByType(Specifier.STRUCTURE);
+        StructDefine struct = sp.getStructObj();
+        if(structNameList.contains(struct.getTag())){
+            return;
+        }else{
+            structNameList.add(struct.getTag());
+        }
+
+        Declarator declarator = structSymArray.getDeclarator(Declarator.ARRAY);
+        int eleCount = declarator.getNumberOfElements();
+        this.emit(Instruction.SIPUSH,""+eleCount);
+        this.emit(Instruction.ANEWARRAY,struct.getTag());
+
+        int idx = getLocalVariableIndex(structSymArray);
+        this.emit(Instruction.ASTORE,""+idx);
+
+        declareStructAsClass(struct);
+    }
+
+    public void createInstanceForStructArray(Symbol structSymArray,int idx){
+        int i = getLocalVariableIndex(structSymArray);
+        this.emit(Instruction.ALOAD,""+i);
+        this.emit(Instruction.SIPUSH,""+idx);
+
+        Specifier sp = structSymArray.getSpecifierByType(Specifier.STRUCTURE);
+        StructDefine struct = sp.getStructObj();
+        this.emit(Instruction.NEW,struct.getTag());
+        this.emit(Instruction.DUP);
+        this.emit(Instruction.INVOKESPECIAL,struct.getTag()+"/"+"<init>()V");
+        this.emit(Instruction.AASTORE);
+    }
+
+    public void assignValueToStructMember(Symbol structSym, Symbol field, Object val){
         int idx = getLocalVariableIndex(structSym);
         this.emit(Instruction.ALOAD,""+idx);
 
@@ -114,9 +153,53 @@ public class ProgramGenerator extends CodeGenerator{
 
     }
 
+    public void assignValueToStructMemberFromArray(Object obj,Symbol field,Object val){
+        ArrayValueSetter setter = (ArrayValueSetter)obj;
+        int idx = setter.getIndex();
+        Symbol symbol = setter.getSymbol();
+
+        int i = getLocalVariableIndex(symbol);
+        this.emit(Instruction.ALOAD,""+i);
+        this.emit(Instruction.SIPUSH,""+idx);
+        this.emit(Instruction.AALOAD);
+
+        String value = "";
+        String fieldType = "";
+        if(field.hasType(Specifier.INT)){
+            fieldType="I";
+            value +=  (Integer)val;
+            this.emit(Instruction.SIPUSH,value);
+        }else if(field.hasType(Specifier.CHAR)){
+            fieldType = "C";
+            value+=(Integer)val;
+            this.emit(Instruction.SIPUSH,value);
+        }else if(field.hasType(Specifier.CHAR)&&field.getDeclarator(Declarator.POINTER)!=null){
+            fieldType = "Ljava/lang/String;";
+            value+=(String)val;
+            this.emit(Instruction.LDC,value);
+        }
+
+        Specifier sp = symbol.getSpecifierByType(Specifier.STRUCTURE);
+        StructDefine struct = sp.getStructObj();
+        String fieldContent = struct.getTag()+"/"+field.getName()+" "+fieldType;
+        this.emit(Instruction.PUTFIELD,fieldContent);
+
+    }
+
     public void readValueFromStructMember(Symbol structSym,Symbol field){
+        ArrayValueSetter vs = (ArrayValueSetter)structSym.getValueSetter();
+        if(vs!=null){
+            structSym = vs.getSymbol();
+        }
+
         int idx = getLocalVariableIndex(structSym);
         this.emit(Instruction.ALOAD,""+idx);
+
+        if(vs!=null){
+            int i = vs.getIndex();
+            this.emit(Instruction.SIPUSH,""+i);
+            this.emit(Instruction.AALOAD);
+        }
 
         String fieldType = "";
         if(field.hasType(Specifier.INT)){
