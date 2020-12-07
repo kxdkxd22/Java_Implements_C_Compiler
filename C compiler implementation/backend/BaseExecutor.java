@@ -12,6 +12,9 @@ public abstract class BaseExecutor implements Executor{
     public static boolean inIfElseStatement = false;
     public static boolean isCompileMode = false;
 
+    public static boolean resultOnStack = false;
+    public static String funcName= "";
+
     public BaseExecutor(){
         executorBrocaster = ExecutorBrocasterImpl.getInstance();
         generator = ProgramGenerator.getInstance();

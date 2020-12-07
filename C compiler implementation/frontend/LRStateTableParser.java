@@ -43,6 +43,8 @@ public class LRStateTableParser {
 
     CodeTreeBuilder treeBuilder = CodeTreeBuilder.getCodeTreeBuilder();
 
+    public Stack<Object> getValueStack(){return valueStack;}
+
     public LRStateTableParser(Lexer lexer){
         this.lexer = lexer;
         statusStack.push(0);

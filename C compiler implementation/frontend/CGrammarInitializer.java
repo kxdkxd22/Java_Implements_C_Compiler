@@ -97,6 +97,8 @@ public class CGrammarInitializer {
 
     public static final int Unary_StructOP_Name_TO_Unary = 100;
 
+    public static final int Def_To_DefList = 28;
+
     private int productionNum = 0;
     private static CGrammarInitializer instance = null;
     private HashMap<Integer, ArrayList<Production>> productionMap = new HashMap<Integer, ArrayList<Production>>();

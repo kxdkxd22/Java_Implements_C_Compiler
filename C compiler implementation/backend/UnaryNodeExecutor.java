@@ -68,22 +68,32 @@ public class UnaryNodeExecutor extends BaseExecutor implements IExecutorReceiver
                 child = root.getChildren().get(0);
                 symbol = (Symbol) child.getAttribute(ICodeKey.SYMBOL);
                 child = root.getChildren().get(1);
-                int index = (int) child.getAttribute(ICodeKey.VALUE);
-
+                int index = 0;
+                if(child.getAttribute(ICodeKey.VALUE)!=null){
+                    index = (int) child.getAttribute(ICodeKey.VALUE);
+                }
+                Object idxObj = child.getAttribute(ICodeKey.SYMBOL);
 
                 try {
                     Declarator declarator = symbol.getDeclarator(Declarator.ARRAY);
                     if(declarator!=null){
                         Object val = declarator.getElement(index);
                         root.setAttribute(ICodeKey.VALUE,val);
-                        ArrayValueSetter setter = new ArrayValueSetter(symbol,index);
+                        ArrayValueSetter setter = null;
+
+                        if(idxObj==null){
+                            setter = new ArrayValueSetter(symbol,index);
+                        }else {
+                            setter = new ArrayValueSetter(symbol,idxObj);
+                        }
+
                         root.setAttribute(ICodeKey.SYMBOL,setter);
                         root.setAttribute(ICodeKey.TEXT,symbol.getName());
-
+                        /*
                         if(symbol.getSpecifierByType(Specifier.STRUCTURE)==null){
                             ProgramGenerator.getInstance().createArray(symbol);
                             ProgramGenerator.getInstance().readArrayElement(symbol,index);
-                        }
+                        }*/
 
                     }
                     Declarator pointer = symbol.getDeclarator(Declarator.POINTER);
@@ -105,19 +115,26 @@ public class UnaryNodeExecutor extends BaseExecutor implements IExecutorReceiver
                 Integer val = (Integer) symbol.getValue();
                 IValueSetter setter = (IValueSetter) symbol;
 
+                int i = generator.getLocalVariableIndex(symbol);
+                generator.emit(Instruction.ILOAD,""+i);
+                generator.emit(Instruction.SIPUSH,""+1);
                 try {
                     if(production == CGrammarInitializer.Unary_Incop_TO_Unary){
-                        setter.setValue(val + 1);
+                        if(BaseExecutor.isCompileMode ==false){
+                            setter.setValue(val + 1);
+                        }
+                        generator.emit(Instruction.IADD);
+                    }else {
+                        if(BaseExecutor.isCompileMode ==false){
+                            setter.setValue(val - 1);
+                        }
+                        generator.emit(Instruction.ISUB);
                     }
-                    if(production == CGrammarInitializer.Unary_DecOp_TO_Unary){
-                        setter.setValue(val - 1);
-                    }
-
                 } catch (Exception e) {
                     e.printStackTrace();
                     System.err.println("Runtime Error: Assign Value Error");
                 }
-
+                generator.emit(Instruction.ISTORE,""+i);
                 break;
             case CGrammarInitializer.LP_Expr_RP_TO_Unary:
                 child = root.getChildren().get(0);
@@ -140,28 +157,62 @@ public class UnaryNodeExecutor extends BaseExecutor implements IExecutorReceiver
             case CGrammarInitializer.Unary_LP_RP_TO_Unary:
             case CGrammarInitializer.Unary_LP_ARGS_RP_TO_Unary:
 
+                boolean reEntry = false;
                 String funcName = (String) root.getChildren().get(0).getAttribute(ICodeKey.TEXT);
+
+                if(funcName != ""&& funcName.equals(BaseExecutor.funcName)){
+                    reEntry = true;
+                }
+
+                ArrayList<Object> argList = null;
+                ArrayList<Object> symList = null;
+
                 if(production== CGrammarInitializer.Unary_LP_ARGS_RP_TO_Unary){
                     ICodeNode argsNode = root.getChildren().get(1);
-                    ArrayList<Object> argList = (ArrayList<Object>) argsNode.getAttribute(ICodeKey.VALUE);
+                    argList = (ArrayList<Object>) argsNode.getAttribute(ICodeKey.VALUE);
                     FunctionArgumentList.getFunctionArgumentList().setFuncArgList(argList);
 
-                    ArrayList<Object> symList = (ArrayList<Object>) argsNode.getAttribute(ICodeKey.SYMBOL);
+                    symList = (ArrayList<Object>) argsNode.getAttribute(ICodeKey.SYMBOL);
                     FunctionArgumentList.getFunctionArgumentList().setFuncArgSymbolList(symList);
                 }
 
                 ICodeNode func = CodeTreeBuilder.getCodeTreeBuilder().getFunctionNodeByName(funcName);
 
                 if(func!=null){
-                    Executor executor = ExecutorFactory.getExecutorFactory().getExecutor(func);
-                    ProgramGenerator.getInstance().setBufferedContent(true);
-                    executor.Execute(func);
-                    symbol = (Symbol) root.getChildren().get(0).getAttribute(ICodeKey.SYMBOL);
-                    emitReturnInstruction(symbol);
-                    ProgramGenerator.getInstance().emitDirective(Directive.END_METHOD);
-                    ProgramGenerator.getInstance().setBufferedContent(false);
+                    BaseExecutor.funcName = funcName;
+                    int count = 0;
+                    while(count < argList.size()){
+                        Object objVal = argList.get(count);
+                        Object objSym = symList.get(count);
+                        if(objSym!=null){
+                            Symbol param = (Symbol) objSym;
+                            int idx = generator.getLocalVariableIndex(param);
+                            if(param.getDeclarator(Declarator.ARRAY)!=null){
+                                generator.emit(Instruction.ALOAD,""+idx);
+                            }else{
+                                generator.emit(Instruction.ILOAD,""+idx);
+                            }
+                        }else{
+                            int v = (int)objVal;
+                            generator.emit(Instruction.SIPUSH,""+v);
+                        }
+
+                        count++;
+                    }
+
+
+                    if(BaseExecutor.isCompileMode==true&&reEntry==false){
+                        Executor executor = ExecutorFactory.getExecutorFactory().getExecutor(func);
+                        ProgramGenerator.getInstance().setBufferedContent(true);
+                        executor.Execute(func);
+                        symbol = (Symbol) root.getChildren().get(0).getAttribute(ICodeKey.SYMBOL);
+                        emitReturnInstruction(symbol);
+                        ProgramGenerator.getInstance().emitDirective(Directive.END_METHOD);
+                        ProgramGenerator.getInstance().setBufferedContent(false);
+                        ProgramGenerator.getInstance().popFuncName();
+
+                    }
                     compileFunctionCall(funcName);
-                    ProgramGenerator.getInstance().popFuncName();
 
                     Object returnVal = func.getAttribute(ICodeKey.VALUE);
                     if(returnVal!=null){
@@ -242,7 +293,7 @@ public class UnaryNodeExecutor extends BaseExecutor implements IExecutorReceiver
     private Symbol getStructSymbolFromStructArray(Object object){
         ArrayValueSetter vs = (ArrayValueSetter) object;
         Symbol symbol = vs.getSymbol();
-        int idx = vs.getIndex();
+        int idx = (int) vs.getIndex();
         Declarator declarator = symbol.getDeclarator(Declarator.ARRAY);
         if(declarator == null){
             return null;

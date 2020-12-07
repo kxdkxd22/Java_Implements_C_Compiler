@@ -71,7 +71,7 @@ public class FunctDeclExecutor extends BaseExecutor {
 
         Symbol eachSym =args;
         int count = 0;
-        while(eachSym!=null){
+        while(eachSym!=null&&eachSym.getDeclarator(Declarator.POINTER)!=null){
             IValueSetter setter = (IValueSetter)eachSym;
 
             try {
@@ -97,7 +97,7 @@ public class FunctDeclExecutor extends BaseExecutor {
         for(int i = 0; i < params.size(); i++){
             Symbol symbol = params.get(i);
             String arg = "";
-            if(symbol.getDeclarator(Declarator.ARRAY)!=null){
+            if(symbol.getDeclarator(Declarator.ARRAY)!=null||symbol.getDeclarator(Declarator.POINTER)!=null){
                 arg+="[";
             }
 

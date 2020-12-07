@@ -1,5 +1,6 @@
 package frontend;
 
+import backend.BaseExecutor;
 import backend.CodeTreeBuilder;
 import backend.Compiler.ProgramGenerator;
 import backend.Intepretor;
@@ -8,6 +9,7 @@ import com.sun.org.apache.bcel.internal.classfile.Code;
 public class BottomUpParser_LR {
 
     public static void main(String[] args) {
+        BaseExecutor.isCompileMode = true;
         ProductionManager productionManager = ProductionManager.getProductionManager();
         productionManager.initProductions();
        // productionManager.printAllProductions();
@@ -22,6 +24,7 @@ public class BottomUpParser_LR {
 
         ProgramGenerator generator = ProgramGenerator.getInstance();
         generator.generate();
+    //
 
         CodeTreeBuilder treeBuilder = CodeTreeBuilder.getCodeTreeBuilder();
         Intepretor intepretor = Intepretor.getIntepretor();

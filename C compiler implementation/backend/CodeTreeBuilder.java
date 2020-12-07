@@ -9,6 +9,7 @@ public class CodeTreeBuilder {
     private Stack<ICodeNode> codeNodeStack = new Stack<ICodeNode>();
     private LRStateTableParser parser = null;
     private TypeSystem typeSystem = null;
+    private Stack<Object> valueStack = null;
     private HashMap<String,ICodeNode> funcMap = new HashMap<String,ICodeNode>();
     private String functionName;
 
@@ -25,7 +26,7 @@ public class CodeTreeBuilder {
     public void setParser(LRStateTableParser parser){
         this.parser = parser;
         typeSystem = parser.getTypeSystem();
-
+        valueStack = parser.getValueStack();
     }
 
     public ICodeNode buildCodeTree(int production,String text){
@@ -33,6 +34,20 @@ public class CodeTreeBuilder {
         Symbol symbol = null;
 
         switch(production){
+            case CGrammarInitializer.Specifiers_DeclList_Semi_TO_Def:
+                node = ICodeFactory.createICodeNode(CTokenType.DEF);
+                symbol = (Symbol)valueStack.get(valueStack.size()-2);
+                node.setAttribute(ICodeKey.SYMBOL,symbol);
+                break;
+            case CGrammarInitializer.Def_To_DefList:
+                node = ICodeFactory.createICodeNode(CTokenType.DEF_LIST);
+                node.addChild(codeNodeStack.pop());
+                break;
+            case CGrammarInitializer.DefList_Def_TO_DefList:
+                node = ICodeFactory.createICodeNode(CTokenType.DEF_LIST);
+                node.addChild(codeNodeStack.pop());
+                node.addChild(codeNodeStack.pop());
+                break;
             case CGrammarInitializer.Number_TO_Unary:
             case CGrammarInitializer.Name_TO_Unary:
             case CGrammarInitializer.String_TO_Unary:
@@ -94,6 +109,7 @@ public class CodeTreeBuilder {
                 break;
             case CGrammarInitializer.LocalDefs_TO_Statement:
                 node = ICodeFactory.createICodeNode(CTokenType.STATEMENT);
+                node.addChild(codeNodeStack.pop());
                 break;
             case CGrammarInitializer.Statement_TO_StmtList:
                 node = ICodeFactory.createICodeNode(CTokenType.STMT_LIST);

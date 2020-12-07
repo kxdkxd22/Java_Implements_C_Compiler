@@ -8,9 +8,12 @@ public class IfStatementExecutor extends BaseExecutor {
     public Object Execute(ICodeNode root) {
         ProgramGenerator generator = ProgramGenerator.getInstance();
         ICodeNode res = executeChild(root,0);
+        String curBranch = generator.getCurrentBranch();
+        generator.emitComparingCmd();
+
         Integer val = (Integer) res.getAttribute(ICodeKey.VALUE);
         copy(root,res);
-        if(val!=null&&val!=0||BaseExecutor.isCompileMode){
+        if((val!=null&&val!=0)||BaseExecutor.isCompileMode){
             generator.increaseIfElseEmbed();
             boolean b = BaseExecutor.inIfElseStatement;
             BaseExecutor.inIfElseStatement = false;
@@ -23,8 +26,9 @@ public class IfStatementExecutor extends BaseExecutor {
             String branchOut = generator.getBranchOut();
             generator.emitString(Instruction.GOTO.toString()+" "+branchOut);
         }else{
-            String curBranch = generator.getCurrentBranch();
+
             generator.emitString(curBranch+":\n");
+            generator.increaseBranch();
         }
 
         return root;

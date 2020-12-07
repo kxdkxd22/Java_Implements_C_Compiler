@@ -1,5 +1,7 @@
 package frontend;
 
+import backend.ArrayValueSetter;
+import backend.BaseExecutor;
 import backend.Compiler.Instruction;
 import backend.Compiler.ProgramGenerator;
 import backend.IValueSetter;
@@ -105,7 +107,38 @@ public class Symbol implements IValueSetter {
         }
 
         ProgramGenerator generator = ProgramGenerator.getInstance();
-        if(obj instanceof Symbol){
+        if(BaseExecutor.resultOnStack == true){
+            this.value = obj;
+            BaseExecutor.resultOnStack = false;
+        }else if(obj instanceof ArrayValueSetter){
+            ArrayValueSetter setter = (ArrayValueSetter)obj;
+            Symbol symbol = setter.getSymbol();
+            Object index = setter.getIndex();
+            if(symbol.getSpecifierByType(Specifier.STRUCTURE)==null){
+                if(index instanceof Symbol){
+                    ProgramGenerator.getInstance().readArrayElement(symbol,index);
+                    if(((Symbol)index).getValue()!=null){
+                        int  i = (int)((Symbol)index).getValue();
+                        try {
+                            this.value = symbol.getDeclarator(Declarator.ARRAY).getElement(i);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+
+                }else{
+                    int  i = (int) index;
+                    try {
+                        this.value = symbol.getDeclarator(Declarator.ARRAY).getElement(i);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                    ProgramGenerator.getInstance().readArrayElement(symbol,i);
+                }
+
+
+            }
+        }else if(obj instanceof Symbol){
             Symbol symbol = (Symbol) obj;
             this.value = symbol.value;
             int i = generator.getLocalVariableIndex(symbol);
@@ -116,7 +149,7 @@ public class Symbol implements IValueSetter {
             this.value = obj;
         }
 
-        if(this.value != null){
+        if(this.value != null||BaseExecutor.isCompileMode==true){
 
             if(this.isStructMember()==false){
                 int idx = generator.getLocalVariableIndex(this);

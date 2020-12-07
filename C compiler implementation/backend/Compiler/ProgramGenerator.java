@@ -14,12 +14,29 @@ public class ProgramGenerator extends CodeGenerator{
     private int branch_count = 0;
     private int branch_out = 0;
     private String embedded = "";
+    private String comparingCmd ="";
+    private int loopCount = 0;
 
     public int getIfElseEmbedCount(){return embedded.length();}
 
     public void increaseIfElseEmbed(){embedded+="i";}
 
     public void decreaseIfElseEmbed(){embedded= embedded.substring(1);}
+
+    public void setComparingCmd(String cmd){comparingCmd = cmd;}
+
+    public void emitComparingCmd(){emitString(comparingCmd);}
+
+    public void increaseLoopCount(){loopCount++;}
+
+    public void emitLoopBranch(){
+        String s = "\n"+"loop"+loopCount+":"+"\n";
+        emitString(s);
+    }
+
+    public String getLoopBranch(){
+        return "loop"+loopCount;
+    }
 
     public void emitBranchOut(){
         String s = "\n"+embedded+"branch_out"+branch_out+":\n";
@@ -188,7 +205,7 @@ public class ProgramGenerator extends CodeGenerator{
 
     public void assignValueToStructMemberFromArray(Object obj,Symbol field,Object val){
         ArrayValueSetter setter = (ArrayValueSetter)obj;
-        int idx = setter.getIndex();
+        int idx = (int) setter.getIndex();
         Symbol symbol = setter.getSymbol();
 
         int i = getLocalVariableIndex(symbol);
@@ -229,7 +246,7 @@ public class ProgramGenerator extends CodeGenerator{
         this.emit(Instruction.ALOAD,""+idx);
 
         if(vs!=null){
-            int i = vs.getIndex();
+            int i = (int) vs.getIndex();
             this.emit(Instruction.SIPUSH,""+i);
             this.emit(Instruction.AALOAD);
         }
@@ -319,7 +336,7 @@ public class ProgramGenerator extends CodeGenerator{
 
     }
 
-    public void readArrayElement(Symbol symbol,int index){
+    public void readArrayElement(Symbol symbol,Object index){
         Declarator declarator = symbol.getDeclarator(Declarator.ARRAY);
         if(declarator == null){
             return;
@@ -327,11 +344,18 @@ public class ProgramGenerator extends CodeGenerator{
 
         int idx = getLocalVariableIndex(symbol);
         this.emit(Instruction.ALOAD,""+idx);
-        this.emit(Instruction.SIPUSH,""+index);
+
+        if(index instanceof  Integer){
+            this.emit(Instruction.SIPUSH,""+index);
+        }else if(index instanceof Symbol){
+            int i = this.getLocalVariableIndex((Symbol) index);
+            this.emit(Instruction.ILOAD,""+i);
+        }
+
         this.emit(Instruction.IALOAD);
     }
 
-    public void writeArrayElement(Symbol symbol,int index,Object value){
+    public void writeArrayElement(Symbol symbol,Object index,Object value){
         Declarator declarator = symbol.getDeclarator(Declarator.ARRAY);
         if(declarator == null){
             return;
@@ -339,12 +363,37 @@ public class ProgramGenerator extends CodeGenerator{
 
         int idx = getLocalVariableIndex(symbol);
         if(symbol.hasType(Specifier.INT)){
-            int val = (int)value;
             this.emit(Instruction.ALOAD,""+idx);
-            this.emit(Instruction.SIPUSH,""+index);
-            this.emit(Instruction.IDIV.SIPUSH,""+val);
-            this.emit(Instruction.IASTORE);
+            if(index instanceof Integer){
+                this.emit(Instruction.SIPUSH,""+index);
+            }else{
+                int i = this.getLocalVariableIndex((Symbol)index);
+                this.emit(Instruction.ILOAD,""+i);
+            }
         }
+
+        if(value instanceof ArrayValueSetter){
+            ArrayValueSetter setter = (ArrayValueSetter)value;
+            Object idxObj = setter.getIndex();
+            Symbol arraySym = setter.getSymbol();
+            if(idxObj instanceof Integer){
+                int  i = (int) idxObj;
+                this.readArrayElement(arraySym,i);
+            }else{
+                this.readArrayElement(arraySym,idxObj);
+            }
+        }
+
+        if(value instanceof Integer){
+            int val = (int)value;
+            this.emit(Instruction.SIPUSH,""+val);
+        }else if(value instanceof Symbol){
+            ProgramGenerator generator = ProgramGenerator.getInstance();
+            int i = generator.getLocalVariableIndex((Symbol) value);
+            generator.emit(Instruction.ILOAD,""+i);
+        }
+
+        this.emit(Instruction.IASTORE);
     }
 
     public static ProgramGenerator getInstance(){

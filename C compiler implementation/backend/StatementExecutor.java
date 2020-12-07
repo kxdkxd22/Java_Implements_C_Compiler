@@ -1,5 +1,6 @@
 package backend;
 
+import backend.Compiler.Instruction;
 import frontend.CGrammarInitializer;
 
 public class StatementExecutor extends BaseExecutor {
@@ -13,9 +14,30 @@ public class StatementExecutor extends BaseExecutor {
         ICodeNode node;
 
         switch (production){
+            case CGrammarInitializer.LocalDefs_TO_Statement:
+                executeChild(root,0);
+                break;
             case CGrammarInitializer.FOR_OptExpr_Test_EndOptExpr_Statement_TO_Statement:
                 executeChild(root,0);
-                while(isLoopContinue(root,LoopType.FOR)){
+
+                if(BaseExecutor.isCompileMode){
+                    generator.emitLoopBranch();
+                    String branch = generator.getCurrentBranch();
+                    isLoopContinue(root,LoopType.FOR);
+                    generator.emitComparingCmd();
+                    String loop = generator.getLoopBranch();
+                    generator.increaseLoopCount();
+                    generator.increaseBranch();
+                    executeChild(root,3);
+                    executeChild(root,2);
+
+
+                    generator.emitString(Instruction.GOTO+" "+loop);
+                    generator.emitString("\n"+branch+":\n");
+
+
+                }
+                while(BaseExecutor.isCompileMode==false&&isLoopContinue(root,LoopType.FOR)){
                     executeChild(root,3);
                     executeChild(root,2);
                 }
@@ -27,7 +49,25 @@ public class StatementExecutor extends BaseExecutor {
 
                 break;
             case CGrammarInitializer.While_LP_Test_Rp_TO_Statement:
-                while(isLoopContinue(root,LoopType.WHILE)){
+                if(BaseExecutor.isCompileMode){
+                    generator.emitLoopBranch();
+                    String branch = generator.getCurrentBranch();
+
+                    executeChild(root,0);
+                    generator.emitComparingCmd();
+
+
+                    String loop = generator.getLoopBranch();
+                    generator.increaseLoopCount();
+                    generator.increaseBranch();
+
+                    executeChild(root,1);
+                    generator.emitString(Instruction.GOTO+" "+loop);
+                    generator.emitString("\n"+branch+":\n");
+
+                }
+
+                while(BaseExecutor.isCompileMode==false&&isLoopContinue(root,LoopType.WHILE)){
                     executeChild(root,1);
                 }
 

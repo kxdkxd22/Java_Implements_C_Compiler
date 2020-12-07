@@ -7,19 +7,22 @@ public class ElseStatementExecutor extends BaseExecutor{
     @Override
     public Object Execute(ICodeNode root) {
         BaseExecutor.inIfElseStatement = true;
-
+        String branch = generator.getCurrentBranch();
         ICodeNode res = executeChild(root,0);
         BaseExecutor.inIfElseStatement = false;
-        String branch = generator.getCurrentBranch();
+
         branch = "\n"+branch+":\n";
+
         generator.emitString(branch);
-        if(generator.getIfElseEmbedCount()==0){
-            generator.increaseBranch();
-        }
+        /*if(generator.getIfElseEmbedCount()==0){
+
+        }*/
+        generator.increaseBranch();
 
         Object obj = res.getAttribute(ICodeKey.VALUE);
         if((Integer)obj == 0 || BaseExecutor.isCompileMode){
             generator.increaseIfElseEmbed();
+
             res = executeChild(root,1);
             generator.decreaseIfElseEmbed();
         }

@@ -21,6 +21,13 @@ public class ExecutorFactory {
          }
          CTokenType type = (CTokenType) root.getAttribute(ICodeKey.TokenType);
          switch (type){
+             case DEF:
+                 return new DefExecutor();
+             case DEF_LIST:
+                 return new DefListExecutor();
+             case LOCAL_DEFS:
+                 return new LocalDefExecutor();
+
              case UNARY:
                  return new UnaryNodeExecutor();
              case BINARY:
